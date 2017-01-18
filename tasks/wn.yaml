@@ -1,0 +1,75 @@
+---
+- name: Install packages
+  package: name=kubernetes-node state=installed
+
+- name: Configure SELinux to use NFS
+  command: setsebool virt_use_nfs on
+  ignore_errors: True
+
+- name: Configure Docker to use registry cache
+  lineinfile:
+    dest: /etc/sysconfig/docker
+    line: OPTIONS='--registry-mirror=http://"{{ kube_server }}:5000" --selinux-enabled --log-driver=journald'
+    regexp: "^OPTIONS"
+  notify: restart docker
+
+- name: Overlay | configure etcd url
+  lineinfile:
+    dest: /etc/sysconfig/flanneld
+    line: FLANNEL_ETCD_ENDPOINTS="http://{{ kube_server }}:2379"
+    regexp: "^FLANNEL_ETCD_ENDPOINTS="
+
+- name: Overlay | configure etcd config key
+  lineinfile:
+    dest: /etc/sysconfig/flanneld
+    line: FLANNEL_ETCD_PREFIX="/atomic01/network"
+    regexp: "^FLANNEL_ETCD_PREFIX="
+
+- name: Flannel systemd | create service.d
+  file:
+    path: /etc/systemd/system/docker.service.d/
+    state: directory
+
+- name: Flannel systemd | deploy unit file
+  copy:
+    src: flanneld-network.conf
+    dest: /etc/systemd/system/docker.service.d/10-flanneld-network.conf
+  notify: reload systemd-daemon
+
+- name: k8s client configuration
+  lineinfile:
+    dest: /etc/kubernetes/kubelet
+    line: KUBELET_ADDRESS="--address={{ ansible_default_ipv4.address }}"
+    regexp: "^KUBELET_ADDRESS"
+  notify: restart kubelet
+
+- name: k8s client configuration | KUBELET_HOSTNAME
+  lineinfile:
+    dest: /etc/kubernetes/kubelet
+    line: KUBELET_HOSTNAME="--hostname_override={{ ansible_default_ipv4.address }}"
+    regexp: "^KUBELET_HOSTNAME="
+  notify: restart kubelet
+
+- name: k8s client configuration | KUBELET_API_SERVER
+  lineinfile:
+    dest: /etc/kubernetes/kubelet
+    line: KUBELET_API_SERVER="--api_servers=http://{{ kube_server }}:8080"
+    regexp: "^KUBELET_API_SERVER"
+  notify: restart kubelet
+
+- name: Configure k8s master on client | KUBE_MASTER
+  lineinfile:
+    dest: /etc/kubernetes/config
+    line: KUBE_MASTER="--master=http://{{ kube_server }}:8080"
+    regexp: "^KUBE_MASTER"
+  notify: restart kubelet
+
+- name: Restart and enable services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - flanneld
+    - kubelet
+    - kube-proxy

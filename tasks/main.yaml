@@ -1,0 +1,10 @@
+---
+- name: Install Epel
+  package: name=epel-release state=installed
+
+- name: Install packages
+  package: name=flannel state=installed
+
+- name: Include "{{kube_type_of_node}}" tasks
+  include: "{{kube_type_of_node}}.yaml"
+
