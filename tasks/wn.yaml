@@ -71,6 +71,12 @@
     regexp: "^KUBE_MASTER"
   notify: restart kubelet
 
+- name: Stop and disable firewalld
+  service:
+    name: firewalld
+    state: stopped
+    enabled: False
+
 - name: Restart and enable services
   service:
     name: "{{ item }}"
