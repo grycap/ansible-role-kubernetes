@@ -4,3 +4,5 @@ kube_type_of_node: front
 kube_server: "{{ ansible_default_ipv4.address }}"
 # Cluster DNS IP
 kube_dns_server: 10.0.0.1
+# Allow privileged containers
+kube_allow_privileged: true

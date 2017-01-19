@@ -44,6 +44,14 @@
     regexp: "^KUBE_ADMISSION_CONTROL"
   notify: restart k8s
 
+- name: apiserver | allow privileged
+  lineinfile:
+    dest: /etc/kubernetes/apiserver
+    line: KUBE_API_ARGS="--allow_privileged=true"
+    regexp: "^KUBE_API_ARGS"
+  notify: restart k8s
+  when: kube_allow_privileged
+
 - name: Stop and disable firewalld
   service:
     name: firewalld
