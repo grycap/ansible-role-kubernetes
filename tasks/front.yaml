@@ -36,13 +36,19 @@
     line: KUBE_API_ADDRESS="--address=0.0.0.0"
     regexp: "^KUBE_API_ADDRESS"
   notify: restart k8s
-
+ 
 - name: apiserver | admission control
   lineinfile:
     dest: /etc/kubernetes/apiserver
     line: KUBE_ADMISSION_CONTROL="--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota"
     regexp: "^KUBE_ADMISSION_CONTROL"
   notify: restart k8s
+
+- name: Stop and disable firewalld
+  service:
+    name: firewalld
+    state: stopped
+    enabled: False
 
 - name: enable services
   service:
