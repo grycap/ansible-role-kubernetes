@@ -13,6 +13,8 @@ The variables that can be passed to this role and a brief description about them
 	kube_type_of_node: front
 	# IP address or name of the Kube front node
 	kube_server: "{{ ansible_default_ipv4.address }}"
+	# Allow privileged containers
+	kube_allow_privileged: true
 
 Example Playbook
 ----------------

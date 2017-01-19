@@ -53,15 +53,7 @@
 - name: k8s client configuration | KUBELET_ARGS
   lineinfile:
     dest: /etc/kubernetes/kubelet
-    line: KUBELET_ARGS="--cluster_dns={{ kube_dns_server }}"
-    regexp: "^KUBELET_ARGS="
-  notify: restart kubelet
-  when: not kube_allow_privileged
-
-- name: k8s client configuration | KUBELET_ARGS
-  lineinfile:
-    dest: /etc/kubernetes/kubelet
-    line: KUBELET_ARGS="--cluster_dns={{ kube_dns_server }} --allow_privileged=true"
+    line: KUBELET_ARGS="--allow_privileged=true"
     regexp: "^KUBELET_ARGS="
   notify: restart kubelet
   when: kube_allow_privileged
