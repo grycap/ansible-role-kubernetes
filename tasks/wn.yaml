@@ -50,6 +50,13 @@
     regexp: "^KUBELET_HOSTNAME="
   notify: restart kubelet
 
+- name: k8s client configuration | KUBELET_ARGS
+  lineinfile:
+    dest: /etc/kubernetes/kubelet
+    line: KUBELET_ARGS="--cluster_dns={{ kube_dns_server }}"
+    regexp: "^KUBELET_ARGS="
+  notify: restart kubelet
+
 - name: k8s client configuration | KUBELET_API_SERVER
   lineinfile:
     dest: /etc/kubernetes/kubelet

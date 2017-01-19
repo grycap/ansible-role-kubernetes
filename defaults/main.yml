@@ -2,3 +2,5 @@
 kube_type_of_node: front
 # IP address or name of the Kube front node
 kube_server: "{{ ansible_default_ipv4.address }}"
+# Cluster DNS IP
+kube_dns_server: 10.0.0.1
