@@ -72,6 +72,13 @@
     regexp: "^KUBE_MASTER"
   notify: restart kubelet
 
+- name: Configure k8s master on client | KUBELET_POD_INFRA_CONTAINER
+  lineinfile:
+    dest: /etc/kubernetes/config
+    state: absent
+    regexp: "^KUBELET_POD_INFRA_CONTAINER"
+  notify: restart kubelet
+
 - name: Stop and disable firewalld
   service:
     name: firewalld
