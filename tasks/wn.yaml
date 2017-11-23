@@ -74,7 +74,7 @@
 
 - name: Configure k8s master on client | KUBELET_POD_INFRA_CONTAINER
   lineinfile:
-    dest: /etc/kubernetes/config
+    dest: /etc/kubernetes/kubelet
     state: absent
     regexp: "^KUBELET_POD_INFRA_CONTAINER"
   notify: restart kubelet
