@@ -1,27 +1,3 @@
-- name: restart etcd
-  service:
-    name: etcd
-    state: restarted
-
-- name: restart k8s
-  service:
-    name: kube-apiserver
-    state: restarted
-
-- name: restart docker
-  service:
-    name: docker
-    state: restarted
-
-- name: restart kubelet
-  service:
-    name: kubelet
-    state: restarted
-
-- name: restart flannel
-  service:
-    name: flanneld
-    state: restarted
-
-- name: reload systemd-daemon
-  command: systemctl daemon-reload
+- name: sysctl-system
+  command: sysctl --system
+  

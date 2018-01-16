@@ -3,7 +3,47 @@
   package: name=epel-release state=installed
 
 - name: Install packages
-  package: name=flannel state=installed
+  package: name=docker state=installed
+
+- name: Start docker service
+  service: name=docker state=started enabled=yes
+  
+- copy:
+    dest: /etc/yum.repos.d/kubernetes.repo
+    content: |
+        [kubernetes]
+        name=Kubernetes
+        baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+        enabled=1
+        gpgcheck=1
+        repo_gpgcheck=1
+        gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+- name: import gpg key
+  rpm_key:
+    key: https://packages.cloud.google.com/yum/doc/yum-key.gpg
+    state: present
+  register: import_key
+                                                                                                       
+- name: Make cache
+  command: "yum -q makecache -y --disablerepo='*' --enablerepo='kubernetes'"
+  when: import_key.changed
+
+- name: Install packages
+  package: name=kubelet,kubeadm,kubectl state=installed
+
+- name: Start kubelet service
+  service: name=kubelet state=started enabled=yes
+
+- copy:
+    dest: /etc/sysctl.d/k8s.conf
+    content: |
+        net.bridge.bridge-nf-call-ip6tables = 1
+        net.bridge.bridge-nf-call-iptables = 1
+  notify: sysctl-system
+
+- name: Disable swap
+  command: swapoff -a
 
 - name: Include "{{kube_type_of_node}}" tasks
   include: "{{kube_type_of_node}}.yaml"
