@@ -1,11 +1,44 @@
 ---
+- set_fact: kube_pod_network_cidr='10.244.0.0/16'
+  when: kube_network == 'flannel'
+
+- set_fact: kube_pod_network_cidr='192.168.0.0/16'
+  when: kube_network == 'calico'
+
 - name: Kubeadm init
   command: kubeadm init --pod-network-cidr={{kube_pod_network_cidr}} --token={{kube_token}} creates=/etc/kubernetes/admin.conf
+
+- lineinfile:
+    path: /etc/sysctl.d/k8s.conf
+    regexp: '^net.bridge.bridge-nf-call-iptables'
+    line: 'net.bridge.bridge-nf-call-iptables = 1'
+    create: yes
+  notify: sysctl-system
+  when: kube_network == 'flannel' or kube_network == 'kube-router' or kube_network == 'romana'
 
 - name: Kubeadm apply flannel
   command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml creates=/etc/cni/net.d/10-flannel.conf
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_network == 'flannel'
+
+- name: Kubeadm apply calico
+  command: kubectl apply -f https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/kubeadm/1.6/calico.yaml creates=/var/etcd/calico-data
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_network == 'calico'
+
+- name: Kubeadm apply romana
+  command: kubectl apply -f https://raw.githubusercontent.com/romana/romana/master/containerize/specs/romana-kubeadm.yml creates=/var/lib/romana/etcd-db
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_network == 'romana'
+
+- name: Kubeadm apply kube-router
+  command: kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter.yaml creates=/etc/cni/net.d/10-kuberouter.conf
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_network == 'kube-router'
 
 - copy:
     dest: /etc/profile.d/kube.sh

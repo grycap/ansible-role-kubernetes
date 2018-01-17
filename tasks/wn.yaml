@@ -1,7 +1,7 @@
 ---
 - name: Wait for Kube master
   wait_for:
-    path: /etc/cni/net.d/10-flannel.conf
+    path: /etc/profile.d/kube.sh
   delegate_to: "{{kube_server}}"
 
 - name: Add node to kube cluster

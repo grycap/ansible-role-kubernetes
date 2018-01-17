@@ -35,11 +35,18 @@
 - name: Start kubelet service
   service: name=kubelet state=started enabled=yes
 
-- copy:
-    dest: /etc/sysctl.d/k8s.conf
-    content: |
-        net.bridge.bridge-nf-call-ip6tables = 1
-        net.bridge.bridge-nf-call-iptables = 1
+- lineinfile:
+    path: /etc/sysctl.d/k8s.conf
+    regexp: '^net.bridge.bridge-nf-call-ip6tables'
+    line: 'net.bridge.bridge-nf-call-ip6tables = 1'
+    create: yes
+  notify: sysctl-system
+
+- lineinfile:
+    path: /etc/sysctl.d/k8s.conf
+    regexp: '^net.bridge.bridge-nf-call-iptables'
+    line: 'net.bridge.bridge-nf-call-iptables = 1'
+    create: yes
   notify: sysctl-system
 
 - name: Stop and disable firewalld
