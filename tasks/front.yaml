@@ -6,3 +6,7 @@
   command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml creates=/etc/cni/net.d/10-flannel.conf
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
+
+- copy:
+    dest: /etc/profile.d/kube.sh
+    content: "export KUBECONFIG=/etc/kubernetes/admin.conf"
