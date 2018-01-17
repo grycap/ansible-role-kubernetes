@@ -1,3 +1,7 @@
 - name: sysctl-system
   command: sysctl --system
-  
+
+- name: restart kubelet
+  service:
+    name: kubelet
+    state: restarted
