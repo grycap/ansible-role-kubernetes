@@ -3,8 +3,7 @@ kube_type_of_node: front
 # IP address or name of the Kube front node
 kube_server: "{{ ansible_default_ipv4.address }}"
 # Token
-password: "{{ lookup('password', '/tmp/tokenpass chars=ascii_lowercase,digits length=16') }}"
-kube_token: kube01.{{password}}
+kube_token: "kube01.{{ lookup('password', '/tmp/tokenpass chars=ascii_lowercase,digits length=16') }}"
 # POD network cidr
 kube_pod_network_cidr: 10.244.0.0/16
 # Type of network to install: currently supported: flannel, kube-router, romana, calico
