@@ -1,9 +1,10 @@
 ---
-- name: Install Epel
-  package: name=epel-release state=installed
+- name: Disable swap
+  command: swapoff -a
 
-- name: Install packages
-  package: name=flannel state=installed
+- name: Include "{{ansible_os_family}}" Kubernetes recipe
+  include: "{{ansible_os_family}}.yaml"
+  static: false
 
 - name: Include "{{kube_type_of_node}}" tasks
   include: "{{kube_type_of_node}}.yaml"

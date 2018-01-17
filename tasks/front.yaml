@@ -1,80 +1,12 @@
 ---
-- name: Install packages
-  package: name=kubernetes-master,etcd state=installed
+- name: Kubeadm init
+  command: kubeadm init --pod-network-cidr={{kube_pod_network_cidr}} --token={{kube_token}} creates=/etc/kubernetes/admin.conf
 
-- name: Configure etcd LISTEN CLIENTS
-  lineinfile:
-    dest: /etc/etcd/etcd.conf
-    line: ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379,http://0.0.0.0:4001"
-    regexp: "^ETCD_LISTEN_CLIENT_URLS"
-  notify: restart etcd
+- name: Kubeadm apply flannel
+  command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml creates=/etc/cni/net.d/10-flannel.conf
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
 
-- name: Configure etcd ADVERTISE CLIENTS
-  lineinfile:
-    dest: /etc/etcd/etcd.conf
-    line: ETCD_ADVERTISE_CLIENT_URLS="http://0.0.0.0:2379,http://0.0.0.0:4001"
-    regexp: "^ETCD_ADVERTISE_CLIENT_URLS"
-  notify: restart etcd
-
-- name: Configure k8s common services
-  lineinfile:
-    dest: /etc/kubernetes/config
-    line: KUBE_ETCD_SERVERS="--etcd_servers=http://{{ kube_server  }}:2379"
-    regexp: "^KUBE_ETCD_SERVERS"
-  notify: restart k8s
-
-- name: Configure k8s common services
-  lineinfile:
-    dest: /etc/kubernetes/config
-    line: KUBE_MASTER="--master=http://{{ kube_server }}:8080"
-    regexp: "^KUBE_MASTER"
-  notify: restart k8s
-
-- name: apiserver | listen address
-  lineinfile:
-    dest: /etc/kubernetes/apiserver
-    line: KUBE_API_ADDRESS="--address=0.0.0.0"
-    regexp: "^KUBE_API_ADDRESS"
-  notify: restart k8s
- 
-- name: apiserver | admission control
-  lineinfile:
-    dest: /etc/kubernetes/apiserver
-    line: KUBE_ADMISSION_CONTROL="--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota"
-    regexp: "^KUBE_ADMISSION_CONTROL"
-  notify: restart k8s
-
-- name: apiserver | allow privileged
-  lineinfile:
-    dest: /etc/kubernetes/apiserver
-    line: KUBE_API_ARGS="--allow_privileged=true"
-    regexp: "^KUBE_API_ARGS"
-  notify: restart k8s
-  when: kube_allow_privileged
-
-- name: Stop and disable firewalld
-  service:
-    name: firewalld
-    state: stopped
-    enabled: False
-
-- name: enable services
-  service:
-    name: "{{ item }}"
-    state: started
-    enabled: yes
-  with_items:
-    - etcd
-    - kube-apiserver
-    - kube-controller-manager
-    - kube-scheduler
-
-- name: Copy json with network config
-  copy:
-    src: flanneld-conf.json
-    dest: /tmp/flanneld-conf.json
-  register: flannelconf
-
-- name: Configure subnet
-  command: curl -L http://localhost:2379/v2/keys/atomic01/network/config -XPUT --data-urlencode value@/tmp/flanneld-conf.json
-  when: flannelconf.changed
+- copy:
+    dest: /etc/profile.d/kube.sh
+    content: "export KUBECONFIG=/etc/kubernetes/admin.conf"
