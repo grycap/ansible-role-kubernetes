@@ -13,7 +13,7 @@ The variables that can be passed to this role and a brief description about them
 	kube_type_of_node: front
 	# IP address or name of the Kube front node
 	kube_server: "{{ ansible_default_ipv4.address }}"
-	# Token
+	# Security Token
 	kube_token: some01.rand0mt0k3n16342
 	# POD network cidr
 	kube_pod_network_cidr: 10.244.0.0/16
