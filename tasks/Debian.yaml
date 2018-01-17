@@ -9,9 +9,15 @@
 
 - name: Add docker repo
   apt_repository: repo='deb https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable' state=present update_cache=yes
+  when: ansible_distribution != "Ubuntu"
 
-- name: Install docker
-  apt: name="docker-ce=17.03" state=installed force=yes
+- name: Add docker repo
+  apt_repository: repo='deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ansible_distribution_release}} stable' state=present update_cache=yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install docker 17.03
+  apt: name="docker-ce=17.03.2~ce-0~ubuntu-{{ ansible_distribution_release }}" state=installed force=yes
+  when: ansible_distribution == "Ubuntu"
 
 - name: Add repo key
   apt_key:
