@@ -1,0 +1,25 @@
+---
+- name: Install docker requisites
+  apt: name=apt-transport-https,ca-certificates,software-properties-common
+
+- name: Add repo key
+  apt_key:
+    url: "https://download.docker.com/linux/debian/gpg"
+    state: present
+
+- name: Add docker repo
+  apt_repository: repo='deb https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable' state=present update_cache=yes
+
+- name: Install docker
+  apt: name="docker-ce=17.03" state=installed force=yes
+
+- name: Add repo key
+  apt_key:
+    url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+    state: present
+
+- name: Add kubernetes repo
+  apt_repository: repo='deb http://apt.kubernetes.io/ kubernetes-xenial main' state=present update_cache=yes
+
+- name: Install docker
+  apt: name=kubelet,kubeadm,kubectl state=installed
