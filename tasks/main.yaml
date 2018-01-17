@@ -45,6 +45,12 @@
 - name: Disable swap
   command: swapoff -a
 
+- name: Stop and disable firewalld
+  service:
+    name: firewalld
+    state: stopped
+    enabled: False
+
 - name: Include "{{kube_type_of_node}}" tasks
   include: "{{kube_type_of_node}}.yaml"
 
