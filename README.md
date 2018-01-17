@@ -15,8 +15,10 @@ The variables that can be passed to this role and a brief description about them
 	kube_server: "{{ ansible_default_ipv4.address }}"
 	# Security Token
 	kube_token: some01.rand0mt0k3n16342
-	# POD network cidr
+	# POD network cidr (only used in kube-router network)
 	kube_pod_network_cidr: 10.244.0.0/16
+	# Type of network to install: currently supported: flannel, kube-router, romana, calico
+	kube_network: flannel
 
 
 Example Playbook
