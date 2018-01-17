@@ -34,6 +34,12 @@
     KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'romana'
 
+- name: Kubeadm apply kube-router
+  command: kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter.yaml creates=/etc/cni/net.d/10-kuberouter.conf
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_network == 'kube-router'
+
 - copy:
     dest: /etc/profile.d/kube.sh
     content: "export KUBECONFIG=/etc/kubernetes/admin.conf"
