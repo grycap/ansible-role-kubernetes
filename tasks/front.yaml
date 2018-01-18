@@ -40,15 +40,15 @@
     KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'kube-router'
 
-- name: Activate insecure local port
+- name: Add Kube API server options
   lineinfile:
     dest: /etc/kubernetes/manifests/kube-apiserver.yaml
-    line: '    - --insecure-port={{kube_insecure_port}}'
-    regexp: '^    - --insecure-port='
+    line: '    - {{item.option}}={{item.value}}'
+    regexp: '^    - {{item.option}}='
     insertafter: '    - kube-apiserver'
   notify: restart kubelet
-  when: kube_insecure_port != 0
-
+  with_items: "{{ kube_apiserver_options }}"
+  
 - copy:
     dest: /etc/profile.d/kube.sh
     content: "export KUBECONFIG=/etc/kubernetes/admin.conf"

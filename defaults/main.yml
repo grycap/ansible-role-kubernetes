@@ -10,6 +10,5 @@ kube_pod_network_cidr: 10.244.0.0/16
 kube_network: flannel
 # Kubelet extra args
 kubelet_extra_args: ''
-#kubelet_extra_args: '--allow_privileged=true'
-# Kube API server insecure port (set 0 to disable it)
-kube_insecure_port: 8080
+# Kube API server options
+kube_apiserver_options: []
