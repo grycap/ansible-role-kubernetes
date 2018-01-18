@@ -43,7 +43,7 @@
 - name: Activate insecure local port
   lineinfile:
     dest: /etc/kubernetes/manifests/kube-apiserver.yaml
-    line: '    - --insecure-port={{kube_insecure_port}}}'
+    line: '    - --insecure-port={{kube_insecure_port}}'
     regexp: '^    - --insecure-port='
     insertafter: '    - kube-apiserver'
   notify: restart kubelet
