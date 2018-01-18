@@ -21,8 +21,8 @@ The variables that can be passed to this role and a brief description about them
 	kube_network: flannel
 	# Kubelet extra args
 	kubelet_extra_args: ''
-	# Kube API server insecure port (set 0 to disable it)
-	kube_insecure_port: 8080
+	# Kube API server options
+	kube_apiserver_options: []
 
 
 Example Playbook
@@ -32,7 +32,7 @@ This an example of how to install this role in the front-end node:
 
     - hosts: server
       roles:
-      - { role: 'grycap.kubernetes' }
+      - { role: 'grycap.kubernetes', kube_apiserver_options: [{option: "--insecure-port", value: "8080"}] }
 
 And in the WNs:
 
