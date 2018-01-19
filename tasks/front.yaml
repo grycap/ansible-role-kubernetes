@@ -46,7 +46,7 @@
     line: '    - {{item.option}}={{item.value}}'
     regexp: '^    - {{item.option}}='
     insertafter: '    - kube-apiserver'
-  notify: restart kubelet
+  notify: restart kubeapi
   with_items: "{{ kube_apiserver_options }}"
   
 - copy:
