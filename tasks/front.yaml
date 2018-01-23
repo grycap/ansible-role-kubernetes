@@ -57,10 +57,6 @@
   ignore_errors: yes
   when: kube_deploy_dashboard
 
-- name: Create auth data file
-  copy: content={{ kube_auth_data }} dest=/etc/kubernetes/auth mode=600
-  when: kube_auth_data != ''
-
 - name: Add Kube API server options
   lineinfile:
     dest: /etc/kubernetes/manifests/kube-apiserver.yaml
