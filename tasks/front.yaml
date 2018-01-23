@@ -44,6 +44,22 @@
     path: /usr/local/bin/helm
   register: helm
 
+- name: Add Kube API server options
+  lineinfile:
+    dest: /etc/kubernetes/manifests/kube-apiserver.yaml
+    line: '    - {{item.option}}={{item.value}}'
+    regexp: '^    - {{item.option}}='
+    insertafter: '    - kube-apiserver'
+  notify: restart kubeapi
+  with_items: "{{ kube_apiserver_options }}"
+
+- name: Force handlers
+  meta: flush_handlers
+
+- name: Wait API server to be Up 
+  wait_for:
+    port: 8000
+
 - name: Install HELM
   block:
     - get_url: url="{{kube_install_helm_url}}" dest=/tmp/helm.tar.gz force=no
@@ -57,15 +73,6 @@
   ignore_errors: yes
   when: kube_deploy_dashboard
 
-- name: Add Kube API server options
-  lineinfile:
-    dest: /etc/kubernetes/manifests/kube-apiserver.yaml
-    line: '    - {{item.option}}={{item.value}}'
-    regexp: '^    - {{item.option}}='
-    insertafter: '    - kube-apiserver'
-  notify: restart kubeapi
-  with_items: "{{ kube_apiserver_options }}"
-  
 - copy:
     dest: /etc/profile.d/kube.sh
     content: "export KUBECONFIG=/etc/kubernetes/admin.conf"
