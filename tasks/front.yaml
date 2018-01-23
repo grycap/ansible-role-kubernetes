@@ -40,6 +40,12 @@
     KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'kube-router'
 
+- name: Kubeadm apply weave
+  command: kubectl apply -f https://cloud.weave.works/k8s/v1.7/net.yaml creates=/etc/cni/net.d/10-weave.conf
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_network == 'weave'
+
 - stat:
     path: /usr/local/bin/helm
   register: helm

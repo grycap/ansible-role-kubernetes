@@ -17,7 +17,7 @@ The variables that can be passed to this role and a brief description about them
 	kube_token: "kube01.{{ lookup('password', '/tmp/tokenpass chars=ascii_lowercase,digits length=16') }}"
 	# POD network cidr (only used in kube-router network)
 	kube_pod_network_cidr: 10.244.0.0/16
-	# Type of network to install: currently supported: flannel, kube-router, romana, calico
+	# Type of network to install: currently supported: flannel, kube-router, romana, calico, weave
 	kube_network: flannel
 	# Kubelet extra args
 	kubelet_extra_args: ''
