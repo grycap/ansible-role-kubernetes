@@ -5,3 +5,14 @@
   service:
     name: kubelet
     state: restarted
+
+- name: kill kubepai
+  command: killall kube-apiserver
+  ignore_errors: yes
+  listen: "restart kubeapi"
+
+- name: restart kubelet to restart kubeapi
+  service:
+    name: kubelet
+    state: restarted
+  listen: "restart kubeapi"

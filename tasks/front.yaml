@@ -40,13 +40,34 @@
     KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'kube-router'
 
+- stat:
+    path: /usr/local/bin/helm
+  register: helm
+
+- name: Install HELM
+  block:
+    - get_url: url="{{kube_install_helm_url}}" dest=/tmp/helm.tar.gz force=no
+    - unarchive: src=/tmp/helm.tar.gz  dest=/tmp creates=/tmp/linux-amd64/helm
+    - copy: src=/tmp/linux-amd64/helm dest=/usr/local/bin/helm mode=755
+    - command: /usr/local/bin/helm init
+  when: kube_install_helm and not helm.stat.exists
+
+- name: Deploy Dashboard
+  command: kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+  ignore_errors: yes
+  when: kube_deploy_dashboard
+
+- name: Create auth data file
+  copy: content={{ kube_auth_data }} dest=/etc/kubernetes/auth mode=600
+  when: kube_auth_data != ''
+
 - name: Add Kube API server options
   lineinfile:
     dest: /etc/kubernetes/manifests/kube-apiserver.yaml
     line: '    - {{item.option}}={{item.value}}'
     regexp: '^    - {{item.option}}='
     insertafter: '    - kube-apiserver'
-  notify: restart kubelet
+  notify: restart kubeapi
   with_items: "{{ kube_apiserver_options }}"
   
 - copy:
