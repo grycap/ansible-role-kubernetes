@@ -40,6 +40,33 @@
     KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'kube-router'
 
+- name: Kubeadm apply weave
+  command: kubectl apply -f https://cloud.weave.works/k8s/v1.7/net.yaml creates=/etc/cni/net.d/10-weave.conf
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_network == 'weave'
+
+- stat:
+    path: /usr/local/bin/helm
+  register: helm
+
+- name: Install HELM
+  block:
+    - get_url: url="{{kube_install_helm_url}}" dest=/tmp/helm.tar.gz force=no
+    - unarchive: src=/tmp/helm.tar.gz  dest=/tmp creates=/tmp/linux-amd64/helm
+    - copy: src=/tmp/linux-amd64/helm dest=/usr/local/bin/helm mode=755
+    - command: /usr/local/bin/helm init
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_install_helm and not helm.stat.exists
+
+- name: Deploy Dashboard
+  command: kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  ignore_errors: yes
+  when: kube_deploy_dashboard
+
 - name: Add Kube API server options
   lineinfile:
     dest: /etc/kubernetes/manifests/kube-apiserver.yaml
@@ -48,7 +75,7 @@
     insertafter: '    - kube-apiserver'
   notify: restart kubeapi
   with_items: "{{ kube_apiserver_options }}"
-  
+
 - copy:
     dest: /etc/profile.d/kube.sh
     content: "export KUBECONFIG=/etc/kubernetes/admin.conf"
