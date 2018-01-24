@@ -34,7 +34,7 @@
 
 - name: Kubeadm apply romana
   block:
-    - copy: src=calico-net.yaml dest=/tmp/romana-net.yml
+    - copy: src=romana-net.yml dest=/tmp/romana-net.yml
     - command: kubectl apply -f /tmp/romana-net.yml creates=/var/lib/romana/etcd-db
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
