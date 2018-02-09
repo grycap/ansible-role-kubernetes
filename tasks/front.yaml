@@ -56,15 +56,10 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'weave'
 
-- include: helm.yml
+- include: helm.yaml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_helm
-
-- include: openfaas.yml
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_install_helm and kube_install_openfaas
 
 - name: Deploy Dashboard
   command: kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml

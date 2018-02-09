@@ -18,5 +18,3 @@ kube_install_helm: false
 kube_install_helm_url: 'https://storage.googleapis.com/kubernetes-helm/helm-v2.7.2-linux-amd64.tar.gz'
 # Deploy the Dashboard
 kube_deploy_dashboard: false
-# Install OpenFaas
-kube_install_openfaas: false
