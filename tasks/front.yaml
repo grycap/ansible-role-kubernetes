@@ -62,12 +62,11 @@
 
 - name: Install HELM
   block:
-    - get_url: url="{{kube_install_helm_url}}" dest=/tmp/helm.tar.gz force=no
-    - unarchive: src=/tmp/helm.tar.gz  dest=/tmp creates=/tmp/linux-amd64/helm
-    - copy: src=/tmp/linux-amd64/helm dest=/usr/local/bin/helm mode=755
-    - command: /usr/local/bin/helm init
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
+    - copy: src=helm.sh dest=/tmp/helm.sh
+    - command: bash /tmp/helm.sh
+    - command: kubectl -n kube-system create sa tiller 
+    - command: kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+    - command: helm init --skip-refresh --upgrade --service-account tiller
   when: kube_install_helm and not helm.stat.exists
 
 - name: Deploy Dashboard
