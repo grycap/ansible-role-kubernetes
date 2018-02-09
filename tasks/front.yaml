@@ -56,30 +56,11 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'weave'
 
-- stat:
-    path: /usr/local/bin/helm
-  register: helm
+- include: helm.yml
+  when: kube_install_helm
 
-- name: Install HELM
-  block:
-    - name: Copy helm install script
-      copy: 
-        src: helm.sh
-        dest: /tmp/helm.sh
-        mode: 0755
-
-    - name: Execute helm install script
-      command: bash /tmp/helm.sh
-
-    - name: Create RBAC permissions for Tiller (1)
-      command: kubectl -n kube-system create sa tiller
-
-    - name: Create RBAC permissions for Tiller (2)
-      command: kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
-      
-    - name: Install the server-side Tiller component on the cluster
-      command: helm init --skip-refresh --upgrade --service-account tiller
-  when: kube_install_helm and not helm.stat.exists
+- include: openfaas.yml
+  when: kube_install_helm and kube_install_openfaas
 
 - name: Deploy Dashboard
   command: kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml

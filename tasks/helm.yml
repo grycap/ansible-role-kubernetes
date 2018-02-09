@@ -1,0 +1,25 @@
+---
+- stat:
+    path: /usr/local/bin/helm
+  register: helm
+
+- name: Install HELM
+  block:
+    - name: Copy helm install script
+      copy: 
+        src: helm.sh
+        dest: /tmp/helm.sh
+        mode: 0755
+
+    - name: Execute helm install script
+      command: bash /tmp/helm.sh
+
+    - name: Create RBAC permissions for Tiller (1)
+      command: kubectl -n kube-system create sa tiller
+
+    - name: Create RBAC permissions for Tiller (2)
+      command: kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+
+    - name: Install the server-side Tiller component on the cluster
+      command: helm init --skip-refresh --upgrade --service-account tiller
+  when: not helm.stat.exists
