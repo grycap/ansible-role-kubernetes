@@ -62,11 +62,23 @@
 
 - name: Install HELM
   block:
-    - copy: src=helm.sh dest=/tmp/helm.sh
-    - command: bash /tmp/helm.sh
-    - command: kubectl -n kube-system create sa tiller 
-    - command: kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
-    - command: helm init --skip-refresh --upgrade --service-account tiller
+    - name: Copy helm install script
+      copy: 
+        src: helm.sh
+        dest: /tmp/helm.sh
+        mode: 0755
+
+    - name: Execute helm install script
+      command: bash /tmp/helm.sh
+
+    - name: Create RBAC permissions for Tiller (1)
+      command: kubectl -n kube-system create sa tiller
+
+    - name: Create RBAC permissions for Tiller (2)
+      command: kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+      
+    - name: Install the server-side Tiller component on the cluster
+      command: helm init --skip-refresh --upgrade --service-account tiller
   when: kube_install_helm and not helm.stat.exists
 
 - name: Deploy Dashboard
