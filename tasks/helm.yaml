@@ -21,5 +21,5 @@
       command: kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
 
     - name: Install the server-side Tiller component on the cluster
-      command: helm init --service-account tiller
+      command: helm init --service-account tiller --override "spec.template.spec.tolerations[0].key"="node-role.kubernetes.io/master" --override "spec.template.spec.tolerations[0].operator"="Exists" --override "spec.template.spec.tolerations[0].effect"="NoSchedule"
   when: not helm.stat.exists
