@@ -16,40 +16,35 @@
   notify: sysctl-system
   when: kube_network == 'flannel' or kube_network == 'kube-router' or kube_network == 'romana'
 
-- name: Kubeadm apply flannel
-  block:
+- block:
     - copy: src=flannel-net.yml dest=/tmp/flannel-net.yml
     - command: kubectl apply -f /tmp/flannel-net.yml creates=/etc/cni/net.d/10-flannel.conf
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'flannel'
 
-- name: Kubeadm apply calico
-  block:
+- block:
     - copy: src=calico-net.yaml dest=/tmp/calico-net.yaml
     - command: kubectl apply -f /tmp/calico-net.yaml creates=/var/etcd/calico-data
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'calico'
 
-- name: Kubeadm apply romana
-  block:
+- block:
     - copy: src=romana-net.yml dest=/tmp/romana-net.yml
     - command: kubectl apply -f /tmp/romana-net.yml creates=/var/lib/romana/etcd-db
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'romana'
 
-- name: Kubeadm apply kube-router
-  block:
+- block:
     - copy: src=kuberouter-net.yaml dest=/tmp/kuberouter-net.yaml
     - command: kubectl apply -f /tmp/kuberouter-net.yaml creates=/etc/cni/net.d/10-kuberouter.conf
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'kube-router'
 
-- name: Kubeadm apply weave
-  block:
+- block:
     - copy: src=weave-net.yaml dest=/tmp/weave-net.yaml
     - command: kubectl apply -f /tmp/weave-net.yaml creates=/etc/cni/net.d/10-weave.conf
       environment:
