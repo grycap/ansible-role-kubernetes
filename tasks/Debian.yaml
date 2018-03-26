@@ -2,10 +2,14 @@
 - name: Install docker requisites
   apt: name=apt-transport-https,ca-certificates,software-properties-common
 
-- name: Add repo key
-  apt_key:
-    url: "https://download.docker.com/linux/debian/gpg"
-    state: present
+- name: Add Docker repo key
+  apt_key: url="https://download.docker.com/linux/debian/gpg"
+  ignore_errors: yes
+  register: add_docker_repo
+
+- name: Add Docker repo key (python 2.7.9 or older)
+  shell: curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -qq - >/dev/null
+  when: add_docker_repo|failed
 
 - name: Add docker repo
   apt_repository: repo='deb https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable' state=present update_cache=yes
