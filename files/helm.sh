@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-##################################################################
-##  https://github.com/openfaas/faas-netes/blob/master/HELM.md  ##
-##################################################################
-
-
 # Copyright 2016 The Kubernetes Authors All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,11 +49,11 @@ initOS() {
 # runs the given command as root (detects if we are root already)
 runAsRoot() {
   local CMD="$*"
-  
+
   if [ $EUID -ne 0 ]; then
     CMD="sudo $CMD"
   fi
-  
+
   $CMD
 }
 
@@ -83,9 +78,9 @@ checkDesiredVersion() {
   # Use the GitHub releases webpage for the project to find the desired version for this project.
   local release_url="https://github.com/kubernetes/helm/releases/${DESIRED_VERSION:-latest}"
   if type "curl" > /dev/null; then
-    TAG=$(curl -SsL $release_url | awk '/\/tag\//' | cut -d '"' -f 2 | awk '{n=split($NF,a,"/");print a[n]}' | awk 'a !~ $0{print}; {a=$0}')
+    TAG=$(curl -SsL $release_url | awk '/\/tag\//' | grep -v no-underline | cut -d '"' -f 2 | awk '{n=split($NF,a,"/");print a[n]}' | awk 'a !~ $0{print}; {a=$0}')
   elif type "wget" > /dev/null; then
-    TAG=$(wget -q -O - $release_url | awk '/\/tag\//' | cut -d '"' -f 2 | awk '{n=split($NF,a,"/");print a[n]}' | awk 'a !~ $0{print}; {a=$0}')
+    TAG=$(wget -q -O - $release_url | awk '/\/tag\//' | grep -v no-underline | cut -d '"' -f 2 | awk '{n=split($NF,a,"/");print a[n]}' | awk 'a !~ $0{print}; {a=$0}')
   fi
   if [ "x$TAG" == "x" ]; then
     echo "Cannot determine ${DESIRED_VERSION} tag."
@@ -139,7 +134,7 @@ installFile() {
   local sum=$(openssl sha1 -sha256 ${HELM_TMP_FILE} | awk '{print $2}')
   local expected_sum=$(cat ${HELM_SUM_FILE})
   if [ "$sum" != "$expected_sum" ]; then
-    echo "SHA sum of $HELM_TMP does not match. Aborting."
+    echo "SHA sum of ${HELM_TMP_FILE} does not match. Aborting."
     exit 1
   fi
 
