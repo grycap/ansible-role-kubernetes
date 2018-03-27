@@ -1,7 +1,6 @@
 ---
 - name: Wait for Kube master
-  local_action: wait_for
-    path: /etc/profile.d/kube.sh
+  local_action: wait_for path=/etc/profile.d/kube.sh
 
 - name: Add node to kube cluster
   command: kubeadm join --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
