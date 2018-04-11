@@ -4,7 +4,7 @@
   register: helm
 
 # Install HELM
-  block:
+- block:
     - name: Copy helm install script
       copy: 
         src: helm.sh
