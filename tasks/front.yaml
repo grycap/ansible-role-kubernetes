@@ -5,6 +5,9 @@
 - set_fact: kube_pod_network_cidr='192.168.0.0/16'
   when: kube_network == 'calico'
 
+- name: force handlers
+  meta: flush_handlers
+
 - name: Kubeadm init
   command: kubeadm init --pod-network-cidr={{kube_pod_network_cidr}} --token={{kube_token}} creates=/etc/kubernetes/admin.conf
 
