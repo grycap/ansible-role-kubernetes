@@ -3,7 +3,7 @@
     path: /usr/local/bin/helm
   register: helm
 
-- name: Install HELM
+# Install HELM
   block:
     - name: Copy helm install script
       copy: 
