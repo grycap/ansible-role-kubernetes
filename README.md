@@ -29,6 +29,8 @@ The variables that can be passed to this role and a brief description about them
 	kube_install_helm_url: 'https://storage.googleapis.com/kubernetes-helm/helm-v2.7.2-linux-amd64.tar.gz'
 	# Deploy the Dashboard
 	kube_deploy_dashboard: false
+	# value to pass to the kubeadm init --apiserver-advertise-address option
+	kube_api_server: 0.0.0.0
 
 
 Example Playbook
