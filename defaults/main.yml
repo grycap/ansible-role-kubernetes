@@ -13,9 +13,11 @@ kubelet_extra_args: ''
 # Kube API server options
 kube_apiserver_options: []
 # Flag to set HELM to be installed
-kube_install_helm: false
+kube_install_helm: true
+# Helm version
+kube_install_helm_version: "v2.9.1"
 # Set the URL of the HELM package to install
-kube_install_helm_url: 'https://storage.googleapis.com/kubernetes-helm/helm-v2.7.2-linux-amd64.tar.gz'
+kube_install_helm_url: "https://storage.googleapis.com/kubernetes-helm/helm-{{kube_install_helm_version}}-linux-amd64.tar.gz"
 # Deploy the Dashboard
 kube_deploy_dashboard: false
 # value to pass to the kubeadm init --apiserver-advertise-address option
