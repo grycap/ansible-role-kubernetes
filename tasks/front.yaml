@@ -59,12 +59,12 @@
     KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_helm
 
-- name: Deploy Dashboard
-  command: kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  ignore_errors: yes
-  when: kube_deploy_dashboard  
+- block:
+    - copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
+    - command: kubectl create -f /tmp/kubernetes-dashboard.yaml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_deploy_dashboard
 
 - name: Add Kube API server options
   lineinfile:
