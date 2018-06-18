@@ -61,7 +61,7 @@
 
 - block:
     - copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
-    - command: kubectl create -f /tmp/kubernetes-dashboard.yaml
+    - command: kubectl apply -f /tmp/kubernetes-dashboard.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_deploy_dashboard
