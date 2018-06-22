@@ -9,11 +9,7 @@
   meta: flush_handlers
 
 - name: Kubeadm init
-  command: kubeadm init --pod-network-cidr={{kube_pod_network_cidr}} --apiserver-advertise-address={{kube_api_server}} creates=/etc/kubernetes/admin.conf
-
-- name: Kubeadm create token
-  command: kubeadm token create {{kube_token}} --ttl {{kube_token_ttl}}
-  ignore_errors: yes
+  command: kubeadm init --pod-network-cidr={{kube_pod_network_cidr}} --token={{kube_token}} --token-ttl {{kube_token_ttl}} --apiserver-advertise-address={{kube_api_server}} creates=/etc/kubernetes/admin.conf
 
 - lineinfile:
     dest: /etc/sysctl.d/k8s.conf
