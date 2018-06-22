@@ -11,9 +11,14 @@
 - name: Kubeadm init
   command: kubeadm init --pod-network-cidr={{kube_pod_network_cidr}} --apiserver-advertise-address={{kube_api_server}} creates=/etc/kubernetes/admin.conf
 
+- name: Kubeadm init
+  shell: kubeadm token list | grep {{kube_token}} | wc -l
+  register: token
+  changed_when: no
+
 - name: Kubeadm create token
   command: kubeadm token create {{kube_token}} --ttl {{kube_token_ttl}}
-  ignore_errors: yes
+  when: token.stdout != "0"
 
 - lineinfile:
     dest: /etc/sysctl.d/k8s.conf
