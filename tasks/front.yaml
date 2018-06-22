@@ -8,6 +8,9 @@
 - name: force handlers
   meta: flush_handlers
 
+- name: Kubeadm create token
+  command: kubeadm token create {{kube_token}} --ttl {{kube_token_ttl}}
+
 - name: Kubeadm init
   command: kubeadm init --pod-network-cidr={{kube_pod_network_cidr}} --token={{kube_token}} --apiserver-advertise-address={{kube_api_server}} creates=/etc/kubernetes/admin.conf
 

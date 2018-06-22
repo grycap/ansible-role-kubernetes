@@ -15,6 +15,8 @@ The variables that can be passed to this role and a brief description about them
 	kube_server: "{{ ansible_default_ipv4.address }}"
 	# Security Token
 	kube_token: "kube01.{{ lookup('password', '/tmp/tokenpass chars=ascii_lowercase,digits length=16') }}"
+	# Token TTL duration (0 do not expire)
+	kube_token_ttl: 0
 	# POD network cidr (only used in kube-router network)
 	kube_pod_network_cidr: 10.244.0.0/16
 	# Type of network to install: currently supported: flannel, kube-router, romana, calico, weave
