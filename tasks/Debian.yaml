@@ -20,7 +20,7 @@
   when: ansible_distribution == "Ubuntu"
 
 - name: Install docker 17.03
-  apt: name="docker-ce=17.03.2~ce-0~ubuntu-{{ ansible_distribution_release }}" state=installed force=yes
+  apt: name="docker-ce=17.03.2~ce-0~ubuntu-{{ ansible_distribution_release }}" state=present force=yes
   when: ansible_distribution == "Ubuntu"
 
 - name: Add repo key
@@ -32,4 +32,4 @@
   apt_repository: repo='deb http://apt.kubernetes.io/ kubernetes-xenial main' state=present update_cache=yes
 
 - name: Install kubernetes packages
-  apt: name=kubelet,kubeadm,kubectl state=installed
+  apt: name=kubelet,kubeadm,kubectl state=present
