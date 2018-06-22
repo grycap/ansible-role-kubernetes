@@ -30,7 +30,7 @@
   when: import_key.changed
 
 - name: Install packages
-  package: name=kubelet,kubeadm,kubectl state=installed
+  package: name=kubelet,kubeadm,kubectl state=present
 
 - name: Start kubelet service
   service: name=kubelet state=started enabled=yes

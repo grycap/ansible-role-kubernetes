@@ -32,4 +32,4 @@
   apt_repository: repo='deb http://apt.kubernetes.io/ kubernetes-xenial main' state=present update_cache=yes
 
 - name: Install kubernetes packages
-  apt: name=kubelet,kubeadm,kubectl state=installed
+  apt: name=kubelet,kubeadm,kubectl state=present
