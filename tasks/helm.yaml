@@ -12,7 +12,7 @@
         mode: 0755
 
     - name: Execute helm install script
-      command: bash /tmp/helm.sh
+      command: bash /tmp/helm.sh -v {{kube_install_helm_version}}
 
     - name: Create RBAC permissions for Tiller (1)
       command: kubectl -n kube-system create sa tiller

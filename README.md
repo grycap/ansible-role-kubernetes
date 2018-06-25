@@ -26,9 +26,9 @@ The variables that can be passed to this role and a brief description about them
 	# Kube API server options
 	kube_apiserver_options: []
 	# Flag to set HELM to be installed
-	kube_install_helm: false
-	# Set the URL of the HELM package to install
-	kube_install_helm_url: 'https://storage.googleapis.com/kubernetes-helm/helm-v2.9.1-linux-amd64.tar.gz'
+	kube_install_helm: true
+	# Helm version
+	kube_install_helm_version: "v2.9.1"
 	# Deploy the Dashboard
 	kube_deploy_dashboard: false
 	# value to pass to the kubeadm init --apiserver-advertise-address option
