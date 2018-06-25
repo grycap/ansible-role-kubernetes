@@ -17,7 +17,7 @@ The variables that can be passed to this role and a brief description about them
 	kube_token: "kube01.{{ lookup('password', '/tmp/tokenpass chars=ascii_lowercase,digits length=16') }}"
 	# Token TTL duration (0 do not expire)
 	kube_token_ttl: 0
-	# POD network cidr (only used in kube-router network)
+	# POD network cidr
 	kube_pod_network_cidr: 10.244.0.0/16
 	# Type of network to install: currently supported: flannel, kube-router, romana, calico, weave
 	kube_network: flannel
@@ -28,7 +28,7 @@ The variables that can be passed to this role and a brief description about them
 	# Flag to set HELM to be installed
 	kube_install_helm: false
 	# Set the URL of the HELM package to install
-	kube_install_helm_url: 'https://storage.googleapis.com/kubernetes-helm/helm-v2.7.2-linux-amd64.tar.gz'
+	kube_install_helm_url: 'https://storage.googleapis.com/kubernetes-helm/helm-v2.9.1-linux-amd64.tar.gz'
 	# Deploy the Dashboard
 	kube_deploy_dashboard: false
 	# value to pass to the kubeadm init --apiserver-advertise-address option

@@ -1,7 +1,4 @@
 ---
-- set_fact: kube_pod_network_cidr='10.244.0.0/16'
-  when: kube_network == 'flannel'
-
 - set_fact: kube_pod_network_cidr='192.168.0.0/16'
   when: kube_network == 'calico'
 
@@ -20,7 +17,7 @@
   when: kube_network == 'flannel' or kube_network == 'kube-router' or kube_network == 'romana'
 
 - block:
-    - copy: src=flannel-net.yml dest=/tmp/flannel-net.yml
+    - template: src=flannel-net.j2 dest=/tmp/flannel-net.yml
     - command: kubectl apply -f /tmp/flannel-net.yml creates=/etc/cni/net.d/10-flannel.conf
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
