@@ -23,5 +23,5 @@ kube_deploy_dashboard: false
 # Value to pass to the kubeadm init --apiserver-advertise-address option
 kube_api_server: 0.0.0.0
 # List of values with the information for creating persisten volumes
-# Array variables needed: [ namespace : "", name : "", storage_class_name : "", capacity_storage : "", nfs_path : "" ]
+# Array variables needed: [ namespace : "", name : "", label : "", capacity_storage : "", nfs_path : "" ]
 kube_persistent_volumes: []

@@ -6,8 +6,9 @@ kind: PersistentVolume
 metadata:
   namespace: "{{item.namespace}}"
   name: "{{item.name}}"
+  labels:
+    app: "{{item.label}}"
 spec:
-  storageClassName: "{{item.storage_class_name}}"
   capacity:
     storage: "{{item.capacity_storage}}"
   accessModes:
