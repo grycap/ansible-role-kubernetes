@@ -20,5 +20,8 @@ kube_install_helm: true
 kube_install_helm_version: "v2.9.1"
 # Deploy the Dashboard
 kube_deploy_dashboard: false
-# value to pass to the kubeadm init --apiserver-advertise-address option
+# Value to pass to the kubeadm init --apiserver-advertise-address option
 kube_api_server: 0.0.0.0
+# List of values with the information for creating persisten volumes
+# Array variables needed: [ namespace : "", name : "", storage_class_name : "", capacity_storage : "", nfs_path : "" ]
+kube_persistent_volumes: []

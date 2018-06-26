@@ -1,0 +1,21 @@
+# Persistent Volumes in NFS
+{% for item in {{ kube_persistent_volumes }} %}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: "{{item.namespace}}"
+  name: "{{item.name}}"
+spec:
+  storageClassName: "{{item.storage_class_name}}"
+  capacity:
+    storage: "{{item.capacity_storage}}"
+  accessModes:
+    - ReadWriteOnce
+  mountOptions:
+    - nolock
+    - hard
+  nfs:
+    path: "{{item.nfs_path}}"
+    server: kubeserver
+{% endfor %}    
