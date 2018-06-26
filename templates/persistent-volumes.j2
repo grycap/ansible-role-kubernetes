@@ -1,5 +1,5 @@
 # Persistent Volumes in NFS
-{% for item in {{ kube_persistent_volumes }} %}
+{% for item in kube_persistent_volumes %}
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -18,4 +18,4 @@ spec:
   nfs:
     path: "{{item.nfs_path}}"
     server: kubeserver
-{% endfor %}    
+{% endfor %}
