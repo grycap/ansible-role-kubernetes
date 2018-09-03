@@ -54,6 +54,7 @@
     name: firewalld
     state: stopped
     enabled: False
+  ignore_errors: yes
 
 - name: Include "{{kube_type_of_node}}" tasks
   include: "{{kube_type_of_node}}.yaml"
