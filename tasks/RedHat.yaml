@@ -2,8 +2,20 @@
 - name: Install Epel
   package: name=epel-release state=installed
 
-- name: Install packages
+- name: Install docker
   package: name=docker state=installed
+
+- name: Fix docker to use devicemapper
+  lineinfile:
+    path: /etc/sysconfig/docker-storage
+    regexp: '^DOCKER_STORAGE_OPTIONS='
+    line: 'DOCKER_STORAGE_OPTIONS="--storage-driver devicemapper"'
+
+- name: Fix docker to use devicemapper
+  lineinfile:
+    path: /etc/sysconfig/docker-storage-setup
+    regexp: '^STORAGE_DRIVER='
+    line: 'STORAGE_DRIVER=devicemapper'
 
 - name: Start docker service
   service: name=docker state=started enabled=yes
@@ -29,7 +41,7 @@
   command: "yum -q makecache -y --disablerepo='*' --enablerepo='kubernetes'"
   when: import_key.changed
 
-- name: Install packages
+- name: Install kubernetes packages
   package: name=kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}} state=present
   when: kube_version != "latest"
 
