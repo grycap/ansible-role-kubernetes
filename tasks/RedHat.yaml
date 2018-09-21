@@ -30,7 +30,12 @@
   when: import_key.changed
 
 - name: Install packages
-  package: name=kubelet,kubeadm,kubectl state=present
+  package: name=kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}} state=present
+  when: kube_version != "latest"
+
+- name: Install kubernetes packages
+  package: name=kubelet-{{kube_version}},kubeadm,kubectl state=latest
+  when: kube_version == "latest"
 
 - name: Start kubelet service
   service: name=kubelet state=started enabled=yes
@@ -54,6 +59,7 @@
     name: firewalld
     state: stopped
     enabled: False
+  ignore_errors: yes
 
 - name: Include "{{kube_type_of_node}}" tasks
   include: "{{kube_type_of_node}}.yaml"
