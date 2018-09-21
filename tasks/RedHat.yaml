@@ -66,6 +66,9 @@
     create: yes
   notify: sysctl-system
 
+- name: sysctl-system
+  command: sysctl --system
+
 - name: Stop and disable firewalld
   service:
     name: firewalld
