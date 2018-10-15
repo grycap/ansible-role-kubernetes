@@ -27,3 +27,5 @@ kube_api_server: 0.0.0.0
 # List of values with the information for creating persisten volumes
 # Array variables needed: [ namespace : "", name : "", label : "", capacity_storage : "", nfs_path : "" ]
 kube_persistent_volumes: []
+# Deploy metrics-server
+kube_install_metrics_server: false
