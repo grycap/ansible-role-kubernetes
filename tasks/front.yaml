@@ -63,6 +63,13 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_deploy_dashboard
 
+- block:
+    - copy: src=metrics-server.yaml dest=/tmp/metrics-server.yaml
+    - command: kubectl apply -f /tmp/metrics-server.yaml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_install_metrics_server
+
 - name: Add Kube API server options
   lineinfile:
     dest: /etc/kubernetes/manifests/kube-apiserver.yaml
