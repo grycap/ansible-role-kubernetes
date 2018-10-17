@@ -93,6 +93,14 @@ spec:
       - name: metrics-server
         image: k8s.gcr.io/metrics-server-amd64:v0.3.1
         imagePullPolicy: Always
+        command:
+        - /metrics-server
+        - --metric-resolution=30s
+        - --kubelet-insecure-tls
+        - --kubelet-preferred-address-types=InternalIP,Hostname,InternalDNS,ExternalDNS,ExternalIP
+        ports: 
+        - containerPort: 443
+          protocol: TCP
         volumeMounts:
         - name: tmp-dir
           mountPath: /tmp
