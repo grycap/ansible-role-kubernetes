@@ -46,7 +46,7 @@
   when: kube_version != "latest"
 
 - name: Install kubernetes packages
-  package: name=kubelet-{{kube_version}},kubeadm,kubectl state=latest
+  package: name=kubelet,kubeadm,kubectl state=latest
   when: kube_version == "latest"
 
 - name: Start kubelet service
