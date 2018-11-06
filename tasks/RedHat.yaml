@@ -1,21 +1,35 @@
 ---
-- name: Install Epel
-  package: name=epel-release state=installed
+- name: Install Requisites
+  yum: name=yum-utils,device-mapper-persistent-data,lvm2 state=installed
 
-- name: Install docker
-  package: name=docker state=installed
+- name: Download docker-ce.repo
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
 
-- name: Fix docker to use devicemapper
-  lineinfile:
-    path: /etc/sysconfig/docker-storage
-    regexp: '^DOCKER_STORAGE_OPTIONS='
-    line: 'DOCKER_STORAGE_OPTIONS="--storage-driver devicemapper"'
+- name: Install docker-ce 18.06.1
+  yum: name=docker-ce-18.06.1.ce state=installed update_cache=yes
 
-- name: Fix docker to use devicemapper
-  lineinfile:
-    path: /etc/sysconfig/docker-storage-setup
-    regexp: '^STORAGE_DRIVER='
-    line: 'STORAGE_DRIVER=devicemapper'
+- name: Create /etc/docker dir
+  file: path=/etc/docker state=directory
+
+- copy:
+    dest: /etc/docker/daemon.json
+    content: |
+        {
+          "exec-opts": ["native.cgroupdriver=systemd"],
+          "log-driver": "json-file",
+          "log-opts": {
+            "max-size": "100m"
+          },
+          "storage-driver": "overlay2",
+          "storage-opts": [
+            "overlay2.override_kernel_check=true"
+          ]
+        }
+
+- name: Create /etc/systemd/system/docker.service.d dir
+  file: path=/etc/systemd/system/docker.service.d state=directory recurse=yes
 
 - name: Start docker service
   service: name=docker state=started enabled=yes
