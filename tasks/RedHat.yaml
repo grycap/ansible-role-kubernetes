@@ -35,11 +35,6 @@
   rpm_key:
     key: https://packages.cloud.google.com/yum/doc/yum-key.gpg
     state: present
-  register: import_key
-                                                                                                       
-- name: Make cache
-  command: "yum -q makecache -y --disablerepo='*' --enablerepo='kubernetes'"
-  when: import_key.changed
 
 - name: Install kubernetes packages
   package: name=kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}} state=present
