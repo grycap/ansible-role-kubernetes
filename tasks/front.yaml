@@ -8,6 +8,9 @@
 - name: Kubeadm init
   command: kubeadm init --pod-network-cidr={{kube_pod_network_cidr}} --token={{kube_token}} --token-ttl {{kube_token_ttl}} --apiserver-advertise-address={{kube_api_server}} creates=/etc/kubernetes/admin.conf
 
+- name: wait Kube to start
+  wait_for: port=6443
+
 - lineinfile:
     dest: /etc/sysctl.d/k8s.conf
     regexp: '^net.bridge.bridge-nf-call-iptables'
