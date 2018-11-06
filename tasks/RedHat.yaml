@@ -17,15 +17,7 @@
     dest: /etc/docker/daemon.json
     content: |
         {
-          "exec-opts": ["native.cgroupdriver=systemd"],
-          "log-driver": "json-file",
-          "log-opts": {
-            "max-size": "100m"
-          },
-          "storage-driver": "overlay2",
-          "storage-opts": [
-            "overlay2.override_kernel_check=true"
-          ]
+          "storage-driver": "devicemapper"
         }
 
 - name: Create /etc/systemd/system/docker.service.d dir
