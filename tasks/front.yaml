@@ -66,6 +66,13 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_deploy_dashboard
 
+- block:
+    - copy: src=metrics-server.yaml dest=/tmp/metrics-server.yaml
+    - command: kubectl apply -f /tmp/metrics-server.yaml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_install_metrics
+
 - name: Install Git package
   package: name=git
   when: kube_apply_repos != []
