@@ -66,6 +66,23 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_deploy_dashboard
 
+- name: Install Git package
+  package: name=git
+  when: kube_apply_repos != []
+
+- name: Download git repo "{{ item.repo }}"
+  git:
+    repo: "{{ item.repo }}"
+    dest: "/tmp/{{ item.repo | basename }}"
+    version: "{{ item.version }}"
+  with_items: "{{ kube_apply_repos }}"
+
+- name: apply path "{{ item.path }}"
+  command: kubectl apply -f "{{ item.path }}" chdir="/tmp/{{ item.repo | basename }}"
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  with_items: "{{ kube_apply_repos }}"
+
 - name: Add Kube API server options
   lineinfile:
     dest: /etc/kubernetes/manifests/kube-apiserver.yaml
