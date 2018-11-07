@@ -21,7 +21,7 @@
 
 - block:
     - template: src=flannel-net.j2 dest=/tmp/flannel-net.yml
-    - command: kubectl apply -f /tmp/flannel-net.yml creates=/etc/cni/net.d/10-flannel.conf
+    - command: kubectl apply -f /tmp/flannel-net.yml creates=/etc/cni/net.d/10-flannel.conflist
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'flannel'
