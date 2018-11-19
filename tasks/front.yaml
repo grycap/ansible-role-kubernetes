@@ -70,6 +70,13 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_metrics_server
 
+- name: Add persistent volumes to kube cluster  
+  block:
+    - template: src=persistent-volumes.j2 dest=/tmp/kubernetes-persistent-volumes.yml
+    - command: kubectl apply -f /tmp/kubernetes-persistent-volumes.yml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+
 - name: Add Kube API server options
   lineinfile:
     dest: /etc/kubernetes/manifests/kube-apiserver.yaml
@@ -78,11 +85,6 @@
     insertafter: '    - kube-apiserver'
   notify: restart kubeapi
   with_items: "{{ kube_apiserver_options }}"
-
-- name: Add persistent volumes to kube cluster  
-  block:
-    - template: src=persistent-volumes.j2 dest=/tmp/kubernetes-persistent-volumes.yml
-    - command: kubectl apply -f /tmp/kubernetes-persistent-volumes.yml
 
 - copy:
     dest: /etc/profile.d/kube.sh
