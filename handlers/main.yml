@@ -6,7 +6,7 @@
     name: kubelet
     state: restarted
 
-- name: kill kubepai
+- name: kill kubeapi
   command: killall kube-apiserver
   ignore_errors: yes
   listen: "restart kubeapi"
