@@ -109,3 +109,6 @@
 - copy:
     dest: /etc/profile.d/kube.sh
     content: "export KUBECONFIG=/etc/kubernetes/admin.conf"
+  
+- name: force handlers
+  meta: flush_handlers
