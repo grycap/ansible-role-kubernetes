@@ -1,9 +1,27 @@
 ---
-- name: Install Epel
-  package: name=epel-release state=installed
+- name: Install Requisites
+  yum: name=device-mapper-persistent-data,lvm2 state=installed
 
-- name: Install packages
-  package: name=docker state=installed
+- name: Download docker-ce.repo
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+
+- name: Install docker-ce 18.06.1
+  yum: name=docker-ce-18.06.1.ce state=installed update_cache=yes
+
+- name: Create /etc/docker dir
+  file: path=/etc/docker state=directory
+
+- copy:
+    dest: /etc/docker/daemon.json
+    content: |
+        {
+          "storage-driver": "devicemapper"
+        }
+
+- name: Create /etc/systemd/system/docker.service.d dir
+  file: path=/etc/systemd/system/docker.service.d state=directory recurse=yes
 
 - name: Start docker service
   service: name=docker state=started enabled=yes
@@ -23,18 +41,13 @@
   rpm_key:
     key: https://packages.cloud.google.com/yum/doc/yum-key.gpg
     state: present
-  register: import_key
-                                                                                                       
-- name: Make cache
-  command: "yum -q makecache -y --disablerepo='*' --enablerepo='kubernetes'"
-  when: import_key.changed
 
-- name: Install packages
-  package: name=kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}} state=present
+- name: Install kubernetes packages
+  package: name=kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}} state=present update_cache=yes
   when: kube_version != "latest"
 
 - name: Install kubernetes packages
-  package: name=kubelet-{{kube_version}},kubeadm,kubectl state=latest
+  package: name=kubelet,kubeadm,kubectl state=latest
   when: kube_version == "latest"
 
 - name: Start kubelet service
@@ -53,6 +66,9 @@
     line: 'net.bridge.bridge-nf-call-iptables = 1'
     create: yes
   notify: sysctl-system
+
+- name: sysctl-system
+  command: sysctl --system
 
 - name: Stop and disable firewalld
   service:

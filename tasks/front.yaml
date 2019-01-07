@@ -8,6 +8,9 @@
 - name: Kubeadm init
   command: kubeadm init --pod-network-cidr={{kube_pod_network_cidr}} --token={{kube_token}} --token-ttl {{kube_token_ttl}} --apiserver-advertise-address={{kube_api_server}} creates=/etc/kubernetes/admin.conf
 
+- name: wait Kube to start
+  wait_for: port=6443
+
 - lineinfile:
     dest: /etc/sysctl.d/k8s.conf
     regexp: '^net.bridge.bridge-nf-call-iptables'
@@ -18,7 +21,7 @@
 
 - block:
     - template: src=flannel-net.j2 dest=/tmp/flannel-net.yml
-    - command: kubectl apply -f /tmp/flannel-net.yml creates=/etc/cni/net.d/10-flannel.conf
+    - command: kubectl apply -f /tmp/flannel-net.yml creates=/etc/cni/net.d/10-flannel.conflist
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'flannel'
@@ -68,7 +71,7 @@
     - command: kubectl apply -f /tmp/metrics-server.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_install_metrics_server
+  when: kube_install_metrics
 
 - name: Add persistent volumes to kube cluster  
   block:
@@ -76,6 +79,23 @@
     - command: kubectl apply -f /tmp/kubernetes-persistent-volumes.yml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Install Git package
+  package: name=git
+  when: kube_apply_repos != []
+
+- name: Download git repo "{{ item.repo }}"
+  git:
+    repo: "{{ item.repo }}"
+    dest: "/tmp/{{ item.repo | basename }}"
+    version: "{{ item.version }}"
+  with_items: "{{ kube_apply_repos }}"
+
+- name: apply path "{{ item.path }}"
+  command: kubectl apply -f "{{ item.path }}" chdir="/tmp/{{ item.repo | basename }}"
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  with_items: "{{ kube_apply_repos }}"
 
 - name: Add Kube API server options
   lineinfile:

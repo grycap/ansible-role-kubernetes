@@ -1,4 +1,4 @@
-# ------------------- Aggregated Metrics Reader ------------------- #
+---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -11,9 +11,7 @@ rules:
 - apiGroups: ["metrics.k8s.io"]
   resources: ["pods"]
   verbs: ["get", "list", "watch"]
-
 ---
-# ------------------- Auth Delegator ------------------- #
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -26,9 +24,7 @@ subjects:
 - kind: ServiceAccount
   name: metrics-server
   namespace: kube-system
-
 ---
-# ------------------- Auth Reader ------------------- #
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
@@ -42,9 +38,7 @@ subjects:
 - kind: ServiceAccount
   name: metrics-server
   namespace: kube-system
-
 ---
-# ------------------- APIService ------------------- #
 apiVersion: apiregistration.k8s.io/v1beta1
 kind: APIService
 metadata:
@@ -58,9 +52,7 @@ spec:
   insecureSkipTLSVerify: true
   groupPriorityMinimum: 100
   versionPriority: 100
-
 ---
-# ------------------- Deployment ------------------- #
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -108,9 +100,7 @@ spec:
       tolerations:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
-
 ---
-# ------------------- Service ------------------- #
 apiVersion: v1
 kind: Service
 metadata:
@@ -125,9 +115,7 @@ spec:
   - port: 443
     protocol: TCP
     targetPort: 443
-
 ---
-# ------------------- Resource Reader ------------------- #
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
