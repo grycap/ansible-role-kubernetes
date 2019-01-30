@@ -10,7 +10,7 @@ Role Variables
 The variables that can be passed to this role and a brief description about them are as follows.
 
     # Version to install or latest
-    kube_version: 1.11.3
+    kube_version: 1.11.4
 	# Type of node front or wn
 	kube_type_of_node: front
 	# IP address or name of the Kube front node
@@ -30,11 +30,14 @@ The variables that can be passed to this role and a brief description about them
 	# Flag to set HELM to be installed
 	kube_install_helm: true
 	# Helm version
-	kube_install_helm_version: "v2.9.1"
+	kube_install_helm_version: "v2.11.0"
 	# Deploy the Dashboard
 	kube_deploy_dashboard: false
 	# value to pass to the kubeadm init --apiserver-advertise-address option
 	kube_api_server: 0.0.0.0
+	# A set of git repos and paths to be applied in the cluster. Following this format:
+	# kube_apply_repos: [{repo: "https://github.com/kubernetes-incubator/metrics-server", version: "master", path: "deploy/1.8+/"}]
+	kube_apply_repos: []
 
 
 Example Playbook
