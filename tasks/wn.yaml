@@ -15,13 +15,13 @@
     command: kubectl drain {{ ansible_fqdn }} --ignore-daemonsets
     delegate_to: "{{kube_server}}"
 
-  - name: Wait Pod proxy to be running
-    command: kubectl get pods -n kube-system --field-selector spec.nodeName={{ ansible_fqdn }},status.phase=Running -l k8s-app=kube-proxy
+  - name: Wait flannel pod to be running
+    command: kubectl get pods -n kube-system --field-selector spec.nodeName={{ ansible_fqdn }},status.phase=Running -l app=flannel
     delegate_to: "{{kube_server}}"
     register: result
-    until: result.stdout.find("kube-proxy") != -1
+    until: result.stdout.find("kube-flannel") != -1
     retries: 5
-    delay: 10
+    delay: 5
 
   - name: uncordon node
     command: kubectl uncordon {{ ansible_fqdn }}
