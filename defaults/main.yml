@@ -1,5 +1,5 @@
 # Version to install or latest
-kube_version: 1.11.4
+kube_version: 1.12.3
 # Type of node front or wn
 kube_type_of_node: front
 # IP address or name of the Kube front node
