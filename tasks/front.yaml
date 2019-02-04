@@ -1,4 +1,7 @@
 ---
+- name: Copy 'is_cluster_ready' file
+  copy: dest=/bin/is_cluster_ready src=is_cluster_ready mode=0755
+
 - set_fact: kube_pod_network_cidr='192.168.0.0/16'
   when: kube_network == 'calico'
 
