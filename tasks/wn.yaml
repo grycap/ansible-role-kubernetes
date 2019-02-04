@@ -6,26 +6,6 @@
 
 - name: Add node to kube cluster
   command: kubeadm join --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
-  register: node_join
-
-- name: Cordon node until it is ready
-  block:
-
-  - name: Drain node {{ ansible_fqdn }}
-    command: kubectl drain {{ ansible_fqdn }} --ignore-daemonsets
-    delegate_to: "{{kube_server}}"
-
-  - name: Wait flannel pod to be running
-    command: kubectl get pods -n kube-system --field-selector spec.nodeName={{ ansible_fqdn }},status.phase=Running -l app=flannel
-    delegate_to: "{{kube_server}}"
-    register: result
-    until: result.stdout.find("kube-flannel") != -1
-    retries: 5
-    delay: 5
-
-  - name: uncordon node
-    command: kubectl uncordon {{ ansible_fqdn }}
-    delegate_to: "{{kube_server}}"
 
 - name: Add KUBELET_EXTRA_ARGS
   lineinfile:
