@@ -6,7 +6,7 @@
     name: kubelet
     state: restarted
 
-- name: kill kubepai
+- name: kill kubeapi
   command: killall kube-apiserver
   ignore_errors: yes
   listen: "restart kubeapi"
@@ -15,4 +15,9 @@
   service:
     name: kubelet
     state: restarted
+  listen: "restart kubeapi"
+
+- name: wait kubeapi port
+  wait_for:
+    port: 8080
   listen: "restart kubeapi"
