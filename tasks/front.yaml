@@ -82,6 +82,7 @@
     - command: kubectl apply -f /tmp/kubernetes-persistent-volumes.yml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_persistent_volumes != []
 
 - name: Install Git package
   package: name=git
