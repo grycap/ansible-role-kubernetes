@@ -50,6 +50,10 @@
   package: name=kubelet,kubeadm,kubectl state=latest
   when: kube_version == "latest"
 
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+
 - name: Start kubelet service
   service: name=kubelet state=started enabled=yes
 
