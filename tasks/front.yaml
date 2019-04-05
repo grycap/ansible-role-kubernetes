@@ -123,3 +123,10 @@
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_ingress
+
+- block:
+    - copy: src=kubernetes-dashboard-ingress.yaml dest=/tmp/kubernetes-dashboard-ingress.yaml
+    - command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_install_ingress and kube_deploy_dashboard
