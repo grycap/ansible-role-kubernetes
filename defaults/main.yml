@@ -32,4 +32,5 @@ kube_persistent_volumes: []
 kube_apply_repos: []
 # Flag to set Metrics-Server to be installed
 kube_install_metrics: false
-
+# Flag to set the nginx ingress controller to be installed
+kube_install_ingress: false
