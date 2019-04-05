@@ -116,3 +116,10 @@
   
 - name: force handlers
   meta: flush_handlers
+
+- block:
+    - copy: src=ingress-nginx.yaml dest=/tmp/ingress-nginx.yaml
+    - command: kubectl apply -f /tmp/ingress-nginx.yaml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_install_ingress
