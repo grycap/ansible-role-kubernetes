@@ -34,3 +34,7 @@ kube_apply_repos: []
 kube_install_metrics: false
 # Flag to set the nginx ingress controller to be installed
 kube_install_ingress: false
+# Flag to set add the nvidia support to the cluster
+kube_nvidia_support: false
+# Driver version to install: specific version or "latest"
+kube_nvidia_driver_version: "410"
