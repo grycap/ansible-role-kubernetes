@@ -22,7 +22,7 @@
     port: 8080
   listen: "restart kubeapi"
 
-- name: restart dockerd
+- name: restart docker
   service:
-    name: dockerd
+    name: docker
     state: restarted

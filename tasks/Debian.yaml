@@ -63,7 +63,7 @@
 
     - name: Install nvidia-docker2 package
       apt: name=nvidia-docker2
-      notify: restart dockerd
+      notify: restart docker
 
     - copy:
         dest: /etc/docker/daemon.json
@@ -77,6 +77,6 @@
                     }
                 }
             }
-      notify: restart dockerd
+      notify: restart docker
 
   when: kube_nvidia_support and kube_type_of_node == "wn"
