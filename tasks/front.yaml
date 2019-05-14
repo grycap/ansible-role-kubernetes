@@ -125,6 +125,15 @@
   when: kube_install_ingress
 
 - block:
+    - command: helm repo add bitnami https://charts.bitnami.com/bitnami
+    - command: helm install --name kubeapps --namespace kubeapps bitnami/kubeapps
+    - copy: src=kubeapps-ingress.yaml dest=/tmp/kubeapps-ingress.yaml
+    - command: kubectl apply -f /tmp/kubeapps-nginx.yaml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_install_kubeapps
+
+- block:
     - copy: src=kubernetes-dashboard-ingress.yaml dest=/tmp/kubernetes-dashboard-ingress.yaml
     - command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
       environment:
