@@ -3,4 +3,4 @@
   roles:
     - role: ansible-role-kubernetes
       kube_install_metrics: true
-      kube_install_kubeapps: true
+      kube_deploy_dashboard: true
