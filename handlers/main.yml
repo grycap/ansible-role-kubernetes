@@ -21,8 +21,3 @@
   wait_for:
     port: 8080
   listen: "restart kubeapi"
-
-- name: wait kubeapi secure port
-  wait_for:
-    port: 6443
-  listen: "restart kubeapi"
