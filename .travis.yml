@@ -16,23 +16,23 @@ addons:
 
 install:
   # Check ansible version
-  - pip install ansible
+  - sudo pip install ansible
 
   # Check ansible version
   - ansible --version
 
   # Create ansible.cfg with correct roles_path
-  - printf '[defaults]\nroles_path=../' > ansible.cfg
+  - sudo printf '[defaults]\nroles_path=../' > ansible.cfg
 
 script:
   # Install dependency
-  - ansible-galaxy install grycap.ntp
+  - sudo ansible-galaxy install grycap.ntp
   
   # Basic role syntax check
-  - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+  - sudo ansible-playbook tests/test.yml -i tests/inventory --syntax-check
 
   # Basic role syntax check
-  - ansible-playbook tests/test.yml -i tests/inventory
+  - sudo ansible-playbook tests/test.yml -i tests/inventory
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
