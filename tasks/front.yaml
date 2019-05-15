@@ -57,6 +57,10 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'weave'
 
+- set_fact:
+    kube_wait_tiller: true
+  when: kube_install_kubeapps
+
 - include: helm.yaml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
