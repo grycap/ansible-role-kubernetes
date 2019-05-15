@@ -125,6 +125,13 @@
   when: kube_install_ingress
 
 - block:
+    - copy: src=kubernetes-dashboard-ingress.yaml dest=/tmp/kubernetes-dashboard-ingress.yaml
+    - command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_install_ingress and kube_deploy_dashboard
+
+- block:
     - name: Wait Tiller pod to be up
       command: kubectl get pods -n kube-system -l name=tiller --field-selector status.phase=Running
       register: tiller_is_up
@@ -146,14 +153,7 @@
       when: helm_status.rc != 0
 
     - copy: src=kubeapps-ingress.yaml dest=/tmp/kubeapps-ingress.yaml
-    - command: kubectl apply -f /tmp/kubeapps-nginx.yaml
+    - command: kubectl apply -f /tmp/kubeapps-ingress.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_kubeapps
-
-- block:
-    - copy: src=kubernetes-dashboard-ingress.yaml dest=/tmp/kubernetes-dashboard-ingress.yaml
-    - command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_install_ingress and kube_deploy_dashboard
