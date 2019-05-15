@@ -57,10 +57,6 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'weave'
 
-- set_fact:
-    kube_wait_tiller: true
-  when: kube_install_kubeapps
-
 - include: helm.yaml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
@@ -129,15 +125,26 @@
   when: kube_install_ingress
 
 - block:
+    - name: Wait Tiller pod to be up
+      command: kubectl get pods -n kube-system -l name=tiller --field-selector status.phase=Running
+      register: tiller_is_up
+      until: tiller_is_up.stdout.find("Running") != -1
+      retries: 15
+      delay: 5
+
     - name: Add Bitnami Helm repo
       command: helm repo add bitnami https://charts.bitnami.com/bitnami
+
     - name: Check if kubeapps is installed
       command: helm status kubeapps
       register: helm_status
+      ignore_errors: yes
       changed_when: false
+
     - name: Install kubeapps
       command: helm install --name kubeapps --namespace kubeapps bitnami/kubeapps
       when: helm_status.rc != 0
+
     - copy: src=kubeapps-ingress.yaml dest=/tmp/kubeapps-ingress.yaml
     - command: kubectl apply -f /tmp/kubeapps-nginx.yaml
       environment:
