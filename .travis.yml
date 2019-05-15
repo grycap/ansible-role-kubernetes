@@ -31,7 +31,7 @@ script:
   # Basic role syntax check
   - sudo ansible-playbook tests/test.yml -i tests/inventory --syntax-check
 
-  # Basic role syntax check
+  # Basic role check
   - sudo ansible-playbook tests/test.yml -i tests/inventory
 
 notifications:
