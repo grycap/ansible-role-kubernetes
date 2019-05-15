@@ -125,8 +125,15 @@
   when: kube_install_ingress
 
 - block:
-    - command: helm repo add bitnami https://charts.bitnami.com/bitnami
-    - command: helm install --name kubeapps --namespace kubeapps bitnami/kubeapps
+    - name: Add Bitnami Helm repo
+      command: helm repo add bitnami https://charts.bitnami.com/bitnami
+    - name: Check if kubeapps is installed
+      command: helm status kubeapps
+      register: helm_status
+      changed_when: false
+    - name: Install kubeapps
+      command: helm install --name kubeapps --namespace kubeapps bitnami/kubeapps
+      when: helm_status.rc != 0
     - copy: src=kubeapps-ingress.yaml dest=/tmp/kubeapps-ingress.yaml
     - command: kubectl apply -f /tmp/kubeapps-nginx.yaml
       environment:
