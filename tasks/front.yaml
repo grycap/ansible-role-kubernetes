@@ -136,7 +136,7 @@
       command: kubectl get pods -n kube-system -l name=tiller --field-selector status.phase=Running
       register: tiller_is_up
       until: tiller_is_up.stdout.find("Running") != -1
-      retries: 15
+      retries: 30
       delay: 5
 
     - name: Add Bitnami Helm repo
