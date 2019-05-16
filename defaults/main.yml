@@ -34,3 +34,5 @@ kube_apply_repos: []
 kube_install_metrics: false
 # Flag to set the nginx ingress controller to be installed
 kube_install_ingress: false
+# Flag to set the kubeapps UI to be installed
+kube_install_kubeapps: false

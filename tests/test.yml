@@ -1,4 +1,10 @@
 ---
 - hosts: localhost
   roles:
-    - ansible-role-kubernetes
+    - role: ansible-role-kubernetes
+      kube_install_metrics: true
+      kube_install_kubeapps: true
+      kube_deploy_dashboard: true
+      kube_apiserver_options:
+      - {option: "--insecure-port", value: "8080"}
+      - {option: "--service-node-port-range", value: "80-32767"}
