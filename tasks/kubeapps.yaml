@@ -1,10 +1,6 @@
 ---
-  - name: Wait Tiller pod to be up
-    command: kubectl get pods -n kube-system -l name=tiller --field-selector status.phase=Running
-    register: tiller_is_up
-    until: tiller_is_up.stdout.find("Running") != -1
-    retries: 30
-    delay: 5
+  - name: Wait for tiller-deploy ready status
+    command: kubectl rollout status deployment/tiller-deploy -n kube-system
 
   - name: Add Bitnami Helm repo
     command: helm repo add bitnami https://charts.bitnami.com/bitnami
