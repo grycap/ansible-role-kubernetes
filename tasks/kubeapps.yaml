@@ -7,9 +7,6 @@
   - name: Add Bitnami Helm repo
     command: helm repo add bitnami https://charts.bitnami.com/bitnami
 
-  - name: Add GRyCAP Helm repo
-    command: helm repo add grycap https://grycap.github.io/helm-charts/
-
   - name: Check if kubeapps is installed
     command: helm status kubeapps
     register: helm_status
