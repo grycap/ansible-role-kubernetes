@@ -14,7 +14,7 @@
     changed_when: false
 
   - name: Install kubeapps
-    command: helm install --name kubeapps --namespace kubeapps bitnami/kubeapps
+    command: helm install --name kubeapps --namespace kubeapps bitnami/kubeapps --set 'mongodb.mongodbEnableIPv6=false'
     when: helm_status.rc != 0
 
   - copy: src=kubeapps-ingress.yaml dest=/tmp/kubeapps-ingress.yaml
