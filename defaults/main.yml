@@ -38,3 +38,5 @@ kube_install_ingress: false
 kube_nvidia_support: false
 # Driver version to install: specific version or "latest"
 kube_nvidia_driver_version: "410"
+# Flag to set the kubeapps UI to be installed
+kube_install_kubeapps: false

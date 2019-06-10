@@ -137,3 +137,6 @@
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_ingress and kube_deploy_dashboard
+
+- include: kubeapps.yaml
+  when: kube_install_kubeapps
