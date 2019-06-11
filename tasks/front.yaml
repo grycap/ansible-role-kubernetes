@@ -125,6 +125,13 @@
   when: kube_install_ingress
 
 - block:
+    - copy: src=nvidia-device-plugin.yml dest=/tmp/nvidia-device-plugin.yml
+    - command: kubectl apply -f /tmp/nvidia-device-plugin.yml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_nvidia_support
+
+- block:
     - copy: src=kubernetes-dashboard-ingress.yaml dest=/tmp/kubernetes-dashboard-ingress.yaml
     - command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
       environment:
