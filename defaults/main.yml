@@ -40,3 +40,9 @@ kube_nvidia_support: false
 kube_nvidia_driver_version: "410"
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
+# Flag to set nfs-client-provisioner to be installed
+kube_install_nfs_client: false
+# NFS path used by nfs-client-provisioner
+kube_nfs_path: /pv
+# NFS server used by nfs-client-provisioner
+kube_nfs_server: kubeserver.localdomain
