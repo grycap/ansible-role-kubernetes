@@ -15,6 +15,7 @@
       helm install --name nfs-client stable/nfs-client-provisioner
       --set nfs.server=kubeserver.localdomain
       --set nfs.path=/pv 
+      --set storageClass.defaultClass=true
       --set nodeSelector."node-role\.kubernetes\.io/master"=''
       --set tolerations[0].key=node-role.kubernetes.io/master
       --set tolerations[0].operator=Exists
