@@ -40,3 +40,5 @@ kube_nvidia_support: false
 kube_nvidia_driver_version: "410"
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
+# Extra options for the flannel plugin
+kube_flanneld_extra_args: []
