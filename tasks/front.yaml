@@ -140,3 +140,6 @@
 
 - include: kubeapps.yaml
   when: kube_install_kubeapps
+
+- include: nfs-client.yaml
+  when: kube_install_nfs_client
