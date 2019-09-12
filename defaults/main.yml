@@ -46,3 +46,5 @@ kube_install_nfs_client: false
 kube_nfs_path: /pv
 # NFS server used by nfs-client-provisioner
 kube_nfs_server: kubeserver.localdomain
+# Extra options for the flannel plugin
+kube_flanneld_extra_args: []

@@ -44,6 +44,8 @@ The variables that can be passed to this role and a brief description about them
 	kube_install_ingress: false
 	# Flag to set the kubeapps UI to be installed
 	kube_install_kubeapps: false
+	# Extra options for the flannel plugin
+	kube_flanneld_extra_args: [] 
 
 Example Playbook
 ----------------
