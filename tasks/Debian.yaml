@@ -47,6 +47,11 @@
 
     - name: Install nvidia-driver package
       apt: name=nvidia-driver-{{ kube_nvidia_driver_version }}
+      when: ansible_distribution_major_version|int >= 18
+
+    - name: Install nvidia package
+      apt: name=nvidia-{{ kube_nvidia_driver_version }}
+      when: ansible_distribution_major_version|int == 16
 
     - name: Add nvidia-docker repo key
       apt_key:
