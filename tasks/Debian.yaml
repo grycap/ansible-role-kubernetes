@@ -9,7 +9,7 @@
 
 - name: Add Docker repo key (python 2.7.9 or older)
   shell: curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -qq - >/dev/null
-  when: add_docker_repo|failed
+  when: add_docker_repo is failed
 
 - name: Add docker repo
   apt_repository: repo='deb https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable' state=present update_cache=yes
