@@ -60,21 +60,21 @@
 - include: helm.yaml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_install_helm
+  when: kube_install_helm | bool
 
 - block:
     - copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
     - command: kubectl apply -f /tmp/kubernetes-dashboard.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_deploy_dashboard
+  when: kube_deploy_dashboard | bool
 
 - block:
     - copy: src=metrics-server.yaml dest=/tmp/metrics-server.yaml
     - command: kubectl apply -f /tmp/metrics-server.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_install_metrics
+  when: kube_install_metrics | bool
 
 - name: Add persistent volumes to kube cluster  
   block:
@@ -122,24 +122,24 @@
     - command: kubectl apply -f /tmp/ingress-nginx.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_install_ingress
+  when: kube_install_ingress | bool
 
 - block:
     - copy: src=nvidia-device-plugin.yml dest=/tmp/nvidia-device-plugin.yml
     - command: kubectl apply -f /tmp/nvidia-device-plugin.yml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_nvidia_support
+  when: kube_nvidia_support | bool
 
 - block:
     - copy: src=kubernetes-dashboard-ingress.yaml dest=/tmp/kubernetes-dashboard-ingress.yaml
     - command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_install_ingress and kube_deploy_dashboard
+  when: kube_install_ingress | bool and kube_deploy_dashboard | bool
 
 - include: kubeapps.yaml
-  when: kube_install_kubeapps
+  when: kube_install_kubeapps | bool
 
 - include: nfs-client.yaml
-  when: kube_install_nfs_client
+  when: kube_install_nfs_client | bool

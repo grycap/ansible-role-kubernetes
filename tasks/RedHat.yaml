@@ -2,13 +2,17 @@
 - name: Install Requisites
   yum: name=device-mapper-persistent-data,lvm2 state=installed
 
-- name: Download docker-ce.repo
-  get_url:
-    url: https://download.docker.com/linux/centos/docker-ce.repo
-    dest: /etc/yum.repos.d/docker-ce.repo
+- block:
 
-- name: Install docker-ce 18.06.1
-  yum: name=docker-ce-18.06.1.ce state=installed update_cache=yes
+  - name: Download docker-ce.repo
+    get_url:
+      url: https://download.docker.com/linux/centos/docker-ce.repo
+      dest: /etc/yum.repos.d/docker-ce.repo
+
+  - name: Install docker-ce 18.06.2
+    yum: name=docker-ce-18.06.2.ce state=installed update_cache=yes
+
+  when: docker_install | bool
 
 - name: Create /etc/docker dir
   file: path=/etc/docker state=directory
@@ -19,12 +23,14 @@
         {
           "storage-driver": "devicemapper"
         }
+  register: devicemapper_storage
 
 - name: Create /etc/systemd/system/docker.service.d dir
   file: path=/etc/systemd/system/docker.service.d state=directory recurse=yes
 
 - name: Start docker service
-  service: name=docker state=started enabled=yes
+  service: name=docker state=restarted enabled=yes
+  when: devicemapper_storage is changed
   
 - copy:
     dest: /etc/yum.repos.d/kubernetes.repo
