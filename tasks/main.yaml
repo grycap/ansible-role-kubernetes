@@ -6,6 +6,8 @@
   shell: docker -v | cut -d ' ' -f 3 | cut -d ',' -f 1
   register: docker_output
 
+- debug: msg="Docker version installed = {{ docker_output.stdout }}"
+
 - set_fact:
     docker_install: true
 
