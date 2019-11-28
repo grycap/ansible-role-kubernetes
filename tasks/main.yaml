@@ -8,6 +8,10 @@
 
 - debug: msg="Docker version installed = {{ docker_output.stdout }}"
 
+- name: Check kube version
+  shell: kubectl version --short | cut -d ' ' -f 3 | cut -d 'v' -f 2
+  register: kubectl_output
+
 - set_fact:
     docker_install: true
 
