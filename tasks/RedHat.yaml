@@ -1,31 +1,4 @@
----
-- name: Install Requisites
-  yum: name=device-mapper-persistent-data,lvm2 state=installed
-
-- name: Download docker-ce.repo
-  get_url:
-    url: https://download.docker.com/linux/centos/docker-ce.repo
-    dest: /etc/yum.repos.d/docker-ce.repo
-
-- name: Install docker-ce 18.06.1
-  yum: name=docker-ce-18.06.1.ce state=installed update_cache=yes
-
-- name: Create /etc/docker dir
-  file: path=/etc/docker state=directory
-
-- copy:
-    dest: /etc/docker/daemon.json
-    content: |
-        {
-          "storage-driver": "devicemapper"
-        }
-
-- name: Create /etc/systemd/system/docker.service.d dir
-  file: path=/etc/systemd/system/docker.service.d state=directory recurse=yes
-
-- name: Start docker service
-  service: name=docker state=started enabled=yes
-  
+--- 
 - copy:
     dest: /etc/yum.repos.d/kubernetes.repo
     content: |
@@ -44,7 +17,8 @@
 
 - name: Install kubernetes packages
   package: name=kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}} state=present update_cache=yes
-  when: kube_version != "latest"
+  when: kube_version != "latest" and (kubeadm_output.stdout == '' or kubeadm_output.stdout is version(kube_version, '<='))
+
 
 - name: Install kubernetes packages
   package: name=kubelet,kubeadm,kubectl state=latest
@@ -76,7 +50,3 @@
     state: stopped
     enabled: False
   ignore_errors: yes
-
-- name: Include "{{kube_type_of_node}}" tasks
-  include: "{{kube_type_of_node}}.yaml"
-

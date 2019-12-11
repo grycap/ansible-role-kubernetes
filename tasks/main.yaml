@@ -2,6 +2,29 @@
 - name: Disable swap
   command: swapoff -a
 
+- name: Check docker version
+  shell: docker -v | cut -d ' ' -f 3 | cut -d ',' -f 1
+  register: docker_output
+
+- debug: msg="Docker version installed = {{ docker_output.stdout }}"
+
+- name: Check kube version
+  shell: kubeadm version -o short | cut -d 'v' -f 2
+  register: kubeadm_output
+
+- debug: msg="Kube version installed = {{ kubeadm_output.stdout }}"
+
+- set_fact:
+    docker_install: true
+
+- name: Chek docker compatible versions
+  set_fact:
+    docker_install: false
+  when: "'1.11.' in docker_output.stdout or '1.12.' in docker_output.stdout or '1.13.' in docker_output.stdout or '17.03.' in docker_output.stdout or '18.06.' in docker_output.stdout or '18.09.' in docker_output.stdout"
+
+- name: Install docker
+  include: "{{ansible_os_family}}_docker.yaml"
+
 - name: Include "{{ansible_os_family}}" Kubernetes recipe
   include: "{{ansible_os_family}}.yaml"
   static: false
