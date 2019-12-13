@@ -1,28 +1,4 @@
 ---
-- name: Install docker requisites
-  apt: name=apt-transport-https,ca-certificates,software-properties-common
-
-- name: Add Docker repo key
-  apt_key: url="https://download.docker.com/linux/debian/gpg"
-  ignore_errors: yes
-  register: add_docker_repo
-
-- name: Add Docker repo key (python 2.7.9 or older)
-  shell: curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -qq - >/dev/null
-  when: add_docker_repo|failed
-
-- name: Add docker repo
-  apt_repository: repo='deb https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable' state=present update_cache=yes
-  when: ansible_distribution != "Ubuntu"
-
-- name: Add docker repo
-  apt_repository: repo='deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ansible_distribution_release}} stable' state=present update_cache=yes
-  when: ansible_distribution == "Ubuntu"
-
-- name: Install docker 18.06
-  apt: name="docker-ce=18.06.1~ce~3-0~ubuntu" state=present force=yes
-  when: ansible_distribution == "Ubuntu"
-
 - name: Add repo key
   apt_key:
     url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
@@ -33,7 +9,7 @@
 
 - name: Install kubernetes packages
   apt: name=kubelet={{ kube_version }}*,kubeadm={{ kube_version }}*,kubectl={{ kube_version }}*
-  when: kube_version != "latest"
+  when: kube_version != "latest" and (kubeadm_output.stdout == '' or kubeadm_output.stdout is version(kube_version, '<='))
 
 - name: Install kubernetes packages
   apt: name=kubelet,kubeadm,kubectl state=latest
@@ -47,6 +23,11 @@
 
     - name: Install nvidia-driver package
       apt: name=nvidia-driver-{{ kube_nvidia_driver_version }}
+      when: ansible_distribution_major_version|int >= 18
+
+    - name: Install nvidia package
+      apt: name=nvidia-{{ kube_nvidia_driver_version }}
+      when: ansible_distribution_major_version|int == 16
 
     - name: Add nvidia-docker repo key
       apt_key:
@@ -79,4 +60,4 @@
             }
       notify: restart docker
 
-  when: kube_nvidia_support and kube_type_of_node == "wn"
+  when: kube_nvidia_support | bool and kube_type_of_node == "wn"
