@@ -46,7 +46,7 @@ data:
 # This manifest installs the Calico etcd on the kubeadm master.  This uses a DaemonSet
 # to force it to run on the master even when the master isn't schedulable, and uses
 # nodeSelector to ensure it only runs on the master.
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: calico-etcd
@@ -54,6 +54,9 @@ metadata:
   labels:
     k8s-app: calico-etcd
 spec:
+  selector:
+    matchLabels:
+      k8s-app: calico-etcd
   template:
     metadata:
       labels:
@@ -125,7 +128,7 @@ spec:
 # as the Calico CNI plugins and network config on
 # each master and worker node in a Kubernetes cluster.
 kind: DaemonSet
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 metadata:
   name: calico-node
   namespace: kube-system
@@ -281,7 +284,7 @@ spec:
 
 # This manifest deploys the Calico Kubernetes controllers.
 # See https://github.com/projectcalico/kube-controllers
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: calico-kube-controllers
@@ -289,6 +292,9 @@ metadata:
   labels:
     k8s-app: calico-kube-controllers
 spec:
+  selector:
+    matchLabels:
+      k8s-app: calico-kube-controllers
   # The controllers can only have a single active instance.
   replicas: 1
   strategy:
@@ -348,7 +354,7 @@ spec:
 
 # This deployment turns off the old "policy-controller". It should remain at 0 replicas, and then
 # be removed entirely once the new kube-controllers deployment has been deployed above.
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: calico-policy-controller
@@ -356,6 +362,9 @@ metadata:
   labels:
     k8s-app: calico-policy-controller
 spec:
+  selector:
+    matchLabels:
+      k8s-app: calico-policy-controller
   # Turn this deployment off in favor of the kube-controllers deployment above.
   replicas: 0
   strategy:
@@ -381,7 +390,7 @@ spec:
 
 ---
 
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: calico-cni-plugin
@@ -397,7 +406,7 @@ subjects:
 ---
 
 kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: calico-cni-plugin
 rules:
@@ -418,7 +427,7 @@ metadata:
 
 ---
 
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: calico-kube-controllers
@@ -434,7 +443,7 @@ subjects:
 ---
 
 kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: calico-kube-controllers
 rules:
