@@ -22,15 +22,15 @@
   when: kube_install_helm | bool
 
 - set_fact:
-    public_hostname: "{{ lookup('dig', public_ip + '/PTR', '@8.8.8.8') }}"
-  when: cert_manager | bool
+    public_hostname: "{{ lookup('dig', kube_cert_public_ip + '/PTR', '@8.8.8.8') }}"
+  when: kube_cert_manager | bool
 
 - block:
   - debug:
       msg: "DNS name = {{ public_hostname }} - Disabling cert_manager."
   - set_fact:
-      cert_manager: false
-  when: cert_manager | bool and (public_hostname is undefined or public_hostname == "NXDOMAIN" or public_hostname == "")
+      kube_cert_manager: false
+  when: kube_cert_manager | bool and (public_hostname is undefined or public_hostname == "NXDOMAIN" or public_hostname == "")
 
 - block:
   - copy: src=cert-manager.yaml dest=/tmp/cert-manager.yaml
@@ -42,7 +42,7 @@
   - command: kubectl apply -f /tmp/prod_issuer.yaml
     environment:
       KUBECONFIG: /etc/kubernetes/admin.conf
-  when: cert_manager | bool
+  when: kube_cert_manager | bool
 
 - block:
     - template: src=kubernetes-dashboard.j2 dest=/tmp/kubernetes-dashboard.yaml

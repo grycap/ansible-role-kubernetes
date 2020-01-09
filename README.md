@@ -47,9 +47,11 @@ The variables that can be passed to this role and a brief description about them
 	# Extra options for the flannel plugin
 	kube_flanneld_extra_args: [] 
 	# Enable to install and manage Certificates with Cert-manager
-	cert_manager: false
+	kube_cert_manager: false
+	# Public IP to use by the cert-manager
+	kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
 	# Email to be used in the Let's Encrypt issuer
-	user_email: jhondoe@server.com
+	kube_cert_user_email: jhondoe@server.com
 
 Example Playbook
 ----------------
