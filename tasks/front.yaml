@@ -21,13 +21,14 @@
     KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_helm | bool
 
-- set_fact:
-    public_hostname: "{{ lookup('dig', kube_cert_public_ip + '/PTR', '@8.8.8.8') }}"
-  when: kube_cert_manager | bool
-
 - block:
   - pip:
       name: dnspython
+  - set_fact:
+      public_hostname: "{{ lookup('dig', kube_cert_public_ip + '/PTR', '@8.8.8.8') }}"
+  when: kube_cert_manager | bool
+
+- block:
   - debug:
       msg: "DNS name = {{ public_hostname }} - Disabling cert_manager."
   - set_fact:
