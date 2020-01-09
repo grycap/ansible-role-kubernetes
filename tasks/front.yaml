@@ -43,6 +43,8 @@
 
   - name: Wait for cert-manager ready status
     command: kubectl rollout status deployment/{{ item }} -n cert-manager
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
     with_items:
       - cert-manager
       - cert-manager-cainjector
