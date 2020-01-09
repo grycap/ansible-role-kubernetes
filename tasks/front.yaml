@@ -26,6 +26,8 @@
   when: kube_cert_manager | bool
 
 - block:
+  - pip:
+      name: dnspython
   - debug:
       msg: "DNS name = {{ public_hostname }} - Disabling cert_manager."
   - set_fact:
@@ -38,7 +40,7 @@
     environment:
       KUBECONFIG: /etc/kubernetes/admin.conf
 
-  - copy: src=prod_issuer.yaml dest=/tmp/prod_issuer.yaml
+  - template: src=prod_issuer.j2 dest=/tmp/prod_issuer.yaml
   - command: kubectl apply -f /tmp/prod_issuer.yaml
     environment:
       KUBECONFIG: /etc/kubernetes/admin.conf
