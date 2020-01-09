@@ -15,9 +15,13 @@
 - block:
   - copy: src=cert-manager.yaml dest=/tmp/cert-manager.yaml
   - command: kubectl apply -f /tmp/cert-manager.yaml
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
 
   - name: Wait for cert-manager ready status
     command: kubectl rollout status deployment/{{ item }} -n cert-manager
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
     with_items:
       - cert-manager
       - cert-manager-cainjector
@@ -25,5 +29,7 @@
 
   - template: src=prod_issuer.j2 dest=/tmp/prod_issuer.yaml
   - command: kubectl apply -f /tmp/prod_issuer.yaml
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
 
   when: kube_cert_manager | bool

@@ -22,8 +22,6 @@
   when: kube_install_helm | bool
 
 - include: cert-manager.yaml
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
 
 - block:
     - copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
