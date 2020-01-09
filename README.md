@@ -46,6 +46,10 @@ The variables that can be passed to this role and a brief description about them
 	kube_install_kubeapps: false
 	# Extra options for the flannel plugin
 	kube_flanneld_extra_args: [] 
+	# Enable to install and manage Certificates with Cert-manager
+	cert_manager: false
+	# Email to be used in the Let's Encrypt issuer
+	user_email: jhondoe@server.com
 
 Example Playbook
 ----------------

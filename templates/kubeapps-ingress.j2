@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  namespace: kubeapps
+  name: kubeapps
+  annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+{%- if cert_manager -%}
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+{%- endif -%}
+spec:
+{%- if cert_manager -%}
+  tls:
+  - hosts:
+    - {{ public_hostname }}
+    secretName: {{ public_hostname }}
+{%- endif -%}
+  rules:
+{%- if cert_manager -%}
+  - host: {{ public_hostname }}
+    http:
+{% else %}
+  - http:
+{%- endif -%}
+      paths:
+      - backend:
+          serviceName: kubeapps
+          servicePort: 80
+        path: /kubeapps

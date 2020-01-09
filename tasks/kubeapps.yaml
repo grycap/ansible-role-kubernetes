@@ -17,7 +17,7 @@
     command: helm install --name kubeapps --namespace kubeapps bitnami/kubeapps --set 'mongodb.mongodbEnableIPv6=false'
     when: helm_status.rc != 0
 
-  - copy: src=kubeapps-ingress.yaml dest=/tmp/kubeapps-ingress.yaml
+  - template: src=kubeapps-ingress.j2 dest=/tmp/kubeapps-ingress.yaml
   - command: kubectl apply -f /tmp/kubeapps-ingress.yaml
     environment:
       KUBECONFIG: /etc/kubernetes/admin.conf
