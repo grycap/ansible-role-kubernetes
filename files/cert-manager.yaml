@@ -6158,6 +6158,10 @@ spec:
                 fieldPath: metadata.namespace
           resources:
             {}
+      # Comment the following tolerations if it must not be deployed on master
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
             
 
 ---
@@ -6219,7 +6223,10 @@ spec:
             requests:
               cpu: 10m
               memory: 32Mi
-            
+      # Comment the following tolerations if it must not be deployed on master
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
 
 ---
 # Source: cert-manager/templates/webhook-deployment.yaml
@@ -6287,6 +6294,10 @@ spec:
       - name: certs
         secret:
           secretName: cert-manager-webhook-tls
+      # Comment the following tolerations if it must not be deployed on master
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
 ---
 # Source: cert-manager/templates/webhook-mutating-webhook.yaml
 apiVersion: admissionregistration.k8s.io/v1beta1

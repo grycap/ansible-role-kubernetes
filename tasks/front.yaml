@@ -41,6 +41,13 @@
     environment:
       KUBECONFIG: /etc/kubernetes/admin.conf
 
+  - name: Wait for cert-manager ready status
+    command: kubectl rollout status deployment/{{ item }} -n cert-manager
+    with_items:
+      - cert-manager
+      - cert-manager-cainjector
+      - cert-manager-webhook
+
   - template: src=prod_issuer.j2 dest=/tmp/prod_issuer.yaml
   - command: kubectl apply -f /tmp/prod_issuer.yaml
     environment:
