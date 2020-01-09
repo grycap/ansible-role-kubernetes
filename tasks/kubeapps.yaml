@@ -1,9 +1,4 @@
 ---
-  - name: Wait for tiller-deploy ready status
-    command: kubectl rollout status deployment/tiller-deploy -n kube-system
-    environment:
-      KUBECONFIG: /etc/kubernetes/admin.conf
-
   - name: Add Bitnami Helm repo
     command: helm repo add bitnami https://charts.bitnami.com/bitnami
 

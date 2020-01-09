@@ -19,7 +19,7 @@ kube_apiserver_options: []
 # Flag to set HELM to be installed
 kube_install_helm: true
 # Helm version
-kube_install_helm_version: "v2.16.1"
+kube_install_helm_version: "v3.0.2"
 # Deploy the Dashboard
 kube_deploy_dashboard: false
 # Value to pass to the kubeadm init --apiserver-advertise-address option
