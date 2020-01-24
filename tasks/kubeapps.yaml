@@ -9,7 +9,13 @@
     changed_when: false
 
   - name: Install kubeapps
-    command: helm install --name kubeapps --namespace kubeapps bitnami/kubeapps --set 'mongodb.mongodbEnableIPv6=false'
+    command: kubectl create namespace kubeapps
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
+    when: helm_status.rc != 0
+
+  - name: Install kubeapps
+    command: helm install --namespace kubeapps bitnami/kubeapps --set useHelm3=true
     when: helm_status.rc != 0
 
   - copy: src=kubeapps-ingress.yaml dest=/tmp/kubeapps-ingress.yaml
