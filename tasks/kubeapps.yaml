@@ -3,7 +3,7 @@
     command: helm repo add bitnami https://charts.bitnami.com/bitnami
 
   - name: Check if kubeapps is installed
-    command: helm status kubeapps
+    command: helm status kubeapps -n kubeapps
     register: helm_status
     ignore_errors: yes
     changed_when: false
