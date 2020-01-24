@@ -15,7 +15,7 @@
     when: helm_status.rc != 0
 
   - name: Install kubeapps
-    command: helm install --namespace kubeapps bitnami/kubeapps --set useHelm3=true
+    command: helm install kubeapps --namespace kubeapps bitnami/kubeapps --set useHelm3=true
     when: helm_status.rc != 0
 
   - copy: src=kubeapps-ingress.yaml dest=/tmp/kubeapps-ingress.yaml
