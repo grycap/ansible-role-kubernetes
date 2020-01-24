@@ -5,6 +5,9 @@
     ignore_errors: yes
     changed_when: false
 
+  - name: Add stable Helm repo
+    command: helm repo add stable https://kubernetes-charts.storage.googleapis.com
+
   - name: Install nfs-client-provisioner
     command: >
       helm install nfs-client stable/nfs-client-provisioner
