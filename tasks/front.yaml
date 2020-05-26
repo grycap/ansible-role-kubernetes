@@ -69,10 +69,11 @@
   notify: restart kubeapi
   with_items: "{{ kube_apiserver_options }}"
 
-- copy:
-    dest: /etc/profile.d/kube.sh
-    content: "export KUBECONFIG=/etc/kubernetes/admin.conf"
-  
+- name: Set KUBECONFIG environment variable
+  lineinfile:
+    dest: /etc/environment
+    line: "KUBECONFIG=/etc/kubernetes/admin.conf"
+
 - name: force handlers
   meta: flush_handlers
 
