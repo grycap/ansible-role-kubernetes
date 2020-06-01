@@ -1,18 +1,16 @@
 ---
-  - name: Wait for tiller-deploy ready status
-    command: kubectl rollout status deployment/tiller-deploy -n kube-system
-    environment:
-      KUBECONFIG: /etc/kubernetes/admin.conf
-
   - name: Check if nfs-client is installed
     command: helm status nfs-client
     register: helm_status
     ignore_errors: yes
     changed_when: false
 
+  - name: Add stable Helm repo
+    command: helm repo add stable https://kubernetes-charts.storage.googleapis.com
+
   - name: Install nfs-client-provisioner
     command: >
-      helm install --name nfs-client stable/nfs-client-provisioner
+      helm install nfs-client stable/nfs-client-provisioner
       --set nfs.server=kubeserver.localdomain
       --set nfs.path=/pv 
       --set storageClass.defaultClass=true
