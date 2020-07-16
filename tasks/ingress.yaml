@@ -1,0 +1,49 @@
+---
+- name: Create ingress-nginx namespace
+  block:
+  - copy: src=ingress-nginx-namespace.yaml dest=/tmp/ingress-nginx-namespace.yaml
+  - command: kubectl apply -f /tmp/ingress-nginx-namespace.yaml
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Check if certs are created
+  block:
+  - stat:
+      path: /var/tmp/certs
+    register: certs_dir
+  - stat:
+      path: /var/tmp/certs/private.key
+    register: certs_private
+  - stat:
+      path: /var/tmp/certs/public.crt
+    register: certs_public
+
+- name: Create certs dir
+  command: mkdir /var/tmp/certs
+  when: certs_dir.stat.isdir is defined and certs_dir.stat.isdir
+
+- name: Create certs
+  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /var/tmp/certs/private.key -out /var/tmp/certs/public.crt -subj "/CN=kubeserver/O=kubeserver"
+  when: (not certs_private.stat.exists) or (not certs_public.stat.exists)
+
+- name: Check if certs secret is created
+  command: kubectl get secret certs -n ingress-nginx
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  register: certs_secret
+  failed_when: certs_secret.rc != 0 and certs_secret.rc != 1
+
+- name: Create certs secret
+  command: kubectl create secret tls certs --key /var/tmp/certs/private.key --cert /var/tmp/certs/public.crt -n ingress-nginx
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: certs_secret.rc == 1
+
+- name: Deploy ingress-nginx
+  block:
+  - copy: src=ingress-nginx.yaml dest=/tmp/ingress-nginx.yaml
+  - command: kubectl apply -f /tmp/ingress-nginx.yaml
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
+
+  
