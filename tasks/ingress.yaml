@@ -20,7 +20,7 @@
 
 - name: Create certs dir
   command: mkdir /var/tmp/certs
-  when: certs_dir.stat.isdir is defined and certs_dir.stat.isdir
+  when: not certs_dir.stat.exists
 
 - name: Create certs
   command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /var/tmp/certs/private.key -out /var/tmp/certs/public.crt -subj "/CN=kubeserver/O=kubeserver"
