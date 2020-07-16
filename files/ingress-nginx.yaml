@@ -521,6 +521,9 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: admission-webhook
     spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
       containers:
         - name: create
           image: docker.io/jettech/kube-webhook-certgen:v1.2.2
@@ -564,6 +567,9 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: admission-webhook
     spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
       containers:
         - name: patch
           image: docker.io/jettech/kube-webhook-certgen:v1.2.2
