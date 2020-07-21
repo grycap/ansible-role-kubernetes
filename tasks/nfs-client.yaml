@@ -11,6 +11,7 @@
   - name: Install nfs-client-provisioner
     command: >
       helm install nfs-client stable/nfs-client-provisioner
+      --namespace nfs-client --create-namespace
       --set nfs.server=kubeserver.localdomain
       --set nfs.path=/pv 
       --set storageClass.defaultClass=true

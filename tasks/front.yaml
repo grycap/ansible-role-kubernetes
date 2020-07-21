@@ -77,11 +77,7 @@
 - name: force handlers
   meta: flush_handlers
 
-- block:
-    - copy: src=ingress-nginx.yaml dest=/tmp/ingress-nginx.yaml
-    - command: kubectl apply -f /tmp/ingress-nginx.yaml
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
+- include: ingress.yaml
   when: kube_install_ingress | bool
 
 - block:
@@ -102,4 +98,4 @@
   when: kube_install_kubeapps | bool
 
 - include: nfs-client.yaml
-  when: kube_install_nfs_client | bool
+  when: (kube_install_nfs_client | bool) and (kube_install_helm | bool)
