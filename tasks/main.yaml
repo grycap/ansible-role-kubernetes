@@ -26,6 +26,7 @@
   include: "{{ansible_os_family}}_docker.yaml"
 
 - name: Create /etc/docker/daemon.json
+  notify: restart docker
   copy:
     content: |
       {
