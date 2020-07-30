@@ -20,10 +20,25 @@
 - name: Chek docker compatible versions
   set_fact:
     docker_install: false
-  when: "'1.11.' in docker_output.stdout or '1.12.' in docker_output.stdout or '1.13.' in docker_output.stdout or '17.03.' in docker_output.stdout or '18.06.' in docker_output.stdout or '18.09.' in docker_output.stdout"
+  when: "'1.11.' in docker_output.stdout or '1.12.' in docker_output.stdout or '1.13.' in docker_output.stdout or '17.03.' in docker_output.stdout or '18.06.' in docker_output.stdout or '18.09.' in docker_output.stdout or '19.03.11' in docker_output.stdout"
 
 - name: Install docker
   include: "{{ansible_os_family}}_docker.yaml"
+
+- name: Create /etc/docker/daemon.json
+  notify: restart docker
+  copy:
+    content: |
+      {
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "log-opts": {
+          "max-size": "100m"
+        },
+        "storage-driver": "overlay2"
+      }
+    dest: /etc/docker/daemon.json
+    mode: 0755
 
 - name: Include "{{ansible_os_family}}" Kubernetes recipe
   include: "{{ansible_os_family}}.yaml"
