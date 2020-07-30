@@ -26,7 +26,7 @@
   include: "{{ansible_os_family}}_docker.yaml"
 
 - name: Create /etc/docker/daemon.json
-  notify: restart docker
+  register: docker_json
   copy:
     content: |
       {
@@ -38,7 +38,12 @@
         "storage-driver": "overlay2"
       }
     dest: /etc/docker/daemon.json
-    mode: 0755
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+  when: docker_json is changed
 
 - name: Include "{{ansible_os_family}}" Kubernetes recipe
   include: "{{ansible_os_family}}.yaml"
