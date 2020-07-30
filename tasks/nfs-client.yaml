@@ -1,6 +1,6 @@
 ---
   - name: Check if nfs-client is installed
-    command: helm status nfs-client
+    command: helm status nfs-client -n nfs-client
     register: helm_status
     ignore_errors: yes
     changed_when: false
