@@ -49,5 +49,5 @@
   include_tasks: "{{ansible_os_family}}.yaml"
 
 - name: Include "{{kube_type_of_node}}" tasks
-  import_tasks: "{{kube_type_of_node}}.yaml"
+  include_tasks: "{{kube_type_of_node}}.yaml"
 
