@@ -14,9 +14,9 @@
 - name: wait Kube to start
   wait_for: port=6443
 
-- include: kube_nets.yaml
+- import_tasks: kube_nets.yaml
 
-- include: helm.yaml
+- import_tasks: helm.yaml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_helm | bool
@@ -77,7 +77,7 @@
 - name: force handlers
   meta: flush_handlers
 
-- include: ingress.yaml
+- import_tasks: ingress.yaml
   when: kube_install_ingress | bool
 
 - block:
@@ -94,8 +94,8 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_ingress | bool and kube_deploy_dashboard | bool
 
-- include: kubeapps.yaml
+- import_tasks: kubeapps.yaml
   when: kube_install_kubeapps | bool
 
-- include: nfs-client.yaml
+- import_tasks: nfs-client.yaml
   when: (kube_install_nfs_client | bool) and (kube_install_helm | bool)
