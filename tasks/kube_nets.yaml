@@ -5,7 +5,7 @@
     line: 'net.bridge.bridge-nf-call-iptables = 1'
     create: yes
   notify: sysctl-system
-  when: kube_network == 'flannel' or kube_network == 'kube-router' or kube_network == 'romana'
+  when: kube_network == 'flannel' or kube_network == 'kube-router'
 
 - block:
     - template: src=flannel-net.j2 dest=/tmp/flannel-net.yml
@@ -20,13 +20,6 @@
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'calico'
-
-- block:
-    - copy: src=romana-net.yml dest=/tmp/romana-net.yml
-    - command: kubectl apply -f /tmp/romana-net.yml creates=/var/lib/romana/etcd-db
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_network == 'romana'
 
 - block:
     - copy: src=kuberouter-net.yaml dest=/tmp/kuberouter-net.yaml

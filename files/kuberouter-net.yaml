@@ -9,16 +9,22 @@ metadata:
 data:
   cni-conf.json: |
     {
-      "name":"kubernetes",
-      "type":"bridge",
-      "bridge":"kube-bridge",
-      "isDefaultGateway":true,
-      "ipam": {
-        "type":"host-local"
-      }
+       "cniVersion":"0.3.0",
+       "name":"mynet",
+       "plugins":[
+          {
+             "name":"kubernetes",
+             "type":"bridge",
+             "bridge":"kube-bridge",
+             "isDefaultGateway":true,
+             "ipam":{
+                "type":"host-local"
+             }
+          }
+       ]
     }
 ---
-apiVersion: extensions/v1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
@@ -27,29 +33,42 @@ metadata:
   name: kube-router
   namespace: kube-system
 spec:
+  selector:
+    matchLabels:
+      k8s-app: kube-router
+      tier: node
   template:
     metadata:
       labels:
         k8s-app: kube-router
         tier: node
-      annotations:
-        scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
+      priorityClassName: system-node-critical
       serviceAccountName: kube-router
       serviceAccount: kube-router
       containers:
       - name: kube-router
-        image: cloudnativelabs/kube-router
+        image: docker.io/cloudnativelabs/kube-router
         imagePullPolicy: Always
         args:
         - --run-router=true
         - --run-firewall=true
-        - --run-service-proxy=false
+        - --run-service-proxy=true
+        - --bgp-graceful-restart=true
+        - --kubeconfig=/var/lib/kube-router/kubeconfig
         env:
         - name: NODE_NAME
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+        - name: KUBE_ROUTER_CNI_CONF_FILE
+          value: /etc/cni/net.d/10-kuberouter.conflist
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 20244
+          initialDelaySeconds: 10
+          periodSeconds: 3
         resources:
           requests:
             cpu: 250m
@@ -63,32 +82,39 @@ spec:
         - name: cni-conf-dir
           mountPath: /etc/cni/net.d
         - name: kubeconfig
-          mountPath: /var/lib/kube-router/kubeconfig
+          mountPath: /var/lib/kube-router
           readOnly: true
+        - name: xtables-lock
+          mountPath: /run/xtables.lock
+          readOnly: false
       initContainers:
       - name: install-cni
-        image: busybox
+        image: docker.io/cloudnativelabs/kube-router
         imagePullPolicy: Always
         command:
         - /bin/sh
         - -c
         - set -e -x;
-          if [ ! -f /etc/cni/net.d/10-kuberouter.conf ]; then
+          if [ ! -f /etc/cni/net.d/10-kuberouter.conflist ]; then
+            if [ -f /etc/cni/net.d/*.conf ]; then
+              rm -f /etc/cni/net.d/*.conf;
+            fi;
             TMP=/etc/cni/net.d/.tmp-kuberouter-cfg;
             cp /etc/kube-router/cni-conf.json ${TMP};
-            mv ${TMP} /etc/cni/net.d/10-kuberouter.conf;
+            mv ${TMP} /etc/cni/net.d/10-kuberouter.conflist;
           fi
         volumeMounts:
-        - mountPath: /etc/cni/net.d
-          name: cni-conf-dir
-        - mountPath: /etc/kube-router
-          name: kube-router-cfg
+        - name: cni-conf-dir
+          mountPath: /etc/cni/net.d
+        - name: kube-router-cfg
+          mountPath: /etc/kube-router
       hostNetwork: true
       tolerations:
+      - effect: NoSchedule
+        operator: Exists
       - key: CriticalAddonsOnly
         operator: Exists
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/master
+      - effect: NoExecute
         operator: Exists
       volumes:
       - name: lib-modules
@@ -101,8 +127,15 @@ spec:
         configMap:
           name: kube-router-cfg
       - name: kubeconfig
+        configMap:
+          name: kube-proxy
+          items:
+          - key: kubeconfig.conf
+            path: kubeconfig
+      - name: xtables-lock
         hostPath:
-          path: /var/lib/kube-router/kubeconfig
+          path: /run/xtables.lock
+          type: FileOrCreate
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -111,7 +144,7 @@ metadata:
   namespace: kube-system
 ---
 kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: kube-router
   namespace: kube-system
@@ -146,7 +179,7 @@ rules:
       - watch
 ---
 kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: kube-router
 roleRef:
