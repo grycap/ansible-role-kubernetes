@@ -80,6 +80,7 @@
         dest: /etc/docker/daemon.json
         content: |
             {
+                "storage-driver": "devicemapper",
                 "default-runtime": "nvidia",
                 "runtimes": {
                     "nvidia": {
