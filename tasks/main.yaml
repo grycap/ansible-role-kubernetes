@@ -2,10 +2,58 @@
 - name: Disable swap
   command: swapoff -a
 
+- name: Disable SWAP in fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'
+
+- name: Check docker version
+  shell: docker -v | cut -d ' ' -f 3 | cut -d ',' -f 1
+  register: docker_output
+
+- debug: msg="Docker version installed = {{ docker_output.stdout }}"
+
+- name: Check kube version
+  shell: kubeadm version -o short | cut -d 'v' -f 2
+  register: kubeadm_output
+
+- debug: msg="Kube version installed = {{ kubeadm_output.stdout }}"
+
+- set_fact:
+    docker_install: true
+
+- name: Chek docker compatible versions
+  set_fact:
+    docker_install: false
+  when: "'1.11.' in docker_output.stdout or '1.12.' in docker_output.stdout or '1.13.' in docker_output.stdout or '17.03.' in docker_output.stdout or '18.06.' in docker_output.stdout or '18.09.' in docker_output.stdout or '19.03.11' in docker_output.stdout"
+
+- name: Install docker
+  include_tasks: "{{ansible_os_family}}_docker.yaml"
+
+- name: Create /etc/docker/daemon.json
+  register: docker_json
+  copy:
+    content: |
+      {
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "log-opts": {
+          "max-size": "100m"
+        },
+        "storage-driver": "overlay2"
+      }
+    dest: /etc/docker/daemon.json
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+  when: docker_json is changed
+
 - name: Include "{{ansible_os_family}}" Kubernetes recipe
-  include: "{{ansible_os_family}}.yaml"
-  static: false
+  include_tasks: "{{ansible_os_family}}.yaml"
 
 - name: Include "{{kube_type_of_node}}" tasks
-  include: "{{kube_type_of_node}}.yaml"
+  include_tasks: "{{kube_type_of_node}}.yaml"
 

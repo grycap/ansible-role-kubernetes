@@ -21,3 +21,8 @@
   wait_for:
     port: 8080
   listen: "restart kubeapi"
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted

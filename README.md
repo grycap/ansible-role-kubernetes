@@ -4,6 +4,10 @@ Kubernetes Role
 
 This ansible role installs a [Kubernetes](https://kubernetes.io/) cluster.
 
+This work is co-funded by the [EOSC-hub project](http://eosc-hub.eu/) (Horizon 2020) under Grant number 777536.
+<img src="https://wiki.eosc-hub.eu/download/attachments/1867786/eu%20logo.jpeg?version=1&modificationDate=1459256840098&api=v2" height="24">
+<img src="https://wiki.eosc-hub.eu/download/attachments/18973612/eosc-hub-web.png?version=1&modificationDate=1516099993132&api=v2" height="24">
+
 Role Variables
 ----------------
 
@@ -21,7 +25,7 @@ The variables that can be passed to this role and a brief description about them
 	kube_token_ttl: 0
 	# POD network cidr
 	kube_pod_network_cidr: 10.244.0.0/16
-	# Type of network to install: currently supported: flannel, kube-router, romana, calico, weave
+	# Type of network to install: currently supported: flannel, kube-router, calico, weave
 	kube_network: flannel
 	# Kubelet extra args
 	kubelet_extra_args: ''
@@ -38,7 +42,14 @@ The variables that can be passed to this role and a brief description about them
 	# A set of git repos and paths to be applied in the cluster. Following this format:
 	# kube_apply_repos: [{repo: "https://github.com/kubernetes-incubator/metrics-server", version: "master", path: "deploy/1.8+/"}]
 	kube_apply_repos: []
-
+	# Flag to set Metrics-Server to be installed
+	kube_install_metrics: false
+	# Flag to set the nginx ingress controller to be installed
+	kube_install_ingress: false
+	# Flag to set the kubeapps UI to be installed
+	kube_install_kubeapps: false
+	# Extra options for the flannel plugin
+	kube_flanneld_extra_args: [] 
 
 Example Playbook
 ----------------

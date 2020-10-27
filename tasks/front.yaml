@@ -14,67 +14,26 @@
 - name: wait Kube to start
   wait_for: port=6443
 
-- lineinfile:
-    dest: /etc/sysctl.d/k8s.conf
-    regexp: '^net.bridge.bridge-nf-call-iptables'
-    line: 'net.bridge.bridge-nf-call-iptables = 1'
-    create: yes
-  notify: sysctl-system
-  when: kube_network == 'flannel' or kube_network == 'kube-router' or kube_network == 'romana'
+- import_tasks: kube_nets.yaml
 
-- block:
-    - template: src=flannel-net.j2 dest=/tmp/flannel-net.yml
-    - command: kubectl apply -f /tmp/flannel-net.yml creates=/etc/cni/net.d/10-flannel.conflist
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_network == 'flannel'
-
-- block:
-    - copy: src=calico-net.yaml dest=/tmp/calico-net.yaml
-    - command: kubectl apply -f /tmp/calico-net.yaml creates=/var/etcd/calico-data
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_network == 'calico'
-
-- block:
-    - copy: src=romana-net.yml dest=/tmp/romana-net.yml
-    - command: kubectl apply -f /tmp/romana-net.yml creates=/var/lib/romana/etcd-db
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_network == 'romana'
-
-- block:
-    - copy: src=kuberouter-net.yaml dest=/tmp/kuberouter-net.yaml
-    - command: kubectl apply -f /tmp/kuberouter-net.yaml creates=/etc/cni/net.d/10-kuberouter.conf
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_network == 'kube-router'
-
-- block:
-    - copy: src=weave-net.yaml dest=/tmp/weave-net.yaml
-    - command: kubectl apply -f /tmp/weave-net.yaml creates=/etc/cni/net.d/10-weave.conf
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_network == 'weave'
-
-- include: helm.yaml
+- import_tasks: helm.yaml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_install_helm
+  when: kube_install_helm | bool
 
 - block:
     - copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
     - command: kubectl apply -f /tmp/kubernetes-dashboard.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_deploy_dashboard
+  when: kube_deploy_dashboard | bool
 
 - block:
     - copy: src=metrics-server.yaml dest=/tmp/metrics-server.yaml
     - command: kubectl apply -f /tmp/metrics-server.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_install_metrics
+  when: kube_install_metrics | bool
 
 - name: Add persistent volumes to kube cluster  
   block:
@@ -110,9 +69,33 @@
   notify: restart kubeapi
   with_items: "{{ kube_apiserver_options }}"
 
-- copy:
-    dest: /etc/profile.d/kube.sh
-    content: "export KUBECONFIG=/etc/kubernetes/admin.conf"
-  
+- name: Set KUBECONFIG environment variable
+  lineinfile:
+    dest: /etc/environment
+    line: "KUBECONFIG=/etc/kubernetes/admin.conf"
+
 - name: force handlers
   meta: flush_handlers
+
+- import_tasks: ingress.yaml
+  when: kube_install_ingress | bool
+
+- block:
+    - copy: src=nvidia-device-plugin.yml dest=/tmp/nvidia-device-plugin.yml
+    - command: kubectl apply -f /tmp/nvidia-device-plugin.yml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_nvidia_support | bool
+
+- block:
+    - copy: src=kubernetes-dashboard-ingress.yaml dest=/tmp/kubernetes-dashboard-ingress.yaml
+    - command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_install_ingress | bool and kube_deploy_dashboard | bool
+
+- import_tasks: kubeapps.yaml
+  when: kube_install_kubeapps | bool
+
+- import_tasks: nfs-client.yaml
+  when: (kube_install_nfs_client | bool) and (kube_install_helm | bool)

@@ -1,7 +1,8 @@
 ---
 - name: Wait for Kube master
   wait_for:
-    path: /etc/profile.d/kube.sh
+    path: /etc/environment
+    search_regex: "KUBECONFIG=/etc/kubernetes/admin.conf"
   delegate_to: "{{kube_server}}"
 
 - name: Add node to kube cluster
