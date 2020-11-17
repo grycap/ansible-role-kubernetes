@@ -16,12 +16,12 @@
     state: present
 
 - name: Install kubernetes packages
-  package: name=kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}} state=present update_cache=yes
+  package: name=psmisc,kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}} state=present update_cache=yes
   when: kube_version != "latest" and (kubeadm_output.stdout == '' or kubeadm_output.stdout is version(kube_version, '<='))
 
 
 - name: Install kubernetes packages
-  package: name=kubelet,kubeadm,kubectl state=latest
+  package: name=psmisc,kubelet,kubeadm,kubectl state=latest
   when: kube_version == "latest"
 
 - name: Start kubelet service
