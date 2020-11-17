@@ -97,5 +97,9 @@
 - import_tasks: kubeapps.yaml
   when: kube_install_kubeapps | bool
 
-- import_tasks: nfs-client.yaml
-  when: (kube_install_nfs_client | bool) and (kube_install_helm | bool)
+- block:
+    - copy: src=nfs-client.yaml dest=/tmp/nfs-client.yaml
+    - command: kubectl apply -f /tmp/nfs-client.yaml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+  when: kube_install_nfs_client | bool
