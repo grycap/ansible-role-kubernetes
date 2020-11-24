@@ -1,6 +1,6 @@
 ---
 - stat:
-    path: /usr/local/bin/helm
+    path: /usr/bin/helm
   register: helm
 
 # Install HELM

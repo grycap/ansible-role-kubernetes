@@ -2,6 +2,12 @@
 - name: Disable swap
   command: swapoff -a
 
+- name: Disable SWAP in fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'
+
 - name: Check docker version
   shell: docker -v | cut -d ' ' -f 3 | cut -d ',' -f 1
   register: docker_output

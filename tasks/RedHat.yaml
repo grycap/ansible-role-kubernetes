@@ -16,12 +16,12 @@
     state: present
 
 - name: Install kubernetes packages
-  package: name=kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}} state=present update_cache=yes
+  package: name=psmisc,kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}} state=present update_cache=yes
   when: kube_version != "latest" and (kubeadm_output.stdout == '' or kubeadm_output.stdout is version(kube_version, '<='))
 
 
 - name: Install kubernetes packages
-  package: name=kubelet,kubeadm,kubectl state=latest
+  package: name=psmisc,kubelet,kubeadm,kubectl state=latest
   when: kube_version == "latest"
 
 - name: Start kubelet service
@@ -50,3 +50,45 @@
     state: stopped
     enabled: False
   ignore_errors: yes
+
+- block:
+    # In CentOS we must assume that drivers are already installed
+    - name: Check nvidia is installed
+      stat:
+        path: /var/lib/dkms/nvidia
+      register: nvidia_inst
+
+    - fail:
+        msg: It seems that NVIDIA drivers are not installed.
+      when: not (nvidia_inst.stat.isdir is defined and nvidia_inst.stat.isdir)
+
+    - name: Download nvidia-docker yum repo
+      get_url:
+        url: https://nvidia.github.io/nvidia-docker/{{ansible_distribution | lower}}{{ansible_distribution_version}}/nvidia-docker.repo
+        dest: /etc/yum.repos.d/nvidia-docker.repo
+
+    - name: Add nvidia repo key
+      rpm_key:
+        state: present
+        key: https://nvidia.github.io/nvidia-docker/gpgkey
+
+    - name: Install nvidia-docker2 package
+      yum: name=nvidia-docker2
+      notify: restart docker
+
+    - copy:
+        dest: /etc/docker/daemon.json
+        content: |
+            {
+                "storage-driver": "devicemapper",
+                "default-runtime": "nvidia",
+                "runtimes": {
+                    "nvidia": {
+                        "path": "/usr/bin/nvidia-container-runtime",
+                        "runtimeArgs": []
+                    }
+                }
+            }
+      notify: restart docker
+
+  when: kube_nvidia_support | bool and kube_type_of_node == "wn"

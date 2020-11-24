@@ -25,7 +25,7 @@ The variables that can be passed to this role and a brief description about them
 	kube_token_ttl: 0
 	# POD network cidr
 	kube_pod_network_cidr: 10.244.0.0/16
-	# Type of network to install: currently supported: flannel, kube-router, romana, calico, weave
+	# Type of network to install: currently supported: flannel, kube-router, calico, weave
 	kube_network: flannel
 	# Kubelet extra args
 	kubelet_extra_args: ''
