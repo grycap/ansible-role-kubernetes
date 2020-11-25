@@ -7,9 +7,23 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+{% if kube_cert_manager %}
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+{% endif %}
 spec:
+{% if kube_cert_manager %}
+  tls:
+  - hosts:
+    - {{ public_hostname }}
+    secretName: {{ public_hostname }}
+{% endif %}
   rules:
+{% if kube_cert_manager %}
+  - host: {{ public_hostname }}
+    http:
+{% else %}
   - http:
+{% endif %}
       paths:
       - path: /dashboard/?(.*)
         backend:

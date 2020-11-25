@@ -21,6 +21,8 @@
     KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_helm | bool
 
+- include_tasks: cert-manager.yaml
+
 - block:
     - copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
     - command: kubectl apply -f /tmp/kubernetes-dashboard.yaml
@@ -88,7 +90,7 @@
   when: kube_nvidia_support | bool
 
 - block:
-    - copy: src=kubernetes-dashboard-ingress.yaml dest=/tmp/kubernetes-dashboard-ingress.yaml
+    - template: src=kubernetes-dashboard-ingress.j2 dest=/tmp/kubernetes-dashboard-ingress.yaml
     - command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
