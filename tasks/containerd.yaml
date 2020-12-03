@@ -1,0 +1,48 @@
+--
+- name: Create /etc/modules-load.d/containerd.conf
+  register: containerd_json
+  copy:
+    content: |
+      overlay
+      br_netfilter
+    dest: /etc/modules-load.d/containerd.conf
+
+- name: Make modprobes
+  command: modprobe {{item}}
+  with_items:
+    - overlay
+    - br_netfilter
+  when: containerd_json is changed
+
+- name: Create /etc/sysctl.d/99-kubernetes-cri.conf
+  register: containerd_sysctl
+  copy:
+    content: |
+      net.bridge.bridge-nf-call-iptables  = 1
+      net.ipv4.ip_forward                 = 1
+      net.bridge.bridge-nf-call-ip6tables = 1
+    dest: /etc/sysctl.d/99-kubernetes-cri.conf
+
+- name: Apply sysctl params
+  command: sysctl --system
+  when: containerd_sysctl is changed
+
+- name: Install containerd
+  include_tasks: "{{ansible_os_family}}_containerd.yaml"
+
+- name: Create /etc/containerd
+  file:
+    path: /etc/containerd
+    state: directory
+
+- name: Create /etc/containerd/config.toml
+  register: containerd_config
+  command:
+    cmd: containerd config default > /etc/containerd/config.toml
+    creates: /etc/containerd/config.toml
+
+- name: restart containerd
+  service:
+    name: containerd
+    state: restarted
+  when: containerd_config is changed

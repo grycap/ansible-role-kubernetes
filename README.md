@@ -31,6 +31,8 @@ The variables that can be passed to this role and a brief description about them
 	kubelet_extra_args: ''
 	# Kube API server options
 	kube_apiserver_options: []
+	# CRI runtime
+	kube_cri_runtime: docker # docker or containerd
 	# Flag to set HELM to be installed
 	kube_install_helm: true
 	# Helm version

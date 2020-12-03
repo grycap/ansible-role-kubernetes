@@ -1,0 +1,12 @@
+---
+- name: Install Requisites
+  yum: name=device-mapper-persistent-data,lvm2 state=installed
+
+- name: Download docker-ce.repo
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+
+- name: Install containerd.io
+  yum: name=containerd.io state=installed update_cache=yes
+
