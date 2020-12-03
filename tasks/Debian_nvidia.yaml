@@ -1,16 +1,25 @@
 ---
-- name: Add NVIDIA PPA
-  apt_repository:
-    repo: ppa:graphics-drivers/ppa
-    update_cache: yes
+- name: Check nvidia is installed
+  stat:
+    path: /var/lib/dkms/nvidia
+  register: nvidia_inst
 
-- name: Install nvidia-driver package
-  apt: name=nvidia-driver-{{ kube_nvidia_driver_version }}
-  when: ansible_distribution_major_version|int >= 18
+- block:
 
-- name: Install nvidia package
-  apt: name=nvidia-{{ kube_nvidia_driver_version }}
-  when: ansible_distribution_major_version|int == 16
+    - name: Add NVIDIA PPA
+      apt_repository:
+        repo: ppa:graphics-drivers/ppa
+        update_cache: yes
+
+    - name: Install nvidia-driver package
+      apt: name=nvidia-driver-{{ kube_nvidia_driver_version }}
+      when: ansible_distribution_major_version|int >= 18
+
+    - name: Install nvidia package
+      apt: name=nvidia-{{ kube_nvidia_driver_version }}
+      when: ansible_distribution_major_version|int == 16
+
+  when: not (nvidia_inst.stat.isdir is defined and nvidia_inst.stat.isdir)
 
 - name: Include NVIDIA {{kube_cri_runtime}} tasks
   include_tasks: "Debian_nvidia_{{kube_cri_runtime}}.yaml"
