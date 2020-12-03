@@ -6,7 +6,7 @@
 
 - name: Download nvidia-container apt list
   get_url:
-    url: https://nvidia.github.io/nvidia-container-runtime{{ansible_distribution | lower}}{{ansible_distribution_version}}/nvidia-container-runtime.list
+    url: https://nvidia.github.io/nvidia-container-runtime/{{ansible_distribution | lower}}{{ansible_distribution_version}}/nvidia-container-runtime.list
     dest: /etc/apt/sources.list.d/nvidia-container-runtime.list
 
 - name: Ubuntu apt update
