@@ -1,4 +1,8 @@
 ---
+- name: Include NVIDIA tasks
+  include_tasks: "{{ansible_os_family}}_nvidia.yaml"
+  when: kube_nvidia_support | bool
+
 - name: Wait for Kube master
   wait_for:
     path: /etc/environment

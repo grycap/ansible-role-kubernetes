@@ -14,7 +14,3 @@
 - name: Install kubernetes packages
   apt: name=kubelet,kubeadm,kubectl state=latest
   when: kube_version == "latest"
-
-- name: Include NVIDIA tasks
-  include_tasks: "Debian_nvidia.yaml"
-  when: kube_nvidia_support | bool and kube_type_of_node == "wn"

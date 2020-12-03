@@ -1,0 +1,30 @@
+---
+
+- name: Download nvidia-docker yum repo
+  get_url:
+    url: https://nvidia.github.io/nvidia-docker/{{ansible_distribution | lower}}{{ansible_distribution_version}}/nvidia-docker.repo
+    dest: /etc/yum.repos.d/nvidia-docker.repo
+
+- name: Add nvidia repo key
+  rpm_key:
+    state: present
+    key: https://nvidia.github.io/nvidia-docker/gpgkey
+
+- name: Install nvidia-docker2 package
+  yum: name=nvidia-docker2
+  notify: restart docker
+
+- copy:
+    dest: /etc/docker/daemon.json
+    content: |
+        {
+            "storage-driver": "devicemapper",
+            "default-runtime": "nvidia",
+            "runtimes": {
+                "nvidia": {
+                    "path": "/usr/bin/nvidia-container-runtime",
+                    "runtimeArgs": []
+                }
+            }
+        }
+  notify: restart docker

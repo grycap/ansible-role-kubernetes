@@ -1,0 +1,31 @@
+---
+- name: Add nvidia-docker repo key
+  apt_key:
+    url: "https://nvidia.github.io/nvidia-docker/gpgkey"
+    state: present
+
+- name: Download nvidia-docker apt list
+  get_url:
+    url: https://nvidia.github.io/nvidia-docker/{{ansible_distribution | lower}}{{ansible_distribution_version}}/nvidia-docker.list
+    dest: /etc/apt/sources.list.d/nvidia-docker.list
+
+- name: Ubuntu apt update
+  apt: update_cache=yes
+
+- name: Install nvidia-docker2 package
+  apt: name=nvidia-docker2
+  notify: restart docker
+
+- copy:
+    dest: /etc/docker/daemon.json
+    content: |
+        {
+            "default-runtime": "nvidia",
+            "runtimes": {
+                "nvidia": {
+                    "path": "/usr/bin/nvidia-container-runtime",
+                    "runtimeArgs": []
+                }
+            }
+        }
+  notify: restart docker

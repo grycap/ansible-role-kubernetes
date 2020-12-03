@@ -22,4 +22,3 @@
 
 - name: Include "{{kube_type_of_node}}" tasks
   include_tasks: "{{kube_type_of_node}}.yaml"
-

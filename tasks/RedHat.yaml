@@ -50,7 +50,3 @@
     state: stopped
     enabled: False
   ignore_errors: yes
-
-- name: Include NVIDIA tasks
-  include_tasks: "RedHat_nvidia.yaml"
-  when: kube_nvidia_support | bool and kube_type_of_node == "wn"
