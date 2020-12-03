@@ -1,5 +1,5 @@
 ---
-- name: Install docker requisites
+- name: Install requisites
   apt: name=apt-transport-https,ca-certificates,software-properties-common
 
 - name: Add Docker repo key
@@ -20,4 +20,11 @@
   when: ansible_distribution == "Ubuntu"
 
 - name: Install containerd.io
-  apt: name="containerd.io" state=present
+  register: containerd_installed
+  apt: name=containerd.io state=present
+
+- name: Delete initial /etc/containerd/config.toml file
+  file:
+    path: /etc/containerd/config.toml
+    state: absent
+  when: containerd_installed is changed

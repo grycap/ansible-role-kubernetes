@@ -8,5 +8,11 @@
     dest: /etc/yum.repos.d/docker-ce.repo
 
 - name: Install containerd.io
+  register: containerd_installed
   yum: name=containerd.io state=installed update_cache=yes
 
+- name: Delete initial /etc/containerd/config.toml file
+  file:
+    path: /etc/containerd/config.toml
+    state: absent
+  when: containerd_installed is changed
