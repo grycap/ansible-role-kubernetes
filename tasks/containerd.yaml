@@ -1,4 +1,5 @@
---
+---
+
 - name: Create /etc/modules-load.d/containerd.conf
   register: containerd_json
   copy:
