@@ -38,8 +38,8 @@
 
 - name: Create /etc/containerd/config.toml
   register: containerd_config
-  command:
-    cmd: containerd config default > /etc/containerd/config.toml
+  shell: containerd config default > /etc/containerd/config.toml
+  args:
     creates: /etc/containerd/config.toml
 
 - name: restart containerd
