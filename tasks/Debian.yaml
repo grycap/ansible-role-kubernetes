@@ -14,3 +14,12 @@
 - name: Install kubernetes packages
   apt: name=kubelet,kubeadm,kubectl state=latest
   when: kube_version == "latest"
+
+- name: Hold Kubernetes packages
+  dpkg_selections:
+    name: "{{item}}"
+    selection: hold
+  with_items:
+   - kubeadm
+   - kubelet
+   - kubectl

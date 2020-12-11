@@ -19,15 +19,20 @@
   package: name=psmisc,kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}} state=present update_cache=yes
   when: kube_version != "latest" and (kubeadm_output.stdout == '' or kubeadm_output.stdout is version(kube_version, '<='))
 
-
 - name: Install kubernetes packages
   package: name=psmisc,kubelet,kubeadm,kubectl state=latest
   when: kube_version == "latest"
 
+- name: Install yum-plugin-versionlock
+  package: name=yum-plugin-versionlock
+
+- name: Fix Kubernetes packages
+  command: yum versionlock add kubelet kubeadm kubectl
+
 - name: Start kubelet service
   service: name=kubelet state=started enabled=yes
 
-- lineinfile:
+  - lineinfile:
     path: /etc/sysctl.d/k8s.conf
     regexp: '^net.bridge.bridge-nf-call-ip6tables'
     line: 'net.bridge.bridge-nf-call-ip6tables = 1'
