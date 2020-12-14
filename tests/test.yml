@@ -1,7 +1,7 @@
 ---
 - hosts: localhost
   roles:
-    - role: workspace
+    - role: ansible-role-kubernetes
       kube_install_metrics: true
       kube_install_kubeapps: false
       kube_deploy_dashboard: true
