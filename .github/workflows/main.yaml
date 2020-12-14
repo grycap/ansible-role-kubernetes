@@ -18,16 +18,16 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
 
-      - name: install requisites
+      - name: Install python
         run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
 
-      - name: install requisites
+      - name: Install Ansible
         run: sudo pip3 install ansible
 
       - name: Create ansible.cfg with correct roles_path
         run: sudo printf '[defaults]\nroles_path=../' > ansible.cfg
   
-      - name: Install dependency
+      - name: Install grycap.ntp
         run: sudo ansible-galaxy install grycap.ntp
   
       - name: Basic role syntax check
