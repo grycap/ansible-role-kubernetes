@@ -2,8 +2,12 @@
 name: CI
 
 on:
-  push:
-    branches: [master]
+
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   test:
@@ -15,19 +19,19 @@ jobs:
         uses: actions/checkout@v2
 
       - name: install requisites
-        run: apt update && apt install -y python3 python3-pip
+        run: sudo apt update && sudo apt install -y python3 python3-pip
 
       - name: install requisites
-        run: pip3 install ansible
+        run: sudo pip3 install ansible
 
       - name: Create ansible.cfg with correct roles_path
-        run: printf '[defaults]\nroles_path=../' > ansible.cfg
+        run: sudo printf '[defaults]\nroles_path=../' > ansible.cfg
   
       - name: Install dependency
-        run: ansible-galaxy install grycap.ntp
+        run: sudo ansible-galaxy install grycap.ntp
   
       - name: Basic role syntax check
-        run: ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+        run: sudo ansible-playbook tests/test.yml -i tests/inventory --syntax-check
 
       - name: Basic role check
-        run: ansible-playbook tests/test.yml -i tests/inventory
+        run: sudo ansible-playbook tests/test.yml -i tests/inventory
