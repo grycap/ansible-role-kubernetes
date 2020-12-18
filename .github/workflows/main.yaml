@@ -41,3 +41,6 @@ jobs:
 
       - name: Basic role check in wn
         run: sudo ansible-playbook tests/test.yml -i tests/inventory -e kube_type_of_node=wn -e kube_server=localhost
+
+      - name: Test nodes
+        run: sudo kubectl get nodes
