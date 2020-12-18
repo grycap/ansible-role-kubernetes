@@ -31,10 +31,13 @@ jobs:
         run: sudo ansible-galaxy install grycap.ntp
   
       - name: Remove pre-installed kubectl to avoid errors
-        run: dpkg -l kubectl && sudo apt remove kubectl
+        run: dpkg -l kubectl && sudo apt remove -y kubectl
 
       - name: Basic role syntax check
         run: sudo ansible-playbook tests/test.yml -i tests/inventory --syntax-check
 
-      - name: Basic role check
+      - name: Basic role check in front
         run: sudo ansible-playbook tests/test.yml -i tests/inventory
+
+      - name: Basic role check in wn
+        run: sudo ansible-playbook tests/test.yml -i tests/inventory -e kube_type_of_node=wn
