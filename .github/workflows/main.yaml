@@ -25,7 +25,7 @@ jobs:
         run: sudo pip3 install ansible
 
       - name: Create ansible.cfg with correct roles_path
-        run: sudo printf '[defaults]\nroles_path=../' > ansible.cfg
+        run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
   
       - name: Install grycap.ntp
         run: sudo ansible-galaxy install grycap.ntp
@@ -40,4 +40,4 @@ jobs:
         run: sudo ansible-playbook tests/test.yml -i tests/inventory
 
       - name: Basic role check in wn
-        run: sudo ansible-playbook tests/test.yml -i tests/inventory -e kube_type_of_node=wn
+        run: sudo ansible-playbook tests/test.yml -i tests/inventory -e kube_type_of_node=wn -e kube_server=localhost
