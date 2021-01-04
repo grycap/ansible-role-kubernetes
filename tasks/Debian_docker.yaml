@@ -29,3 +29,23 @@
     when: ansible_distribution == "Ubuntu"
 
   when: docker_install | bool
+
+- name: Create /etc/docker/daemon.json
+  register: docker_json
+  copy:
+    content: |
+      {
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "log-opts": {
+          "max-size": "100m"
+        },
+        "storage-driver": "overlay2"
+      }
+    dest: /etc/docker/daemon.json
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+  when: docker_json is changed
