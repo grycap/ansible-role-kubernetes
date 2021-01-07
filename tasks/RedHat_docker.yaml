@@ -10,7 +10,7 @@
       dest: /etc/yum.repos.d/docker-ce.repo
 
   - name: Install docker-ce 18.06.2
-    yum: name=docker-ce-18.06.2.ce,docker-ce-cli-18.06.2.ce state=installed update_cache=yes
+    yum: name=docker-ce-18.06.2.ce state=installed update_cache=yes
 
   when: docker_install | bool
 
