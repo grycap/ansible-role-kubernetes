@@ -37,17 +37,18 @@
     regexp: '^net.bridge.bridge-nf-call-ip6tables'
     line: 'net.bridge.bridge-nf-call-ip6tables = 1'
     create: yes
-  notify: sysctl-system
+  notify:
+    - sysctl-system
+    - restart docker
 
 - lineinfile:
     path: /etc/sysctl.d/k8s.conf
     regexp: '^net.bridge.bridge-nf-call-iptables'
     line: 'net.bridge.bridge-nf-call-iptables = 1'
     create: yes
-  notify: sysctl-system
-
-- name: sysctl-system
-  command: sysctl --system
+  notify:
+    - sysctl-system
+    - restart docker
 
 - name: Stop and disable firewalld
   service:
