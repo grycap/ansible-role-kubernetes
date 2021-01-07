@@ -26,7 +26,7 @@
 - name: Version lock kubernetes packages
   command: yum versionlock add kubelet kubeadm kubectl
   register: yum_versionlock
-  changed_when: 'versionlock added: 1' in yum_versionlock.stdout_lines
+  changed_when: "'versionlock added: 1' in yum_versionlock.stdout_lines"
   ignore_errors: yes
 
 - name: Start kubelet service
