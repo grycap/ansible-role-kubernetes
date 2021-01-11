@@ -15,6 +15,16 @@
   apt: name=kubelet,kubeadm,kubectl state=latest
   when: kube_version == "latest"
 
+- name: Hold "{{ item }}" package
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - kubeadm
+    - kubelet
+    - kubectl
+  ignore_errors: yes
+
 - block:
     - name: Add NVIDIA PPA
       apt_repository:

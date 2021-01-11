@@ -43,4 +43,4 @@ jobs:
         run: sudo ansible-playbook tests/test.yml -i tests/inventory -e kube_type_of_node=wn -e kube_server=localhost
 
       - name: Test nodes
-        run: sudo kubectl -s localhost:8080  get nodes
+        run: sudo kubectl -s https://localhost:6443 --insecure-skip-tls-verify --kubeconfig /etc/kubernetes/admin.conf  get nodes

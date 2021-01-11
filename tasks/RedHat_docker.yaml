@@ -21,6 +21,11 @@
     dest: /etc/docker/daemon.json
     content: |
         {
+          "exec-opts": ["native.cgroupdriver=systemd"],
+          "log-driver": "json-file",
+          "log-opts": {
+            "max-size": "100m"
+          },
           "storage-driver": "devicemapper"
         }
   register: devicemapper_storage
@@ -28,6 +33,6 @@
 - name: Create /etc/systemd/system/docker.service.d dir
   file: path=/etc/systemd/system/docker.service.d state=directory recurse=yes
 
-- name: Start docker service
+- name: Restart docker service
   service: name=docker state=restarted enabled=yes
   when: devicemapper_storage is changed

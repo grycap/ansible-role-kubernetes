@@ -19,7 +19,7 @@
 
 - name: wait kubeapi port
   wait_for:
-    port: 8080
+    port: 6443
   listen: "restart kubeapi"
 
 - name: restart docker
