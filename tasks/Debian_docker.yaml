@@ -30,18 +30,20 @@
 
   when: docker_install | bool
 
+- set_fact:
+    docker_options:
+      exec-opts: ["native.cgroupdriver=systemd"]
+      log-driver: json-file
+      log-opts: {max-size: 100m}
+      storage-driver: overlay2
+
+- set_fact:
+    docker_options: "{{ docker_options | combine(kube_docker_options) }}"
+
 - name: Create /etc/docker/daemon.json
   register: docker_json
   copy:
-    content: |
-      {
-        "exec-opts": ["native.cgroupdriver=systemd"],
-        "log-driver": "json-file",
-        "log-opts": {
-          "max-size": "100m"
-        },
-        "storage-driver": "overlay2"
-      }
+    content: "{{ docker_options | to_nice_json(indent=2) }}"
     dest: /etc/docker/daemon.json
 
 - name: restart docker

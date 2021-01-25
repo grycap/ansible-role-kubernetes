@@ -17,17 +17,19 @@
 - name: Create /etc/docker dir
   file: path=/etc/docker state=directory
 
+- set_fact:
+    docker_options:
+      exec-opts: ["native.cgroupdriver=systemd"]
+      log-driver: json-file
+      log-opts: {max-size: 100m}
+      storage-driver: devicemapper
+
+- set_fact:
+    docker_options: "{{ docker_options | combine(kube_docker_options) }}"
+
 - copy:
     dest: /etc/docker/daemon.json
-    content: |
-        {
-          "exec-opts": ["native.cgroupdriver=systemd"],
-          "log-driver": "json-file",
-          "log-opts": {
-            "max-size": "100m"
-          },
-          "storage-driver": "devicemapper"
-        }
+    content: "{{ docker_options | to_nice_json(indent=2) }}"
   register: devicemapper_storage
 
 - name: Create /etc/systemd/system/docker.service.d dir
