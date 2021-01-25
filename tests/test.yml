@@ -7,3 +7,5 @@
       kube_deploy_dashboard: true
       kube_apiserver_options:
       - {option: "--service-node-port-range", value: "80-32767"}
+      kube_docker_options:
+        data-root: /var/lib/docker

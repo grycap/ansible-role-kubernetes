@@ -56,6 +56,8 @@ The variables that can be passed to this role and a brief description about them
 	kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
 	# Email to be used in the Let's Encrypt issuer
 	kube_cert_user_email: jhondoe@server.com
+	# Options to add in the docker.json file
+	kube_docker_options: {}
 
 Example Playbook
 ----------------
