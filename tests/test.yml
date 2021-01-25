@@ -8,4 +8,4 @@
       kube_apiserver_options:
       - {option: "--service-node-port-range", value: "80-32767"}
       kube_docker_options:
-        kube_cri_data_dir: /var/lib/docker
+        data-root: /var/lib/docker
