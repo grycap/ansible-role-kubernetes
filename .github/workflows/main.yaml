@@ -27,8 +27,8 @@ jobs:
       - name: Create ansible.cfg with correct roles_path
         run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
   
-      - name: Install grycap.ntp
-        run: sudo ansible-galaxy install grycap.ntp
+      - name: Install geerlingguy.ntp
+        run: sudo ansible-galaxy install geerlingguy.ntp
   
       - name: Remove pre-installed kubectl to avoid errors
         run: dpkg -l kubectl && sudo apt remove -y kubectl
