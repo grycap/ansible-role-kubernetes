@@ -26,7 +26,7 @@
 - name: Chek docker compatible versions
   set_fact:
     docker_install: false
-  when: "'1.11.' in docker_output.stdout or '1.12.' in docker_output.stdout or '1.13.' in docker_output.stdout or '17.03.' in docker_output.stdout or '18.06.' in docker_output.stdout or '18.09.' in docker_output.stdout or '19.03.11' in docker_output.stdout"
+  when: "'1.11.' in docker_output.stdout or '1.12.' in docker_output.stdout or '1.13.' in docker_output.stdout or '17.03.' in docker_output.stdout or '18.06.' in docker_output.stdout or '18.09.' in docker_output.stdout or '19.03.' in docker_output.stdout"
 
 - name: Install docker
   include_tasks: "{{ansible_os_family}}_docker.yaml"
