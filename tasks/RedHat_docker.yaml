@@ -9,8 +9,8 @@
       url: https://download.docker.com/linux/centos/docker-ce.repo
       dest: /etc/yum.repos.d/docker-ce.repo
 
-  - name: Install docker-ce 19.03.11
-    yum: name=docker-ce-19.03.11 state=installed update_cache=yes
+  - name: Install docker-ce 19.03.15
+    yum: name=docker-ce-19.03.15 state=installed update_cache=yes
 
   when: docker_install | bool
 
