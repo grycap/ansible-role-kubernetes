@@ -2,6 +2,10 @@
 - name: Install Requisites
   yum: name=device-mapper-persistent-data,lvm2 state=installed
 
+- name: Remove problematic podman and buildah
+  yum: name=podman,buildah state=removed
+  when: ansible_distribution_major_version|int >= 8
+
 - block:
 
   - name: Download docker-ce.repo
