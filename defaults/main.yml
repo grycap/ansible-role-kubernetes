@@ -56,3 +56,10 @@ kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
 kube_cert_user_email: jhondoe@server.com
 # Options to add in the docker.json file
 kube_docker_options: {}
+# Nvidia docker options to add in the docker.json file
+docker_nvidia_options:
+  default-runtime: nvidia
+  runtimes:
+    nvidia:
+      path: /usr/bin/nvidia-container-runtime
+      runtimeArgs: []
