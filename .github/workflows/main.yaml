@@ -31,7 +31,7 @@ jobs:
         run: sudo ansible-galaxy install geerlingguy.ntp
   
       - name: Remove pre-installed kubectl to avoid errors
-        run: dpkg -l kubectl && sudo apt remove -y kubectl
+        run: sudo apt remove buildah podman kubectl containers-image -y
 
       - name: Basic role syntax check
         run: sudo ansible-playbook tests/test.yml -i tests/inventory --syntax-check
