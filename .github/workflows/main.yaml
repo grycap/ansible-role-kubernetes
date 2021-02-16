@@ -22,7 +22,7 @@ jobs:
         run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
     
       - name: Remove pre-installed kubectl to avoid errors
-        run: sudo apt remove buildah podman kubectl containers-image containers-common docker-ce -y
+        run: sudo apt remove buildah podman kubectl containers-image containers-common docker -y
 
       - name: Install Ansible
         run: sudo pip3 install ansible
