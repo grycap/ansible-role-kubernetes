@@ -35,6 +35,10 @@
 - set_fact:
     docker_options: "{{ docker_options | combine(kube_docker_options) }}"
 
+- name: Install Nvidia-docker
+  include_tasks: "{{ansible_os_family}}_nvidia.yaml"
+  when: kube_nvidia_support | bool and kube_type_of_node == "wn"
+
 - name: Create /etc/docker/daemon.json
   register: docker_json
   copy:

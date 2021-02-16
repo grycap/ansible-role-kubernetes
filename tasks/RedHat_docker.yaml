@@ -31,14 +31,18 @@
 - set_fact:
     docker_options: "{{ docker_options | combine(kube_docker_options) }}"
 
+- name: Install Nvidia-docker
+  include_tasks: "{{ansible_os_family}}_nvidia.yaml"
+  when: kube_nvidia_support | bool and kube_type_of_node == "wn"
+
 - copy:
     dest: /etc/docker/daemon.json
     content: "{{ docker_options | to_nice_json(indent=2) }}"
-  register: devicemapper_storage
+  register: docker_daemon_json
 
 - name: Create /etc/systemd/system/docker.service.d dir
   file: path=/etc/systemd/system/docker.service.d state=directory recurse=yes
 
 - name: Restart docker service
   service: name=docker state=restarted enabled=yes
-  when: devicemapper_storage is changed
+  when: docker_daemon_json is changed

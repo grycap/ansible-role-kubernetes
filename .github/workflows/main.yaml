@@ -20,6 +20,9 @@ jobs:
 
       - name: Install python
         run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
+    
+      - name: Remove pre-installed kubectl to avoid errors
+        run: sudo apt remove buildah podman kubectl containers-image containers-common docker -y
 
       - name: Install Ansible
         run: sudo pip3 install ansible
@@ -29,9 +32,6 @@ jobs:
   
       - name: Install geerlingguy.ntp
         run: sudo ansible-galaxy install geerlingguy.ntp
-  
-      - name: Remove pre-installed kubectl to avoid errors
-        run: dpkg -l kubectl && sudo apt remove -y kubectl
 
       - name: Basic role syntax check
         run: sudo ansible-playbook tests/test.yml -i tests/inventory --syntax-check

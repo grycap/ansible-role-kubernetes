@@ -9,3 +9,4 @@
       - {option: "--service-node-port-range", value: "80-32767"}
       kube_docker_options:
         data-root: /var/lib/docker
+      kube_version: 1.20.2
