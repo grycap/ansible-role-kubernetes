@@ -11,13 +11,13 @@
 - name: Kubeadm init
   command: kubeadm init --pod-network-cidr={{kube_pod_network_cidr}} --token={{kube_token}} --token-ttl {{kube_token_ttl}} --apiserver-advertise-address={{kube_api_server}} creates=/etc/kubernetes/admin.conf
 
-- name: wait Kube to start on localhost
-  wait_for: port=6443
-  when: kube_api_server == "0.0.0.0"
-
-- name: wait Kube to start on "{{kube_api_server}}"
-  wait_for: port=6443 host="{{kube_api_server}}"
+- name: Set kube_wait_api_server_ip
+  set_fact:
+    kube_wait_api_server_ip: "{{kube_api_server}}"
   when: kube_api_server != "0.0.0.0"
+
+- name: wait Kube to start on "{{kube_wait_api_server_ip}}"
+  wait_for: port=6443 host="{{kube_wait_api_server_ip}}"
 
 - import_tasks: kube_nets.yaml
 

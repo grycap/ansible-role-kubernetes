@@ -24,6 +24,8 @@ kube_install_helm_version: "v3.2.1"
 kube_deploy_dashboard: false
 # Value to pass to the kubeadm init --apiserver-advertise-address option
 kube_api_server: 0.0.0.0
+# IP to wait the api server
+kube_wait_api_server_ip: 127.0.0.1
 # List of values with the information for creating persisten volumes
 # Array variables needed: [ namespace : "", name : "", label : "", capacity_storage : "", nfs_path : "" ]
 kube_persistent_volumes: []
