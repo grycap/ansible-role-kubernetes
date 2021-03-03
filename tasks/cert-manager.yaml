@@ -10,7 +10,7 @@
       msg: "DNS name = {{ public_hostname }} - Disabling cert_manager."
   - set_fact:
       kube_cert_manager: false
-  when: kube_cert_manager | bool and (public_hostname is undefined or public_hostname == "NXDOMAIN" or public_hostname == "")
+  when: kube_cert_manager | bool and (public_hostname is undefined or public_hostname == "NXDOMAI" or public_hostname == "")
 
 - block:
   - copy: src=cert-manager.yaml dest=/tmp/cert-manager.yaml
