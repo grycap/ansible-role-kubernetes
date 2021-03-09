@@ -52,8 +52,10 @@ The variables that can be passed to this role and a brief description about them
 	kube_flanneld_extra_args: [] 
 	# Enable to install and manage Certificates with Cert-manager
 	kube_cert_manager: false
-	# Public IP to use by the cert-manager
+	# Public IP to use by the cert-manager (not needed if kube_public_dns_name is set)
 	kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
+	# Public DNS name to use in the dashboard tls certificate
+	kube_public_dns_name: ""
 	# Email to be used in the Let's Encrypt issuer
 	kube_cert_user_email: jhondoe@server.com
 	# Options to add in the docker.json file
