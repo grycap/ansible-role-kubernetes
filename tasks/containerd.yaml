@@ -48,6 +48,9 @@
     regexp: '(\s+)\[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options\](\s+)\['
     replace: '\1[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]\1  SystemdCgroup = true\2['
 
+- name: Copy kubeadm-config.yaml file
+  copy: src=kubeadm-config.yaml dest=/tmp/kubeadm-config.yaml
+
 - name: Set kubeadm-config.yaml file
   set_fact:
     kubeadm_config: "--config kubeadm-config.yaml"
