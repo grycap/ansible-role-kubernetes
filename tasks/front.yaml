@@ -8,8 +8,11 @@
 - name: force handlers
   meta: flush_handlers
 
+- name: Create kubeadm-config file
+  template: src=kubeadm-config.j2 dest=/tmp/kubeadm-config.yml
+
 - name: Kubeadm init
-  command: kubeadm init {{kubeadm_config}} --pod-network-cidr={{kube_pod_network_cidr}} --token={{kube_token}} --token-ttl {{kube_token_ttl}} --apiserver-advertise-address={{kube_api_server}} creates=/etc/kubernetes/admin.conf
+  command: kubeadm init --config /tmp/kubeadm-config.yml creates=/etc/kubernetes/admin.conf
 
 - name: Set kube_wait_api_server_ip
   set_fact:

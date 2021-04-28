@@ -18,8 +18,6 @@ kubelet_extra_args: ''
 kube_apiserver_options: []
 # CRI runtime
 kube_cri_runtime: docker # docker or containerd
-# kubeadm config file option
-kubeadm_config: ""
 # Flag to set HELM to be installed
 kube_install_helm: true
 # Helm version
