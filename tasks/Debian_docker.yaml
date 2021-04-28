@@ -39,14 +39,3 @@
   include_tasks: "{{ansible_os_family}}_nvidia.yaml"
   when: kube_nvidia_support | bool and kube_type_of_node == "wn"
 
-- name: Create /etc/docker/daemon.json
-  register: docker_json
-  copy:
-    content: "{{ docker_options | to_nice_json(indent=2) }}"
-    dest: /etc/docker/daemon.json
-
-- name: restart docker
-  service:
-    name: docker
-    state: restarted
-  when: docker_json is changed
