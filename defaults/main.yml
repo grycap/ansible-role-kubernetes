@@ -26,6 +26,8 @@ kube_install_helm_version: "v3.2.1"
 kube_deploy_dashboard: false
 # Value to pass to the kubeadm init --apiserver-advertise-address option
 kube_api_server: 0.0.0.0
+# IP to wait the api server
+kube_wait_api_server_ip: 127.0.0.1
 # List of values with the information for creating persisten volumes
 # Array variables needed: [ namespace : "", name : "", label : "", capacity_storage : "", nfs_path : "" ]
 kube_persistent_volumes: []
@@ -52,7 +54,18 @@ kube_nfs_server: kubeserver.localdomain
 kube_flanneld_extra_args: []
 # Enable to install and manage Certificates with Cert-manager
 kube_cert_manager: false
-# Public IP to use by the cert-manager
+# Public IP to use by the cert-manager (not needed if kube_public_dns_name is set)
 kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
+# Public DNS name to use in the dashboard tls certificate
+kube_public_dns_name: ""
 # Email to be used in the Let's Encrypt issuer
 kube_cert_user_email: jhondoe@server.com
+# Options to add in the docker.json file
+kube_docker_options: {}
+# Nvidia docker options to add in the docker.json file
+docker_nvidia_options:
+  default-runtime: nvidia
+  runtimes:
+    nvidia:
+      path: /usr/bin/nvidia-container-runtime
+      runtimeArgs: []

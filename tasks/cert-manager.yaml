@@ -3,14 +3,18 @@
       name: dnspython
   - set_fact:
       public_hostname: "{{ lookup('dig', kube_cert_public_ip + '/PTR', '@8.8.8.8')[:-1] }}"
-  when: kube_cert_manager | bool
+  when: kube_cert_manager | bool and kube_public_dns_name == ""
 
 - block:
   - debug:
       msg: "DNS name = {{ public_hostname }} - Disabling cert_manager."
   - set_fact:
       kube_cert_manager: false
-  when: kube_cert_manager | bool and (public_hostname is undefined or public_hostname == "NXDOMAIN" or public_hostname == "")
+  when: kube_cert_manager | bool and kube_public_dns_name == ""and (public_hostname is undefined or public_hostname == "NXDOMAI" or public_hostname == "")
+
+- set_fact:
+    public_hostname: "{{ kube_public_dns_name}}"
+  when: kube_cert_manager | bool and kube_public_dns_name != ""
 
 - block:
   - copy: src=cert-manager.yaml dest=/tmp/cert-manager.yaml

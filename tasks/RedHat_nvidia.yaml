@@ -1,5 +1,4 @@
 ---
-
 # In CentOS we must assume that drivers are already installed
 - name: Check nvidia is installed
   stat:

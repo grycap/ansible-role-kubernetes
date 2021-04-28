@@ -2,6 +2,10 @@
 - name: Install Requisites
   yum: name=device-mapper-persistent-data,lvm2 state=installed
 
+- name: Remove problematic podman and buildah
+  yum: name=podman,buildah state=removed
+  when: ansible_distribution_major_version|int >= 8
+
 - block:
 
   - name: Download docker-ce.repo
@@ -9,25 +13,27 @@
       url: https://download.docker.com/linux/centos/docker-ce.repo
       dest: /etc/yum.repos.d/docker-ce.repo
 
-  - name: Install docker-ce 18.06.2
-    yum: name=docker-ce-18.06.2.ce state=installed update_cache=yes
+  - name: Install docker-ce 19.03.15
+    yum: name=docker-ce-19.03.15 state=installed update_cache=yes
 
   when: docker_install | bool
 
 - name: Create /etc/docker dir
   file: path=/etc/docker state=directory
 
-- copy:
-    dest: /etc/docker/daemon.json
-    content: |
-        {
-          "storage-driver": "devicemapper"
-        }
-  register: devicemapper_storage
+- set_fact:
+    docker_options:
+      exec-opts: ["native.cgroupdriver=systemd"]
+      log-driver: json-file
+      log-opts: {max-size: 100m}
+      storage-driver: devicemapper
+
+- set_fact:
+    docker_options: "{{ docker_options | combine(kube_docker_options) }}"
+
+- name: Install Nvidia-docker
+  include_tasks: "{{ansible_os_family}}_nvidia.yaml"
+  when: kube_nvidia_support | bool and kube_type_of_node == "wn"
 
 - name: Create /etc/systemd/system/docker.service.d dir
   file: path=/etc/systemd/system/docker.service.d state=directory recurse=yes
-
-- name: Start docker service
-  service: name=docker state=restarted enabled=yes
-  when: devicemapper_storage is changed

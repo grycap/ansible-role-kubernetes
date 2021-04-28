@@ -1,7 +1,7 @@
 ---
 - block:
   - name: Install docker requisites
-    apt: name=apt-transport-https,ca-certificates,software-properties-common
+    apt: name=apt-transport-https,ca-certificates,software-properties-common,curl,gnupg2
 
   - name: Add Docker repo key
     apt_key: url="https://download.docker.com/linux/debian/gpg"
@@ -16,16 +16,37 @@
     apt_repository: repo='deb https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable' state=present update_cache=yes
     when: ansible_distribution != "Ubuntu"
 
-  - name: Install docker 18.06
-    apt: name="docker-ce=18.06.2~ce~3-0~debian" state=present force=yes
-    when: ansible_distribution != "Ubuntu"
-
   - name: Add docker repo
     apt_repository: repo='deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ansible_distribution_release}} stable' state=present update_cache=yes
     when: ansible_distribution == "Ubuntu"
 
-  - name: Install docker 18.06
-    apt: name="docker-ce=18.06.2~ce~3-0~ubuntu" state=present force=yes
-    when: ansible_distribution == "Ubuntu"
+  - name: Install docker 19.03
+    apt: name="docker-ce=5:19.03.11~3-0~{{ansible_distribution | lower}}-{{ansible_distribution_release}}" state=present force=yes
 
   when: docker_install | bool
+
+- set_fact:
+    docker_options:
+      exec-opts: ["native.cgroupdriver=systemd"]
+      log-driver: json-file
+      log-opts: {max-size: 100m}
+      storage-driver: overlay2
+
+- set_fact:
+    docker_options: "{{ docker_options | combine(kube_docker_options) }}"
+
+- name: Install Nvidia-docker
+  include_tasks: "{{ansible_os_family}}_nvidia.yaml"
+  when: kube_nvidia_support | bool and kube_type_of_node == "wn"
+
+- name: Create /etc/docker/daemon.json
+  register: docker_json
+  copy:
+    content: "{{ docker_options | to_nice_json(indent=2) }}"
+    dest: /etc/docker/daemon.json
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+  when: docker_json is changed

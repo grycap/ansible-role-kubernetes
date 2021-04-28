@@ -1,6 +1,8 @@
 ---
   - name: Add Bitnami Helm repo
     command: helm repo add bitnami https://charts.bitnami.com/bitnami
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
 
   - name: Check if kubeapps is installed
     command: helm status kubeapps -n kubeapps
@@ -16,6 +18,8 @@
 
   - name: Install kubeapps
     command: helm install kubeapps --namespace kubeapps bitnami/kubeapps --set useHelm3=true
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
     when: helm_status.rc != 0
 
   - template: src=kubeapps-ingress.j2 dest=/tmp/kubeapps-ingress.yaml

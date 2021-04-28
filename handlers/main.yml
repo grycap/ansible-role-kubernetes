@@ -17,9 +17,10 @@
     state: restarted
   listen: "restart kubeapi"
 
-- name: wait kubeapi port
+- name: wait kubeapi port on "{{kube_wait_api_server_ip}}"
   wait_for:
-    port: 8080
+    port: 6443
+    host: "{{kube_wait_api_server_ip}}"
   listen: "restart kubeapi"
 
 - name: restart docker

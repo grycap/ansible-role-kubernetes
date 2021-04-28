@@ -19,7 +19,9 @@
     register: certs_public
 
 - name: Create certs dir
-  command: mkdir /var/tmp/certs
+  file:
+    path: /var/tmp/certs
+    state: directory
   when: not certs_dir.stat.exists
 
 - name: Create certs

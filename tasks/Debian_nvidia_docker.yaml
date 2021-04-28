@@ -16,16 +16,5 @@
   apt: name=nvidia-docker2
   notify: restart docker
 
-- copy:
-    dest: /etc/docker/daemon.json
-    content: |
-        {
-            "default-runtime": "nvidia",
-            "runtimes": {
-                "nvidia": {
-                    "path": "/usr/bin/nvidia-container-runtime",
-                    "runtimeArgs": []
-                }
-            }
-        }
-  notify: restart docker
+- set_fact:
+    docker_options: "{{ docker_options | combine(docker_nvidia_options) }}"
