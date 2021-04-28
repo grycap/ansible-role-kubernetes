@@ -10,7 +10,7 @@
   delegate_to: "{{kube_server}}"
 
 - name: Add node to kube cluster
-  command: kubeadm join {{kubeadm_config}} --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
+  command: kubeadm join --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
 
 - name: Add KUBELET_EXTRA_ARGS
   lineinfile:
