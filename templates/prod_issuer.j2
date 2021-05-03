@@ -12,8 +12,22 @@ spec:
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
       name: letsencrypt-prod
-    # Enable the HTTP-01 challenge provider
     solvers:
+{% if kube_cert_manager_challenge == "dns01" %}
+    # Enable the DNS-01 challenge provider
+    - selector:
+        dnsZones:
+          - "{{ kube_cert_manager_challenge_dns01_domain }}"
+      dns01:
+        route53:
+          region: us-east-1
+          accessKeyID: {{ kube_cert_manager_challenge_dns01_ak }}
+          secretAccessKeySecretRef:
+            name: prod-route53-credentials-secret
+            key: sk
+{% else %}
+    # Enable the HTTP-01 challenge provider
     - http01:
         ingress:
           class: nginx
+{% endif %}

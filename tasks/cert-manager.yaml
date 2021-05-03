@@ -31,6 +31,12 @@
       - cert-manager-cainjector
       - cert-manager-webhook
 
+  - template: src=dns01_secret.j2 dest=/tmp/dns01_secret.yaml
+  - command: kubectl apply -f /tmp/dns01_secret.yaml
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
+    when: kube_cert_manager_challenge == "dns01"
+
   - template: src=prod_issuer.j2 dest=/tmp/prod_issuer.yaml
   - command: kubectl apply -f /tmp/prod_issuer.yaml
     environment:
