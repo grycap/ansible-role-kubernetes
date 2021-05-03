@@ -58,6 +58,12 @@ kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
 kube_public_dns_name: ""
 # Email to be used in the Let's Encrypt issuer
 kube_cert_user_email: jhondoe@server.com
+# Cert Manager type of challenge provider: http01 or dns01
+kube_cert_manager_challenge: 'http01'
+# In case of dns01 only Route53 is supported and this data is required
+kube_cert_manager_challenge_dns01_domain: ''
+kube_cert_manager_challenge_dns01_ak: ''
+kube_cert_manager_challenge_dns01_sk: ''
 # Options to add in the docker.json file
 kube_docker_options: {}
 # Nvidia docker options to add in the docker.json file
