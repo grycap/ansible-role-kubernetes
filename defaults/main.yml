@@ -66,6 +66,8 @@ kube_cert_manager_challenge_dns01_ak: ''
 kube_cert_manager_challenge_dns01_sk: ''
 # Options to add in the docker.json file
 kube_docker_options: {}
+# Compatible docker versions
+kube_docker_compatible_versions: ['17.03.', '18.06.', '18.09.', '19.03.']
 # Nvidia docker options to add in the docker.json file
 docker_nvidia_options:
   default-runtime: nvidia
