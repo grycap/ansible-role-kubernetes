@@ -31,7 +31,7 @@ jobs:
         run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
   
       - name: Install geerlingguy.ntp
-        run: sudo ansible-galaxy install geerlingguy.ntp
+        run: sudo ansible-galaxy install geerlingguy.ntp grycap.docker
 
       - name: Basic role syntax check
         run: sudo ansible-playbook tests/test.yml -i tests/inventory --syntax-check
