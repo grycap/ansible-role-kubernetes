@@ -25,7 +25,8 @@ dependencies:
     docker_nvidia_support: kube_nvidia_support and kube_type_of_node == "wn"
     docker_install_criu: false
     docker_install_pip: false
-    docker_containerd_only: "{{ kube_cri_runtime == 'containerd' | bool }}"
+    docker_compose_version: ""
+    docker_containerd_only: "{{ (kube_cri_runtime == 'containerd') | bool }}"
     when: ansible_os_family == "RedHat"
   - role: 'grycap.docker'
     docker_version: "5:19.03.11~3-0~{{ansible_distribution | lower}}-{{ansible_distribution_release}}"
@@ -34,5 +35,6 @@ dependencies:
     docker_nvidia_support: kube_nvidia_support and kube_type_of_node == "wn"
     docker_install_criu: false
     docker_install_pip: false
-    docker_containerd_only: "{{ kube_cri_runtime == 'containerd' | bool }}"
+    docker_compose_version: ""
+    docker_containerd_only: "{{ (kube_cri_runtime == 'containerd') | bool }}"
     when: ansible_os_family == "Debian"
