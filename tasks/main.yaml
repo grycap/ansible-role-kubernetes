@@ -11,6 +11,7 @@
 - name: Check kube version
   shell: kubeadm version -o short | cut -d 'v' -f 2
   register: kubeadm_output
+  changed_when: false
 
 - debug: msg="Kube version installed = {{ kubeadm_output.stdout }}"
 
