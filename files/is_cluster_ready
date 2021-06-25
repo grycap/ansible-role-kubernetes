@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LINES=`ps aux | grep "ansible" | wc -l`
+LINES=`ps aux | grep "ansible" | grep -v "\[mux\]" | wc -l`
 docker inspect im > /dev/null 2> /dev/null
 
 if [ $LINES -gt 1 -o "$?" -ne "0" ]
