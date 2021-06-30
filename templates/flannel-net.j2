@@ -31,7 +31,7 @@ spec:
   allowPrivilegeEscalation: false
   defaultAllowPrivilegeEscalation: false
   # Capabilities
-  allowedCapabilities: ['NET_ADMIN']
+  allowedCapabilities: ['NET_ADMIN', 'NET_RAW']
   defaultAddCapabilities: []
   requiredDropCapabilities: []
   # Host namespaces
@@ -158,7 +158,7 @@ spec:
       serviceAccountName: flannel
       initContainers:
       - name: install-cni
-        image: quay.io/coreos/flannel:v0.11.0-amd64
+        image: quay.io/coreos/flannel:v0.14.0
         command:
         - cp
         args:
@@ -172,7 +172,7 @@ spec:
           mountPath: /etc/kube-flannel/
       containers:
       - name: kube-flannel
-        image: quay.io/coreos/flannel:v0.11.0-amd64
+        image: quay.io/coreos/flannel:v0.14.0
         command:
         - /opt/bin/flanneld
         args:
