@@ -22,8 +22,3 @@
     port: 6443
     host: "{{kube_wait_api_server_ip}}"
   listen: "restart kubeapi"
-
-- name: restart docker
-  service:
-    name: docker
-    state: restarted
