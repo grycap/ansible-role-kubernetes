@@ -45,6 +45,13 @@
     command: sysctl --system
     when: containerd_sysctl is changed
 
+  - name: Set systemd cgroupDriver
+    lineinfile:
+      dest: /var/lib/kubelet/config.yaml
+      line: 'cgroupDriver: systemd'
+      regexp: '^cgroupDriver:'
+    notify: restart kubelet
+
   when: kube_cri_runtime == "containerd"
 
 - name: Include "{{ansible_os_family}}" Kubernetes recipe
