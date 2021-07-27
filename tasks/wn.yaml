@@ -5,14 +5,17 @@
     search_regex: "KUBECONFIG=/etc/kubernetes/admin.conf"
   delegate_to: "{{kube_server}}"
 
-- name: Add node to kube cluster
-  command: kubeadm join --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
-
 - name: Add KUBELET_EXTRA_ARGS
   lineinfile:
-    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    line: 'Environment="KUBELET_EXTRA_ARGS={{kubelet_extra_args}}"'
-    regexp: '^Environment="KUBELET_EXTRA_ARGS'
-    insertafter: '\[Service\]'
+    dest: "{{item}}/kubelet"
+    line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd {{kubelet_extra_args}}'
+    regexp: 'KUBELET_EXTRA_ARGS='
+    create: yes
   notify: restart kubelet
-  when: kubelet_extra_args != ''
+  with_first_found:
+    - files:
+       - /etc/sysconfig/
+       - /etc/default/
+
+- name: Add node to kube cluster
+  command: kubeadm join --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
