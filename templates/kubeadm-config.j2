@@ -14,6 +14,6 @@ cgroupDriver: systemd
 kind: InitConfiguration
 apiVersion: kubeadm.k8s.io/v1beta2
 bootstrapTokens:
-- token: "{{kube_token}} "                          # --token
+- token: "{{kube_token}}"                          # --token
   description: "kubeadm bootstrap token"
   ttl: "{{kube_token_ttl}}"                         # --token-ttl
