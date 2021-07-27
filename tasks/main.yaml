@@ -50,13 +50,5 @@
 - name: Include "{{ansible_os_family}}" Kubernetes recipe
   include_tasks: "{{ansible_os_family}}.yaml"
 
-- name: Set systemd cgroupDriver
-  lineinfile:
-    dest: /var/lib/kubelet/config.yaml
-    line: 'cgroupDriver: systemd'
-    regexp: '^cgroupDriver:'
-  notify: restart kubelet
-  when: kube_cri_runtime == "containerd"
-
 - name: Include "{{kube_type_of_node}}" tasks
   include_tasks: "{{kube_type_of_node}}.yaml"

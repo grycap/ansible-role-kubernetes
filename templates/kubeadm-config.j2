@@ -1,0 +1,19 @@
+---
+kind: ClusterConfiguration
+apiVersion: kubeadm.k8s.io/v1beta2
+networking:
+  podSubnet: "{{kube_pod_network_cidr}}"            # --pod-network-cidr
+apiServer:
+  extraArgs:
+    advertise-address: "{{kube_api_server}}"        # --apiserver-advertise-address
+---
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+cgroupDriver: systemd
+---
+kind: InitConfiguration
+apiVersion: kubeadm.k8s.io/v1beta2
+bootstrapTokens:
+- token: "{{kube_token}} "                          # --token
+  description: "kubeadm bootstrap token"
+  ttl: "{{kube_token_ttl}}"                         # --token-ttl
