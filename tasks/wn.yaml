@@ -7,7 +7,7 @@
 
 - name: Add KUBELET_EXTRA_ARGS
   lineinfile:
-    dest: "{{item}}"kubelet
+    dest: "{{item}}/kubelet"
     line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd {{kubelet_extra_args}}'
     regexp: 'KUBELET_EXTRA_ARGS='
     create: yes
