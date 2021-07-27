@@ -10,9 +10,11 @@
 
 - name: Add KUBELET_EXTRA_ARGS
   lineinfile:
-    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    line: 'Environment="KUBELET_EXTRA_ARGS={{kubelet_extra_args}}"'
-    regexp: '^Environment="KUBELET_EXTRA_ARGS'
-    insertafter: '\[Service\]'
+    dest: "{{item}}"
+    line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd {{kubelet_extra_args}}'
+    regexp: 'KUBELET_EXTRA_ARGS='
   notify: restart kubelet
-  when: kubelet_extra_args != ''
+  with_first_found:
+    - files:
+       - /etc/sysconfig/kubelet
+       - /etc/default/kubelet
