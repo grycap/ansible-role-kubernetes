@@ -16,11 +16,17 @@
       KUBECONFIG: /etc/kubernetes/admin.conf
     when: helm_status.rc != 0
 
-  - name: Install kubeapps
-    command: helm install kubeapps --namespace kubeapps bitnami/kubeapps --set useHelm3=true
+  - name: Install kubeapps {{kube_kubeapps_chart_version}}
+    command: helm install kubeapps --namespace kubeapps bitnami/kubeapps --version={{kube_kubeapps_chart_version}}
     environment:
       KUBECONFIG: /etc/kubernetes/admin.conf
-    when: helm_status.rc != 0
+    when: helm_status.rc != 0 and kube_kubeapps_chart_version != "latest"
+
+  - name: Install kubeapps latest
+    command: helm install kubeapps --namespace kubeapps bitnami/kubeapps
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
+    when: helm_status.rc != 0 and kube_kubeapps_chart_version == "latest"
 
   - template: src=kubeapps-ingress.j2 dest=/tmp/kubeapps-ingress.yaml
   - command: kubectl apply -f /tmp/kubeapps-ingress.yaml
