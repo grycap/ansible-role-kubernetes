@@ -48,6 +48,8 @@ The variables that can be passed to this role and a brief description about them
 	kube_install_ingress: false
 	# Flag to set the kubeapps UI to be installed
 	kube_install_kubeapps: false
+	# KubeApps chart version to install (or latest)
+	kube_kubeapps_chart_version: "7.3.2"
 	# Extra options for the flannel plugin
 	kube_flanneld_extra_args: [] 
 	# Enable to install and manage Certificates with Cert-manager
