@@ -52,3 +52,4 @@
   command: kubectl wait --for=condition=complete --timeout=300s -n ingress-nginx job/ingress-nginx-admission-create
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
+  ignore_errors: yes
