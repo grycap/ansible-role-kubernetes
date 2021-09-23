@@ -64,6 +64,8 @@ The variables that can be passed to this role and a brief description about them
 	kube_docker_options: {}
 	# Compatible docker versions
 	kube_docker_compatible_versions: ['17.03.', '18.06.', '18.09.', '19.03.']
+	# Install docker with pip
+	kube_install_docker_pip
 
 Example Playbook
 ----------------

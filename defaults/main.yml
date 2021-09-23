@@ -79,3 +79,5 @@ docker_nvidia_options:
     nvidia:
       path: /usr/bin/nvidia-container-runtime
       runtimeArgs: []
+# Install docker with pip
+kube_install_docker_pip: false
