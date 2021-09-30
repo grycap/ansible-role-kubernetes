@@ -5,21 +5,40 @@
 - name: force handlers
   meta: flush_handlers
 
-- name: Create kubeadm-config file
-  template: src=kubeadm-config.j2 dest=/tmp/kubeadm-config.yml
+- block:
 
-- name: Kubeadm init
-  command: kubeadm init --config /tmp/kubeadm-config.yml creates=/etc/kubernetes/admin.conf
+  - name: Create kubeadm-config file
+    template: src=kubeadm-config.j2 dest=/tmp/kubeadm-config.yml
 
-- name: Set kube_wait_api_server_ip
-  set_fact:
-    kube_wait_api_server_ip: "{{kube_api_server}}"
-  when: kube_api_server != "0.0.0.0"
+  - name: Kubeadm init
+    command: kubeadm init --config /tmp/kubeadm-config.yml creates=/etc/kubernetes/admin.conf
 
-- name: wait Kube to start on "{{kube_wait_api_server_ip}}"
-  wait_for: port=6443 host="{{kube_wait_api_server_ip}}"
+  - name: Set kube_wait_api_server_ip
+    set_fact:
+      kube_wait_api_server_ip: "{{kube_api_server}}"
+    when: kube_api_server != "0.0.0.0"
 
-- import_tasks: kube_nets.yaml
+  - name: wait Kube to start on "{{kube_wait_api_server_ip}}"
+    wait_for: port=6443 host="{{kube_wait_api_server_ip}}"
+  
+  - import_tasks: kube_nets.yaml
+
+  when: kube_install_method == "kubeadm"
+
+- block:
+
+  - name: Install k3s server
+    command: sh /tmp/k3s.sh --no-deploy traefik
+    environment:
+      INSTALL_K3S_VERSION: "{{ kube_version }}"
+
+  - name: Link kubectl to /usr/bin/kubectl
+    file:
+      src: /usr/local/bin/kubectl
+      dest: /usr/bin/kubectl
+      state: link
+
+  when: kube_install_method == "k3s"
 
 - import_tasks: helm.yaml
   environment:
