@@ -4,7 +4,7 @@
   - copy: src=ingress-nginx-namespace.yaml dest=/tmp/ingress-nginx-namespace.yaml
   - command: kubectl apply -f /tmp/ingress-nginx-namespace.yaml
     environment:
-      KUBECONFIG: /etc/kubernetes/admin.conf
+      KUBECONFIG: "{{KUBECONFIG}}"
 
 - name: Check if certs are created
   block:
@@ -31,14 +31,14 @@
 - name: Check if certs secret is created
   command: kubectl get secret certs -n ingress-nginx
   environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
+    KUBECONFIG: "{{KUBECONFIG}}"
   register: certs_secret
   failed_when: certs_secret.rc != 0 and certs_secret.rc != 1
 
 - name: Create certs secret
   command: kubectl create secret tls certs --key /var/tmp/certs/private.key --cert /var/tmp/certs/public.crt -n ingress-nginx
   environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
+    KUBECONFIG: "{{KUBECONFIG}}"
   when: certs_secret.rc == 1
 
 - name: Deploy ingress-nginx
@@ -46,10 +46,10 @@
   - copy: src=ingress-nginx.yaml dest=/tmp/ingress-nginx.yaml
   - command: kubectl apply -f /tmp/ingress-nginx.yaml
     environment:
-      KUBECONFIG: /etc/kubernetes/admin.conf
+      KUBECONFIG: "{{KUBECONFIG}}"
 
 - name: Wait ingress-nginx jobs
   command: kubectl wait --for=condition=complete --timeout=300s -n ingress-nginx job/ingress-nginx-admission-create
   environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
+    KUBECONFIG: "{{KUBECONFIG}}"
   ignore_errors: yes

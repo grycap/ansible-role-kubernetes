@@ -3,7 +3,7 @@
 - name: Wait for Kube master
   wait_for:
     path: /etc/environment
-    search_regex: "KUBECONFIG=/etc/kubernetes/admin.conf"
+    search_regex: "KUBECONFIG="
   delegate_to: "{{kube_server}}"
 
 - block:
