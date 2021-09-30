@@ -8,12 +8,16 @@
 
 - block:
 
+  - name: read node token on k3s master node
+    set_fact:
+      node_token: "{{ lookup('file', '/var/lib/rancher/k3s/server/node-token') }}"
+
   - name: Install k3s node
     command: sh /tmp/k3s.sh
     environment:
       INSTALL_K3S_EXEC: ""
       K3S_URL: https://{{ kube_server }}:6443
-      K3S_TOKEN: "{{ kube_token }}"
+      K3S_TOKEN: "{{ node_token }}"
 
   when: kube_install_method == "k3s"
 
