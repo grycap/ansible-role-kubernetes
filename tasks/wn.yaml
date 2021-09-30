@@ -13,7 +13,7 @@
       node_token: "{{ lookup('file', '/var/lib/rancher/k3s/server/node-token') }}"
 
   - name: Install k3s node
-    command: sh /tmp/k3s.sh
+    command: sh /tmp/k3s.sh creates=/var/lib/rancher/k3s/agent/etc/k3s-agent-load-balancer.json
     environment:
       INSTALL_K3S_EXEC: ""
       K3S_URL: https://{{ kube_server }}:6443
