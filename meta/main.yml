@@ -27,7 +27,7 @@ dependencies:
     docker_install_pip: "{{kube_install_docker_pip}}"
     docker_compose_version: ""
     docker_containerd_only: "{{ (kube_cri_runtime == 'containerd') | bool }}"
-    when: ansible_os_family == "RedHat" and kube_install_method == kubeadm
+    when: ansible_os_family == "RedHat" and kube_install_method == 'kubeadm'
   - role: 'grycap.docker'
     docker_version: "5:19.03.11~3-0~{{ansible_distribution | lower}}-{{ansible_distribution_release}}"
     docker_compatible_versions: "{{kube_docker_compatible_versions}}"
@@ -37,4 +37,4 @@ dependencies:
     docker_install_pip: "{{kube_install_docker_pip}}"
     docker_compose_version: ""
     docker_containerd_only: "{{ (kube_cri_runtime == 'containerd') | bool }}"
-    when: ansible_os_family == "Debian" and kube_install_method == kubeadm
+    when: ansible_os_family == "Debian" and kube_install_method == 'kubeadm'
