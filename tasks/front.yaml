@@ -47,11 +47,14 @@
 - block:
 
   - set_fact:
-      k3s_args: --service-node-port-range=80-32000
+      k3s_args: --no-deploy traefik 
+
+  - set_fact:
+      k3s_args: --no-deploy traefik --service-node-port-range=80-32000
     when: kube_install_ingress | bool
 
   - name: Install k3s server
-    command: sh /tmp/k3s.sh --no-deploy traefik {{k3s_args}} creates=/etc/rancher/k3s/k3s.yaml
+    command: sh /tmp/k3s.sh {{k3s_args}} creates=/etc/rancher/k3s/k3s.yaml
     environment:
       INSTALL_K3S_VERSION: "{{ kube_version }}"
 
