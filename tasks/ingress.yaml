@@ -53,3 +53,9 @@
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
   ignore_errors: yes
+
+- name: Wait ingress-nginx deployment
+  command: kubectl wait --for=condition=available --timeout=300s -n ingress-nginx deployment/ingress-nginx-controller
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
+  ignore_errors: yes
