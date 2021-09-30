@@ -1,7 +1,9 @@
 # Version to install or latest
 kube_version: 1.19.14
-# Type of node front or wn
+# Type of node front, control_plane or wn
 kube_type_of_node: front
+# Endpoint for the control plane in case of HA mode with multiple master
+kube_control_plane_endpoint: ""
 # IP address or name of the Kube front node
 kube_server: "{{ ansible_default_ipv4.address }}"
 # Token

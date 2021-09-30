@@ -50,5 +50,22 @@
 - name: Include "{{ansible_os_family}}" Kubernetes recipe
   include_tasks: "{{ansible_os_family}}.yaml"
 
+- name: Add KUBELET_EXTRA_ARGS
+  lineinfile:
+    dest: "{{item}}/kubelet"
+    line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd {{kubelet_extra_args}}'
+    regexp: 'KUBELET_EXTRA_ARGS='
+    create: yes
+  notify: restart kubelet
+  with_first_found:
+    - files:
+       - /etc/sysconfig/
+       - /etc/default/
+
 - name: Include "{{kube_type_of_node}}" tasks
   include_tasks: "{{kube_type_of_node}}.yaml"
+  when: kube_type_of_node == "front" or kube_type_of_node == "wn"
+
+- name: Include control_plane tasks
+  include_tasks: "wn.yaml"
+  when: kube_type_of_node == "control_plane"
