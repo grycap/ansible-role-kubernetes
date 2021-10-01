@@ -4,6 +4,8 @@ kube_version: 1.19.14
 kube_type_of_node: front
 # How to install K8s: kubeadm or k3s
 kube_install_method: kubeadm
+# Servers to install and configure ntp
+kube_ntp_servers: [ntp.upv.es, ntp.uv.es]
 # IP address or name of the Kube front node
 kube_server: "{{ ansible_default_ipv4.address }}"
 # Token

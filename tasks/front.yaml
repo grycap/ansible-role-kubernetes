@@ -47,7 +47,12 @@
 - block:
 
   - set_fact:
-      k3s_args: --no-deploy traefik 
+      k3s_args: --no-deploy traefik
+
+  - name: Add Kube API server options to K3s
+    set_fact:
+      k3s_args: "{{k3s_args}} --kube-apiserver-arg={{item.option}}={{item.value}}"
+    with_items: "{{ kube_apiserver_options }}"
 
   - set_fact:
       k3s_args: --no-deploy traefik --service-node-port-range=80-32000

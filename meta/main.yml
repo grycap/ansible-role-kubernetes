@@ -17,7 +17,8 @@ galaxy_info:
 
 dependencies:
   - role: 'geerlingguy.ntp'
-    ntp_servers: [ntp.upv.es, ntp.uv.es]
+    ntp_servers: "{{ kube_ntp_servers }}"
+    when: kube_ntp_servers != []
   - role: 'grycap.docker'
     docker_version: '19.03.15'
     docker_compatible_versions: "{{kube_docker_compatible_versions}}"
