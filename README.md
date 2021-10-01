@@ -66,6 +66,12 @@ The variables that can be passed to this role and a brief description about them
 	kube_docker_compatible_versions: ['17.03.', '18.06.', '18.09.', '19.03.']
 	# Install docker with pip
 	kube_install_docker_pip
+	# Command flags to use for launching k3s in the systemd service
+	kube_k3_exec: ""
+	# How to install K8s: kubeadm or k3s
+	kube_install_method: kubeadm
+	# Servers to install and configure ntp. If [] ntp will not be configured
+	kube_ntp_servers: [ntp.upv.es, ntp.uv.es]
 
 Example Playbook
 ----------------
