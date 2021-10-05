@@ -6,6 +6,9 @@ networking:
 apiServer:
   extraArgs:
     advertise-address: "{{kube_api_server}}"        # --apiserver-advertise-address
+{% if kube_control_plane_endpoint != "" %}
+controlPlaneEndpoint: {{kube_control_plane_endpoint}}
+{% endif %}
 ---
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
@@ -17,6 +20,3 @@ bootstrapTokens:
 - token: "{{kube_token}}"                          # --token
   description: "kubeadm bootstrap token"
   ttl: "{{kube_token_ttl}}"                         # --token-ttl
-{% if kube_control_plane_endpoint != "" %}
-controlPlaneEndpoint: {{kube_control_plane_endpoint}}
-{% endif %}
