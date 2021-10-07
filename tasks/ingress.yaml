@@ -57,5 +57,5 @@
 - name: Wait ingress-nginx deployment
   command: kubectl wait --for=condition=available --timeout=300s -n ingress-nginx deployment/ingress-nginx-controller
   environment:
-    KUBECONFIG: "{{KUBECONFIG}}"
+    KUBECONFIG: /etc/kubernetes/admin.conf
   ignore_errors: yes
