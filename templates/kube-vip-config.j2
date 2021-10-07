@@ -7,7 +7,7 @@ remotePeers:
 - id: {{loop.index + 1}}
   address: {{peer_ip}}
   port: 10000
-{% endfor %}"
+{% endfor %}
 vip: {{kube_control_plane_ip}}
 gratuitousARP: true
 singleNode: false
@@ -24,4 +24,4 @@ loadBalancers:
 {% for peer_ip in kube_control_plane_remote_peer_list %}
   - port: 6443
     address: {{peer_ip}}
-{% endfor %}"
+{% endfor %}
