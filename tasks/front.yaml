@@ -26,6 +26,18 @@
 - name: Kubeadm init
   command: kubeadm init --config /tmp/kubeadm-config.yml {{init_params}} creates=/etc/kubernetes/admin.conf 
 
+- name: Add Kube API server options
+  lineinfile:
+    dest: /etc/kubernetes/manifests/kube-apiserver.yaml
+    line: '    - {{item.option}}={{item.value}}'
+    regexp: '^    - {{item.option}}='
+    insertafter: '    - kube-apiserver'
+  notify: restart kubeapi
+  with_items: "{{ kube_apiserver_options }}"
+
+- name: force handlers
+  meta: flush_handlers
+
 - name: Set kube_wait_api_server_ip
   set_fact:
     kube_wait_api_server_ip: "{{kube_api_server}}"
@@ -35,6 +47,11 @@
   wait_for: port=6443 host="{{kube_wait_api_server_ip}}"
 
 - import_tasks: kube_nets.yaml
+
+- name: Set KUBECONFIG environment variable
+  lineinfile:
+    dest: /etc/environment
+    line: "KUBECONFIG=/etc/kubernetes/admin.conf"
 
 - import_tasks: helm.yaml
   environment:
@@ -81,23 +98,6 @@
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
   with_items: "{{ kube_apply_repos }}"
-
-- name: Add Kube API server options
-  lineinfile:
-    dest: /etc/kubernetes/manifests/kube-apiserver.yaml
-    line: '    - {{item.option}}={{item.value}}'
-    regexp: '^    - {{item.option}}='
-    insertafter: '    - kube-apiserver'
-  notify: restart kubeapi
-  with_items: "{{ kube_apiserver_options }}"
-
-- name: Set KUBECONFIG environment variable
-  lineinfile:
-    dest: /etc/environment
-    line: "KUBECONFIG=/etc/kubernetes/admin.conf"
-
-- name: force handlers
-  meta: flush_handlers
 
 - import_tasks: ingress.yaml
   when: kube_install_ingress | bool
