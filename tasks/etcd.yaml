@@ -1,0 +1,51 @@
+- name: Create kubeadm-config-etcd file
+  template: src=kubeadm-config-etcd.j2 dest=/tmp/kubeadm-config-etcd.yml
+
+- name: Create /etc/kubernetes/pki/etcd file dir
+  file: path=/etc/kubernetes/pki/etcd state=directory mode=755 recurse=yes
+
+- name: Create etcd CA cert
+  command: kubeadm init phase certs etcd-ca creates=/etc/kubernetes/pki/etcd/ca.crt
+  when: kube_type_of_node == "front"
+
+- block:
+
+  - name: Wait for etcd CA cert
+    wait_for:
+      path: /etc/kubernetes/pki/etcd/ca.key
+    delegate_to: "{{kube_server}}"
+  
+  - name: Copy etcd CA files from master
+    synchronize:
+      src: "{{item}}"
+      dest: /etc/kubernetes/pki/etcd/ca.key
+    delegate_to: "{{kube_server}}"
+    with_items:
+      - "/etc/kubernetes/pki/etcd/ca.key"
+      - "/etc/kubernetes/pki/etcd/ca.crt"
+
+  when: kube_type_of_node == "control_plane"
+
+- name: Create etcd server cert
+  command: kubeadm init phase certs etcd-server --config=/tmp/kubeadm-config-etcd.yaml creates=/etc/kubernetes/pki/etcd/server.crt
+
+- name: Create etcd peer cert
+  command: kubeadm init phase certs etcd-peer --config=/tmp/kubeadm-config-etcd.yaml creates=/etc/kubernetes/pki/etcd/peer.crt
+
+- name: Create etcd healthcheck client cert
+  command: kubeadm init phase certs etcd-healthcheck-client --config=/tmp/kubeadm-config-etcd.yaml creates=/etc/kubernetes/pki/etcd/healthcheck-client.crt
+
+- name: Create apiserver-etcd-client server cert
+  command: kubeadm init phase certs apiserver-etcd-client --config=/tmp/kubeadm-config-etcd.yaml creates=/etc/kubernetes/pki/apiserver-etcd-client.crt
+
+- name: Create etcd manifest
+  command: kubeadm init phase etcd local --config=/tmp/kubeadm-config-etcd.yaml creates=/etc/kubernetes/manifests/etcd.yaml
+
+- name: Create k8s ca cert
+  command: kubeadm init phase certs ca creates=/etc/kubernetes/pki/ca.crt
+
+- name: Configure kubelet
+  command: kubeadm init phase kubeconfig kubelet --config=/tmp/kubeadm-config-etcd.yaml creates=/etc/kubernetes/kubelet.conf
+
+- name: Configure kubelet
+  command: kubeadm init phase kubelet-start --config=/tmp/kubeadm-config-etcd.yaml creates=/var/lib/kubelet/config.yaml

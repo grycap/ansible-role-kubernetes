@@ -1,0 +1,21 @@
+---
+- name: Configure VIP LB
+  import_tasks: lb.yaml
+
+- name: Configure HA ETDC
+  import_tasks: etcd.yaml
+
+- name: Wait for Kube master
+  wait_for:
+    path: /etc/environment
+    search_regex: "KUBECONFIG=/etc/kubernetes/admin.conf"
+  delegate_to: "{{kube_server}}"
+
+- name: Transfer certificates from server node
+  synchronize:
+    src: /etc/kubernetes/pki
+    dest: /etc/kubernetes/pki
+  delegate_to: "{{kube_server}}"
+
+- name: Add node to kube cluster control_plane
+  command: kubeadm join --control-plane --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf

@@ -6,8 +6,17 @@ networking:
 apiServer:
   extraArgs:
     advertise-address: "{{kube_api_server}}"        # --apiserver-advertise-address
-{% if kube_control_plane_endpoint != "" %}
-controlPlaneEndpoint: {{kube_control_plane_endpoint}}
+{% if kube_control_plane_ip != "" %}
+controlPlaneEndpoint: {{kube_control_plane_ip}}:{{kube_control_plane_port}}
+etcd:
+    external:
+        endpoints:
+        {%- for peer_name, peer_ip in kube_etcd_peer_list.items() %}
+          - http://{{peer_ip}}:2379
+        {% endfor -%}
+        caFile: /etc/kubernetes/pki/etcd/ca.crt
+        certFile: /etc/kubernetes/pki/apiserver-etcd-client.crt
+        keyFile: /etc/kubernetes/pki/apiserver-etcd-client.key
 {% endif %}
 ---
 kind: KubeletConfiguration
@@ -20,3 +29,4 @@ bootstrapTokens:
 - token: "{{kube_token}}"                          # --token
   description: "kubeadm bootstrap token"
   ttl: "{{kube_token_ttl}}"                         # --token-ttl
+certificateKey: {{}}
