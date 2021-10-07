@@ -64,8 +64,3 @@
 
 - name: Include "{{kube_type_of_node}}" tasks
   include_tasks: "{{kube_type_of_node}}.yaml"
-  when: kube_type_of_node == "front" or kube_type_of_node == "wn"
-
-- name: Include control_plane tasks
-  include_tasks: "wn.yaml"
-  when: kube_type_of_node == "control_plane"
