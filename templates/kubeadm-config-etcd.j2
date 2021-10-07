@@ -1,4 +1,3 @@
-
 ---
 kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta2
@@ -15,9 +14,8 @@ etcd:
       listen-peer-urls: "https://{{kube_etcd_peer_address}}:2380"
       advertise-client-urls: "https://{{kube_etcd_peer_address}}:2379"
       initial-advertise-peer-urls: "https://{{kube_etcd_peer_address}}:2380"
-      initial-cluster: "
-      {%- for peer_name, peer_ip in kube_etcd_peer_list.items() -%}
-        {%- if loop.index -%} , {%- endif -%}"
+      initial-cluster: "{%- for peer_name, peer_ip in kube_etcd_peer_list.items() -%}
+        {%- if loop.index > 1 -%} , {%- endif -%}
         {{peer_name}}=https://{{peer_ip}}:2380
       {%- endfor -%}"
       name: "{{kube_etcd_peer_name}}"

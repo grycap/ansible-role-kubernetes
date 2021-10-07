@@ -5,19 +5,26 @@
 - name: force handlers
   meta: flush_handlers
 
+- set_fact:
+    init_params: ""
+
 - block:
   - name: Configure VIP LB
     import_tasks: lb.yaml
 
   - name: Configure HA ETDC
     import_tasks: etcd.yaml
+
+  - set_fact:
+      init_params: "--upload-certs --ignore-preflight-errors=all"
+  
   when: kube_control_plane_ip != ""
 
 - name: Create kubeadm-config file
   template: src=kubeadm-config.j2 dest=/tmp/kubeadm-config.yml
 
 - name: Kubeadm init
-  command: kubeadm init --config /tmp/kubeadm-config.yml --upload-certs creates=/etc/kubernetes/admin.conf 
+  command: kubeadm init --config /tmp/kubeadm-config.yml {{init_params}} creates=/etc/kubernetes/admin.conf 
 
 - name: Set kube_wait_api_server_ip
   set_fact:

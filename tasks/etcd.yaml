@@ -1,5 +1,5 @@
 - name: Create kubeadm-config-etcd file
-  template: src=kubeadm-config-etcd.j2 dest=/tmp/kubeadm-config-etcd.yml
+  template: src=kubeadm-config-etcd.j2 dest=/tmp/kubeadm-config-etcd.yaml
 
 - name: Create /etc/kubernetes/pki/etcd file dir
   file: path=/etc/kubernetes/pki/etcd state=directory mode=755 recurse=yes
