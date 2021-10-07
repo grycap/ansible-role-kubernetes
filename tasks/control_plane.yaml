@@ -12,4 +12,4 @@
   delegate_to: "{{kube_server}}"
 
 - name: Add node to kube cluster control_plane
-  command: kubeadm join --control-plane --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification --ignore-preflight-errors=all creates=/etc/kubernetes/admin.conf
+  command: kubeadm join --control-plane --token {{kube_token}} {{kube_control_plane_ip}}:{{kube_control_plane_port}} --discovery-token-unsafe-skip-ca-verification --certificate-key={{kube_certificate_key}} --ignore-preflight-errors=all creates=/etc/kubernetes/admin.conf
