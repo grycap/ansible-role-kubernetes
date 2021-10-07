@@ -18,7 +18,7 @@
   - name: Copy etcd CA files from master
     synchronize:
       src: "{{item}}"
-      dest: /etc/kubernetes/pki/etcd/ca.key
+      dest: "{{item}}"
     delegate_to: "{{kube_server}}"
     with_items:
       - "/etc/kubernetes/pki/etcd/ca.key"
