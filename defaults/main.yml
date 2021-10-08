@@ -82,13 +82,13 @@ docker_nvidia_options:
 # Install docker with pip
 kube_install_docker_pip: false
 
-kube_install_kyverno: true
-kyverno_crds_helm_chart_version: 2.0.3
-kyverno_helm_chart_version: 2.0.3
+kube_install_kyverno: false
+kyverno_crds_helm_chart_version: "2.0.3"
+kyverno_helm_chart_version: "2.0.3"
 kyverno_image: ghcr.io/kyverno/kyverno
-kyverno_image_tag: v1.4.3
+kyverno_image_tag: "v1.4.3"
 kyverno_initContainer_image: ghcr.io/kyverno/kyvernopre
-kyverno_initContainer_image_tag: v1.4.3
+kyverno_initContainer_image_tag: "v1.4.3"
 
 # List of resource types to be skipped by kyverno policy engine. See: https://kyverno.io/docs/installation/#resource-filters
 kyverno_config_notapplypolicies: '[Event,*,*][*,kube-system,*][*,kube-public,*][*,kube-node-lease,*][Node,*,*][APIService,*,*][TokenReview,*,*][SubjectAccessReview,*,*][SelfSubjectAccessReview,*,*][*,kyverno,*][Binding,*,*][ReportChangeRequest,*,*][ClusterReportChangeRequest,*,*]'
