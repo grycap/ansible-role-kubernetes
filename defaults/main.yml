@@ -82,6 +82,7 @@ docker_nvidia_options:
 # Install docker with pip
 kube_install_docker_pip: false
 
+kube_install_kyverno: true
 kyverno_crds_helm_chart_version: 2.0.3
 kyverno_helm_chart_version: 2.0.3
 kyverno_image: ghcr.io/kyverno/kyverno
