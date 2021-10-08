@@ -10,7 +10,7 @@
     command: kubeadm init phase certs ca creates=/etc/kubernetes/pki/ca.crt
 
   - name: Create k8s sa cert
-    command: kubeadm init phase certs ca creates=/etc/kubernetes/pki/sa.crt
+    command: kubeadm init phase certs ca creates=/etc/kubernetes/pki/sa.pub
 
   - name: Create k8s front-proxy-ca cert
     command: kubeadm init phase certs ca creates=/etc/kubernetes/pki/front-proxy-ca.crt
