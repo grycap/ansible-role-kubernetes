@@ -1,0 +1,25 @@
+namespace: kyverno
+createSelfSignedCert: false
+config:
+  resourceFilters: {{ kyverno_config_notapplypolicies }}
+
+rbac:
+  create: true
+  serviceAccount:
+    create: true
+    name: kyverno
+
+image:
+  repository: {{ kyverno_image }}
+  tag: {{ kyverno_image_tag }}
+
+initImage:
+  repository: {{ kyverno_initContainer_image }}
+  tag: {{ kyverno_initContainer_image_tag }}
+
+serviceMonitor:
+  enabled: false
+
+podSecurityStandard: {{ kyverno_podSecurityStandard }}
+podSecuritySeverity: {{ kyverno_podSecuritySeverity}}
+validationFailureAction: {{ kyverno_validationFailureAction }}
