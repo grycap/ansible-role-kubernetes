@@ -59,3 +59,4 @@
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
   ignore_errors: yes
+
