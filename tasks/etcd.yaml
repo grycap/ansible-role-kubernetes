@@ -4,8 +4,20 @@
 - name: Create /etc/kubernetes/pki/etcd file dir
   file: path=/etc/kubernetes/pki/etcd state=directory mode=755 recurse=yes
 
-- name: Create etcd CA cert
-  command: kubeadm init phase certs etcd-ca creates=/etc/kubernetes/pki/etcd/ca.crt
+- block:
+
+  - name: Create k8s ca cert
+    command: kubeadm init phase certs ca creates=/etc/kubernetes/pki/ca.crt
+
+  - name: Create k8s sa cert
+    command: kubeadm init phase certs ca creates=/etc/kubernetes/pki/sa.crt
+
+  - name: Create k8s front-proxy-ca cert
+    command: kubeadm init phase certs ca creates=/etc/kubernetes/pki/front-proxy-ca.crt
+
+  - name: Create etcd CA cert
+    command: kubeadm init phase certs etcd-ca creates=/etc/kubernetes/pki/etcd/ca.crt
+
   when: kube_type_of_node == "front"
 
 - block:
@@ -15,7 +27,7 @@
       path: /etc/kubernetes/pki/etcd/ca.key
     delegate_to: "{{kube_server}}"
   
-  - name: Copy etcd CA files from master
+  - name: Copy CA files from master
     synchronize:
       src: "{{item}}"
       dest: "{{item}}"
@@ -23,6 +35,12 @@
     with_items:
       - "/etc/kubernetes/pki/etcd/ca.key"
       - "/etc/kubernetes/pki/etcd/ca.crt"
+      - "/etc/kubernetes/pki/ca.crt"
+      - "/etc/kubernetes/pki/ca.key"
+      - "/etc/kubernetes/pki/sa.crt"
+      - "/etc/kubernetes/pki/sa.key"
+      - "/etc/kubernetes/pki/front-proxy-ca.crt"
+      - "/etc/kubernetes/pki/front-proxy-ca.key"
 
   when: kube_type_of_node == "control_plane"
 
@@ -40,9 +58,6 @@
 
 - name: Create etcd manifest
   command: kubeadm init phase etcd local --config=/tmp/kubeadm-config-etcd.yaml creates=/etc/kubernetes/manifests/etcd.yaml
-
-- name: Create k8s ca cert
-  command: kubeadm init phase certs ca creates=/etc/kubernetes/pki/ca.crt
 
 - name: Configure kubelet
   command: kubeadm init phase kubeconfig kubelet --config=/tmp/kubeadm-config-etcd.yaml creates=/etc/kubernetes/kubelet.conf

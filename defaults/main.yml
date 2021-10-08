@@ -88,7 +88,6 @@ kube_control_plane_port: 8443
 kube_control_plane_peer_ip: ""
 kube_control_plane_peer_iface: ""
 kube_control_plane_remote_peer_list: ["{{ ansible_default_ipv4.address }}"]
-kube_certificate_key: "2a22bafb08c4d49a5f8d587134bd5647cf5c0f9eeb9291c935a6495cdc59a03c"
 # ETCD Peer adress
 kube_etcd_peer_address: "{{ ansible_default_ipv4.address }}"
 kube_etcd_peer_list: {"kubeserver.localdomain": "{{ ansible_default_ipv4.address }}"}

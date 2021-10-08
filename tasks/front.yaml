@@ -16,7 +16,7 @@
     import_tasks: etcd.yaml
 
   - set_fact:
-      init_params: "--upload-certs --ignore-preflight-errors=all"
+      init_params: "--ignore-preflight-errors=all"
   
   when: kube_control_plane_ip != ""
 
