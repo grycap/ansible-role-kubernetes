@@ -1,7 +1,7 @@
 namespace: kyverno
 createSelfSignedCert: false
 config:
-  resourceFilters: {{ kyverno_config_notapplypolicies }}
+  resourceFilters: "{{ kyverno_config_notapplypolicies }}"
 
 rbac:
   create: true
