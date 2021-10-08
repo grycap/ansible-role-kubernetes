@@ -37,7 +37,7 @@
       - "/etc/kubernetes/pki/etcd/ca.crt"
       - "/etc/kubernetes/pki/ca.crt"
       - "/etc/kubernetes/pki/ca.key"
-      - "/etc/kubernetes/pki/sa.crt"
+      - "/etc/kubernetes/pki/sa.pub"
       - "/etc/kubernetes/pki/sa.key"
       - "/etc/kubernetes/pki/front-proxy-ca.crt"
       - "/etc/kubernetes/pki/front-proxy-ca.key"
