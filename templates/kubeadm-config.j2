@@ -29,6 +29,3 @@ bootstrapTokens:
 - token: "{{kube_token}}"                          # --token
   description: "kubeadm bootstrap token"
   ttl: "{{kube_token_ttl}}"                         # --token-ttl
-{% if kube_control_plane_ip != "" %}
-certificateKey: {{kube_certificate_key}}
-{% endif %}

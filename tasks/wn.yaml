@@ -5,10 +5,10 @@
     search_regex: "KUBECONFIG=/etc/kubernetes/admin.conf"
   delegate_to: "{{kube_server}}"
 
-- name: Add WN to kube cluster
+- name: Add WN to kube cluster to master
   command: kubeadm join --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
-  when: kube_type_of_node == "wn"
+  when: kube_control_plane_ip == ""
 
-- name: Add node to kube cluster control_plane
-  command: kubeadm join --control-plane --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
-  when: kube_type_of_node == "control_plane"
+- name: Add WN to kube cluster control plane
+  command: kubeadm join --token {{kube_token}} {{kube_control_plane_ip}}:{{kube_control_plane_port}} --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
+  when: kube_control_plane_ip != ""
