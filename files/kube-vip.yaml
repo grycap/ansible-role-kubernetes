@@ -11,7 +11,7 @@ spec:
     - start
     - -c
     - /vip.yaml
-    image: 'plndr/kube-vip:0.1.1'
+    image: 'ghcr.io/kube-vip/kube-vip:v0.3.8'
     name: kube-vip
     resources: {}
     securityContext:
