@@ -125,3 +125,6 @@
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_nfs_client | bool
+
+- import_tasks: kyverno.yaml
+  when: kube_install_kyverno | bool
