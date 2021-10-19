@@ -1,8 +1,10 @@
 - block:
   - pip:
       name: dnspython
+    ignore_errors: yes
   - set_fact:
       public_hostname: "{{ lookup('dig', kube_cert_public_ip + '/PTR', '@8.8.8.8')[:-1] }}"
+    ignore_errors: yes
   when: kube_cert_manager | bool and kube_public_dns_name == ""
 
 - block:
