@@ -10,9 +10,10 @@
 - block:
   - debug:
       msg: "DNS name = {{ public_hostname }} - Disabling cert_manager."
+    ignore_errors: yes
   - set_fact:
       kube_cert_manager: false
-  when: kube_cert_manager | bool and kube_public_dns_name == ""and (public_hostname is undefined or public_hostname == "NXDOMAI" or public_hostname == "")
+  when: kube_cert_manager | bool and kube_public_dns_name == "" and (public_hostname is undefined or public_hostname == "NXDOMAI" or public_hostname == "")
 
 - set_fact:
     public_hostname: "{{ kube_public_dns_name}}"
