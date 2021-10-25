@@ -2,7 +2,7 @@
   - name: Add Kyverno Helm repo
     command: helm repo add kyverno https://kyverno.github.io/kyverno/
     environment:
-      KUBECONFIG: /etc/kubernetes/admin.conf
+      KUBECONFIG: "{{KUBECONFIG}}"
 
   - name: Check if kyverno is installed
     command: helm status kyverno -n kyverno
@@ -19,18 +19,18 @@
   - name: Helm update
     command: helm repo update
     environment:
-      KUBECONFIG: /etc/kubernetes/admin.conf
+      KUBECONFIG: "{{KUBECONFIG}}"
 
   - name: Create namespace kyverno 
     command: kubectl create namespace kyverno
     environment:
-      KUBECONFIG: /etc/kubernetes/admin.conf
+      KUBECONFIG: "{{KUBECONFIG}}"
     when: helm_status.rc != 0
 
   - name: Install kyverno-crds {{kyverno_crds_helm_chart_version}}
     command: helm install kyverno-crds kyverno/kyverno-crds --namespace kyverno --version={{kyverno_crds_helm_chart_version}}
     environment:
-      KUBECONFIG: /etc/kubernetes/admin.conf
+      KUBECONFIG: "{{KUBECONFIG}}"
     when: helm_status_kyverno_crds.rc != 0
   
   - template: src=kyverno-values.j2 dest=/tmp/kyverno-values.yml
@@ -38,5 +38,5 @@
   - name: Install kyverno {{kyverno_helm_chart_version}}
     command: helm install kyverno --namespace kyverno -f /tmp/kyverno-values.yml kyverno/kyverno --version={{kyverno_helm_chart_version}}
     environment:
-      KUBECONFIG: /etc/kubernetes/admin.conf
+      KUBECONFIG: "{{KUBECONFIG}}"
     when: helm_status.rc != 0
