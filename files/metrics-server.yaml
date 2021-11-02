@@ -171,6 +171,9 @@ spec:
         kubernetes.io/os: linux
       priorityClassName: system-cluster-critical
       serviceAccountName: metrics-server
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
       volumes:
       - emptyDir: {}
         name: tmp-dir
