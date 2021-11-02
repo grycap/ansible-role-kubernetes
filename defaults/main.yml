@@ -106,3 +106,4 @@ scone_gh_token: ''
 scone_hub_username: ''
 scone_hub_access_token: ''
 scone_hub_email: ''
+scone_max_sgx_pods: 100

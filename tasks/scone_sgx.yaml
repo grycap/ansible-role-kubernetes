@@ -25,7 +25,7 @@
     changed_when: add_status.rc == 0
 
   - name: Install sconeapps sgxdevplugin
-    command: helm install sgxdevplugin sconeapps/sgxdevplugin  --set maxSGXPods={{maxSGXPods}}
+    command: helm install sgxdevplugin sconeapps/sgxdevplugin  --set maxSGXPods={{scone_max_sgx_pods}}
     environment:
       KUBECONFIG: /etc/kubernetes/admin.conf
     when: helm_status.rc != 0
