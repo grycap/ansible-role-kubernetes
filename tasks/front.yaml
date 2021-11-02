@@ -108,6 +108,9 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_install_ingress | bool and kube_deploy_dashboard | bool
 
+- import_tasks: scone_sgx.yaml
+  when: scone_gh_token != ''
+
 - import_tasks: kubeapps.yaml
   when: kube_install_kubeapps | bool
 

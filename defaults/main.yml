@@ -98,4 +98,11 @@ kyverno_podSecurityStandard: baseline
 # Set desired pod security severity low, medium, high. Used severity level in PolicyReportResults for the selected pod security policie
 kyverno_podSecuritySeverity: high
 # Set to get response in failed validation check. Supported values are audit and enforce. See: https://kyverno.io/docs/writing-policies/validate/       
-kyverno_validationFailureAction: ensure 
+kyverno_validationFailureAction: ensure
+
+# Credentials to access SCONE charts and docker images
+# https://sconedocs.github.io/helm/
+scone_gh_token: ''
+scone_hub_username: ''
+scone_hub_access_token: ''
+scone_hub_email: ''

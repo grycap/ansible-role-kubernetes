@@ -1,0 +1,31 @@
+---
+  - name: Add sconeapps Helm repo
+    command: helm repo add sconeapps https://{{scone_gh_token}}@raw.githubusercontent.com/scontain/sconeapps/master/
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
+
+  - name: Check if sconeapps is installed
+    command: helm status sconeapps -n sconeapps
+    register: helm_status
+    ignore_errors: yes
+    changed_when: false
+
+  - name: Install sconeapps
+    command: kubectl create namespace sconeapps
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
+    when: helm_status.rc != 0
+
+  - name: Add sconehub credentials
+    command: kubectl create secret docker-registry sconeapps --docker-server=registry.scontain.com:5050 --docker-username={{scone_hub_username}} --docker-password={{scone_hub_access_token}} --docker-email={{scone_hub_email}}
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
+    ignore_errors: yes
+    register: add_status
+    changed_when: add_status.rc == 0
+
+  - name: Install sconeapps sgxdevplugin
+    command: helm install sgxdevplugin sconeapps/sgxdevplugin  --set maxSGXPods={{maxSGXPods}}
+    environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
+    when: helm_status.rc != 0
