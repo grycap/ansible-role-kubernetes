@@ -125,6 +125,13 @@
     dest: /etc/environment
     line: "KUBECONFIG={{KUBECONFIG}}"
 
+- block:
+    - copy: src=nfs-client.yaml dest=/tmp/nfs-client.yaml
+    - command: kubectl apply -f /tmp/nfs-client.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+  when: kube_install_nfs_client | bool
+
 - import_tasks: ingress.yaml
   when: kube_install_ingress | bool
 
@@ -144,13 +151,6 @@
 
 - import_tasks: kubeapps.yaml
   when: kube_install_kubeapps | bool
-
-- block:
-    - copy: src=nfs-client.yaml dest=/tmp/nfs-client.yaml
-    - command: kubectl apply -f /tmp/nfs-client.yaml
-      environment:
-        KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_install_nfs_client | bool
 
 - import_tasks: kyverno.yaml
   when: kube_install_kyverno | bool
