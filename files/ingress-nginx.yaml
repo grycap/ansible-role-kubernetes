@@ -28,6 +28,7 @@ metadata:
   name: ingress-nginx-controller
   namespace: ingress-nginx
 data:
+  proxy-body-size: "0"
   allow-snippet-annotations: 'false'
 ---
 # Source: ingress-nginx/templates/clusterrole.yaml
