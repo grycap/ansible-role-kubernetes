@@ -12,6 +12,7 @@
     set_fact:
       node_token: "{{ lookup('file', '/var/lib/rancher/k3s/server/node-token') }}"
     delegate_to: "{{kube_server}}"
+    delegate_facts: true
 
   - name: Install k3s node
     command: sh /tmp/k3s.sh creates=/var/lib/rancher/k3s/agent/etc/k3s-agent-load-balancer.json
