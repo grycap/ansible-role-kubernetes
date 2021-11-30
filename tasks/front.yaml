@@ -47,7 +47,7 @@
 - block:
 
   - set_fact:
-      k3s_args: "--disable traefik --disable servicelb {{kube_k3_exec}}"
+      k3s_args: "--disable traefik --disable servicelb --disable local-storage {{kube_k3_exec}}"
 
   - name: Add Kube API server options to K3s
     set_fact:
