@@ -8,11 +8,14 @@
 
 - block:
 
-  - name: read node token on k3s master node
-    set_fact:
-      node_token: "{{ lookup('file', '/var/lib/rancher/k3s/server/node-token') }}"
-    delegate_to: "{{kube_server}}"
-    delegate_facts: true
+  - name: Read node-token from FE
+    block:
+    - command: 'cat /var/lib/rancher/k3s/server/node-token'
+      register: token_read
+      delegate_to: '{{ kube_server }}'
+      delegate_facts: true
+    - set_fact:
+        node_token: "{{ token_read.stdout }}"
 
   - name: Install k3s node
     command: sh /tmp/k3s.sh creates=/var/lib/rancher/k3s/agent/etc/k3s-agent-load-balancer.json
