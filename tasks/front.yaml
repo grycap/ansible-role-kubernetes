@@ -69,6 +69,9 @@
       dest: /usr/bin/kubectl
       state: link
 
+  - name: Update master node label
+    shell: kubectl get node --selector='node-role.kubernetes.io/master' -o=name | xargs -I ARG kubectl label ARG node-role.kubernetes.io/master= --overwrite
+
   - set_fact:
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
