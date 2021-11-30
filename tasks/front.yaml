@@ -129,7 +129,7 @@
     line: "KUBECONFIG={{KUBECONFIG}}"
 
 - block:
-    - copy: src=nfs-client.yaml dest=/tmp/nfs-client.yaml
+    - template: src=nfs-client.j2 dest=/tmp/nfs-client.yaml
     - command: kubectl apply -f /tmp/nfs-client.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
