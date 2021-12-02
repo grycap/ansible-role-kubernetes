@@ -134,6 +134,7 @@ spec:
         - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
         - --kubelet-use-node-status-port
         - --metric-resolution=15s
+        - --kubelet-insecure-tls
         image: k8s.gcr.io/metrics-server/metrics-server:v0.5.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -171,6 +172,9 @@ spec:
         kubernetes.io/os: linux
       priorityClassName: system-cluster-critical
       serviceAccountName: metrics-server
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
       volumes:
       - emptyDir: {}
         name: tmp-dir
