@@ -1,6 +1,6 @@
 # Version to install or latest
 kube_version: 1.19.14
-# Type of node front or wn
+# Type of node front, control_plane or wn
 kube_type_of_node: front
 # IP address or name of the Kube front node
 kube_server: "{{ ansible_default_ipv4.address }}"
@@ -82,6 +82,19 @@ docker_nvidia_options:
 # Install docker with pip
 kube_install_docker_pip: false
 
+
+# Endpoint for the control plane in case of HA mode with multiple master
+kube_control_plane_ip: ""
+kube_control_plane_port: 8443
+kube_control_plane_peer_ip: "{{ ansible_default_ipv4.address }}"
+kube_control_plane_peer_iface: "{{ ansible_default_ipv4.interface }}"
+kube_control_plane_remote_peer_list: ["{{ ansible_default_ipv4.address }}"]
+# ETCD Peer adress
+kube_etcd_peer_address: "{{ ansible_default_ipv4.address }}"
+kube_etcd_peer_list: {"kubeserver.localdomain": "{{ ansible_default_ipv4.address }}"}
+kube_etcd_peer_name: "kubeserver.localdomain"
+
+# Kyverno options
 kube_install_kyverno: false
 kyverno_crds_helm_chart_version: "2.0.3"
 kyverno_helm_chart_version: "2.0.3"
@@ -99,3 +112,4 @@ kyverno_podSecurityStandard: baseline
 kyverno_podSecuritySeverity: high
 # Set to get response in failed validation check. Supported values are audit and enforce. See: https://kyverno.io/docs/writing-policies/validate/       
 kyverno_validationFailureAction: ensure 
+

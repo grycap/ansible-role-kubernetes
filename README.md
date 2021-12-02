@@ -66,6 +66,16 @@ The variables that can be passed to this role and a brief description about them
 	kube_docker_compatible_versions: ['17.03.', '18.06.', '18.09.', '19.03.']
 	# Install docker with pip
 	kube_install_docker_pip
+	# Endpoint for the control plane in case of HA mode with multiple master
+	kube_control_plane_ip: ""
+	kube_control_plane_port: 8443
+	kube_control_plane_peer_ip: "{{ ansible_default_ipv4.address }}"
+	kube_control_plane_peer_iface: "{{ ansible_default_ipv4.interface }}"
+	kube_control_plane_remote_peer_list: ["{{ ansible_default_ipv4.address }}"]
+	# ETCD Peer adress
+	kube_etcd_peer_address: "{{ ansible_default_ipv4.address }}"
+	kube_etcd_peer_list: {"kubeserver.localdomain": "{{ ansible_default_ipv4.address }}"}
+	kube_etcd_peer_name: "kubeserver.localdomain"
 
 Example Playbook
 ----------------
