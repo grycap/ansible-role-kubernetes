@@ -19,8 +19,10 @@
       command: kubectl create namespace yunikorn
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
+    - name: Copy Yunikorn values
+      copy: src=yunikorn-values.yaml dest=/tmp/yunikorn-values.yaml
     - name: Install Apache Yunikorn
-      command: helm install yunikorn yunikorn/yunikorn --namespace yunikorn --version={{kube_yunikorn_version}} --set service.type=ClusterIP
+      command: helm install yunikorn yunikorn/yunikorn --namespace yunikorn --version={{kube_yunikorn_version}} --values /tmp/yunikorn-values.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
     when: helm_status.rc != 0
