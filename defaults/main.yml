@@ -105,3 +105,8 @@ kyverno_podSecurityStandard: baseline
 kyverno_podSecuritySeverity: high
 # Set to get response in failed validation check. Supported values are audit and enforce. See: https://kyverno.io/docs/writing-policies/validate/       
 kyverno_validationFailureAction: ensure 
+
+# Option to install Apache Yunikorn
+kube_install_yunikorn: false
+# Apache Yunikorn's version to be installed
+kube_yunikorn_version: 0.12.2
