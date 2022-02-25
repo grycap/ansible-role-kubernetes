@@ -1,0 +1,14 @@
+service:
+  type: ClusterIP
+
+configuration: |
+  partitions:
+  - name: default
+    placementrules:
+    - name: provided
+    - name: tag
+      value: namespace
+      create: true
+    queues:
+    - name: root
+      submitacl: '*'

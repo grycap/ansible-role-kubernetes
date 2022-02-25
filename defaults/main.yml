@@ -2,6 +2,10 @@
 kube_version: 1.19.14
 # Type of node front or wn
 kube_type_of_node: front
+# How to install K8s: kubeadm or k3s
+kube_install_method: kubeadm
+# Servers to install and configure ntp. If [] ntp will not be configured
+kube_ntp_servers: [ntp.upv.es, ntp.uv.es]
 # IP address or name of the Kube front node
 kube_server: "{{ ansible_default_ipv4.address }}"
 # Token
@@ -81,3 +85,28 @@ docker_nvidia_options:
       runtimeArgs: []
 # Install docker with pip
 kube_install_docker_pip: false
+# Command flags to use for launching k3s in the systemd service
+kube_k3_exec: ""
+
+kube_install_kyverno: false
+kyverno_crds_helm_chart_version: "2.0.3"
+kyverno_helm_chart_version: "2.0.3"
+kyverno_image: ghcr.io/kyverno/kyverno
+kyverno_image_tag: "v1.4.3"
+kyverno_initContainer_image: ghcr.io/kyverno/kyvernopre
+kyverno_initContainer_image_tag: "v1.4.3"
+
+# List of resource types to be skipped by kyverno policy engine. See: https://kyverno.io/docs/installation/#resource-filters
+kyverno_config_notapplypolicies: '[Event,*,*][*,kube-system,*][*,kube-public,*][*,kube-node-lease,*][Node,*,*][APIService,*,*][TokenReview,*,*][SubjectAccessReview,*,*][SelfSubjectAccessReview,*,*][*,kyverno,*][Binding,*,*][ReportChangeRequest,*,*][ClusterReportChangeRequest,*,*]'
+
+# Set desired pod security level privileged, baseline, restricted, custom. Set to restricted for maximum security for your cluster. See: https://kyverno.io/policies/pod-security/ 
+kyverno_podSecurityStandard: baseline
+# Set desired pod security severity low, medium, high. Used severity level in PolicyReportResults for the selected pod security policie
+kyverno_podSecuritySeverity: high
+# Set to get response in failed validation check. Supported values are audit and enforce. See: https://kyverno.io/docs/writing-policies/validate/       
+kyverno_validationFailureAction: ensure 
+
+# Option to install Apache Yunikorn
+kube_install_yunikorn: false
+# Apache Yunikorn's version to be installed
+kube_yunikorn_version: 0.12.2

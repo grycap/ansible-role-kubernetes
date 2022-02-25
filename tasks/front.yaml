@@ -5,25 +5,81 @@
 - name: force handlers
   meta: flush_handlers
 
-- name: Create kubeadm-config file
-  template: src=kubeadm-config.j2 dest=/tmp/kubeadm-config.yml
+- block:
 
-- name: Kubeadm init
-  command: kubeadm init --config /tmp/kubeadm-config.yml creates=/etc/kubernetes/admin.conf
+  - name: Create kubeadm-config file
+    template: src=kubeadm-config.j2 dest=/tmp/kubeadm-config.yml
 
-- name: Set kube_wait_api_server_ip
-  set_fact:
-    kube_wait_api_server_ip: "{{kube_api_server}}"
-  when: kube_api_server != "0.0.0.0"
+  - name: Kubeadm init
+    command: kubeadm init --config /tmp/kubeadm-config.yml creates=/etc/kubernetes/admin.conf
 
-- name: wait Kube to start on "{{kube_wait_api_server_ip}}"
-  wait_for: port=6443 host="{{kube_wait_api_server_ip}}"
+  - name: Set kube_wait_api_server_ip
+    set_fact:
+      kube_wait_api_server_ip: "{{kube_api_server}}"
+    when: kube_api_server != "0.0.0.0"
 
-- import_tasks: kube_nets.yaml
+  - name: wait Kube to start on "{{kube_wait_api_server_ip}}"
+    wait_for: port=6443 host="{{kube_wait_api_server_ip}}"
+
+  - name: Add Kube API server options
+    lineinfile:
+      dest: /etc/kubernetes/manifests/kube-apiserver.yaml
+      line: '    - {{item.option}}={{item.value}}'
+      regexp: '^    - {{item.option}}='
+      insertafter: '    - kube-apiserver'
+    notify: restart kubeapi
+    with_items: "{{ kube_apiserver_options }}"
+
+  - name: force handlers
+    meta: flush_handlers
+
+  - name: wait Kube to start on "{{kube_wait_api_server_ip}}"
+    wait_for: port=6443 host="{{kube_wait_api_server_ip}}"
+
+  - set_fact:
+      KUBECONFIG: /etc/kubernetes/admin.conf
+  
+  - import_tasks: kube_nets.yaml
+
+  when: kube_install_method == "kubeadm"
+
+
+- block:
+
+  - set_fact:
+      k3s_args: "--disable traefik --disable servicelb --disable local-storage {{kube_k3_exec}}"
+
+  - name: Add Kube API server options to K3s
+    set_fact:
+      k3s_args: "{{k3s_args}} --kube-apiserver-arg={{item.option}}={{item.value}}"
+    with_items: "{{ kube_apiserver_options }}"
+
+  - set_fact:
+      k3s_args: "{{k3s_args}} --service-node-port-range=80-32000"
+    when: kube_install_ingress | bool
+
+  - name: Install k3s server
+    command: sh /tmp/k3s.sh {{k3s_args}} creates=/etc/rancher/k3s/k3s.yaml
+    environment:
+      INSTALL_K3S_VERSION: "{{ kube_version }}"
+
+  - name: Link kubectl to /usr/bin/kubectl
+    file:
+      src: /usr/local/bin/kubectl
+      dest: /usr/bin/kubectl
+      state: link
+
+  - name: Update master node label
+    shell: kubectl get node --selector='node-role.kubernetes.io/master' -o=name | xargs -I ARG kubectl label ARG node-role.kubernetes.io/master= --overwrite
+
+  - set_fact:
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+  when: kube_install_method == "k3s"
 
 - import_tasks: helm.yaml
   environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
+    KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_install_helm | bool
 
 - include_tasks: cert-manager.yaml
@@ -32,14 +88,14 @@
     - copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
     - command: kubectl apply -f /tmp/kubernetes-dashboard.yaml
       environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
+        KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_deploy_dashboard | bool
 
 - block:
     - copy: src=metrics-server.yaml dest=/tmp/metrics-server.yaml
     - command: kubectl apply -f /tmp/metrics-server.yaml
       environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
+        KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_install_metrics | bool
 
 - name: Add persistent volumes to kube cluster  
@@ -47,7 +103,7 @@
     - template: src=persistent-volumes.j2 dest=/tmp/kubernetes-persistent-volumes.yml
     - command: kubectl apply -f /tmp/kubernetes-persistent-volumes.yml
       environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
+        KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_persistent_volumes != []
 
 - name: Install Git package
@@ -64,25 +120,20 @@
 - name: apply path "{{ item.path }}"
   command: kubectl apply -f "{{ item.path }}" chdir="/tmp/{{ item.repo | basename }}"
   environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
+    KUBECONFIG: "{{KUBECONFIG}}"
   with_items: "{{ kube_apply_repos }}"
-
-- name: Add Kube API server options
-  lineinfile:
-    dest: /etc/kubernetes/manifests/kube-apiserver.yaml
-    line: '    - {{item.option}}={{item.value}}'
-    regexp: '^    - {{item.option}}='
-    insertafter: '    - kube-apiserver'
-  notify: restart kubeapi
-  with_items: "{{ kube_apiserver_options }}"
 
 - name: Set KUBECONFIG environment variable
   lineinfile:
     dest: /etc/environment
-    line: "KUBECONFIG=/etc/kubernetes/admin.conf"
+    line: "KUBECONFIG={{KUBECONFIG}}"
 
-- name: force handlers
-  meta: flush_handlers
+- block:
+    - template: src=nfs-client.j2 dest=/tmp/nfs-client.yaml
+    - command: kubectl apply -f /tmp/nfs-client.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+  when: kube_install_nfs_client | bool
 
 - import_tasks: ingress.yaml
   when: kube_install_ingress | bool
@@ -91,22 +142,21 @@
     - copy: src=nvidia-device-plugin.yml dest=/tmp/nvidia-device-plugin.yml
     - command: kubectl apply -f /tmp/nvidia-device-plugin.yml
       environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
+        KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_nvidia_support | bool
 
 - block:
     - template: src=kubernetes-dashboard-ingress.j2 dest=/tmp/kubernetes-dashboard-ingress.yaml
     - command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
       environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
+        KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_install_ingress | bool and kube_deploy_dashboard | bool
 
 - import_tasks: kubeapps.yaml
   when: kube_install_kubeapps | bool
 
-- block:
-    - copy: src=nfs-client.yaml dest=/tmp/nfs-client.yaml
-    - command: kubectl apply -f /tmp/nfs-client.yaml
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
-  when: kube_install_nfs_client | bool
+- import_tasks: kyverno.yaml
+  when: kube_install_kyverno | bool
+
+- import_tasks: yunikorn.yaml
+  when: kube_install_yunikorn | bool
