@@ -265,9 +265,6 @@ metadata:
   namespace: ingress-nginx
 spec:
   type: NodePort
-  ipFamilyPolicy: SingleStack
-  ipFamilies:
-    - IPv4
   ports:
     - name: http
       port: 80
