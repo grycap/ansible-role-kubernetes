@@ -6,6 +6,9 @@ networking:
 apiServer:
   extraArgs:
     advertise-address: "{{kube_api_server}}"        # --apiserver-advertise-address
+{% if kube_api_server != "0.0.0.0" %}
+controlPlaneEndpoint: "{{kube_api_server}}:6443"
+{% endif %}
 ---
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1

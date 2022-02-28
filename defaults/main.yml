@@ -113,3 +113,8 @@ scone_hub_username: ''
 scone_hub_access_token: ''
 scone_hub_email: ''
 scone_max_sgx_pods: 100
+
+# Option to install Apache Yunikorn
+kube_install_yunikorn: false
+# Apache Yunikorn's version to be installed
+kube_yunikorn_version: 0.12.2

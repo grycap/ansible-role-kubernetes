@@ -21,4 +21,5 @@
   wait_for:
     port: 6443
     host: "{{kube_wait_api_server_ip}}"
+    delay: 5
   listen: "restart kubeapi"
