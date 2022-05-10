@@ -6,6 +6,16 @@ networking:
 apiServer:
   extraArgs:
     advertise-address: "{{kube_api_server}}"        # --apiserver-advertise-address
+{% if IM_NODE_PUBLIC_IP is defined %}
+  certSANs:
+  - "{{ IM_NODE_PUBLIC_IP }}"
+{% if kube_api_server != "0.0.0.0" %}
+  - "{{ kube_api_server }}"
+{% endif %}
+{% if IM_NODE_PRIVATE_IP is defined %}
+  - "{{ IM_NODE_PRIVATE_IP }}"
+{% endif %}
+{% endif %}
 {% if kube_api_server != "0.0.0.0" %}
 controlPlaneEndpoint: "{{kube_api_server}}:6443"
 {% endif %}
