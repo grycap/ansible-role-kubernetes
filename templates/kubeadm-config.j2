@@ -12,6 +12,9 @@ apiServer:
 {% if kube_api_server != "0.0.0.0" %}
   - "{{ kube_api_server }}"
 {% endif %}
+{% if kube_public_dns_name != "" %}
+  - "{{ kube_public_dns_name }}"
+{% endif %}
 {% if IM_NODE_PRIVATE_IP is defined %}
   - "{{ IM_NODE_PRIVATE_IP }}"
 {% endif %}
