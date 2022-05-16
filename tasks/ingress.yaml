@@ -48,6 +48,14 @@
     environment:
       KUBECONFIG: "{{KUBECONFIG}}"
 
+- name: Deploy ingress-nginx jobs
+  block:
+  - copy: src=ingress-nginx-jobs.yaml dest=/tmp/ingress-nginx-jobs.yaml
+  - command: kubectl apply -f /tmp/ingress-nginx-jobs.yaml
+    environment:
+      KUBECONFIG: "{{KUBECONFIG}}"
+  ignore_errors: yes
+
 - name: Wait ingress-nginx jobs
   command: kubectl wait --for=condition=complete --timeout=300s -n ingress-nginx job/ingress-nginx-admission-create
   environment:

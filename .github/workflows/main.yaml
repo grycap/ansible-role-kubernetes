@@ -73,7 +73,7 @@ jobs:
         run: sudo ansible-playbook tests/test.yml -i tests/inventory --syntax-check
 
       - name: Basic role check in front
-        run: sudo ansible-playbook tests/test.yml -i tests/inventory -e kube_install_method=k3s -e kube_version=v1.22.2+k3s1
+        run: sudo ansible-playbook tests/test.yml -i tests/inventory -e kube_install_metrics=false -e kube_install_method=k3s -e kube_version=v1.23.6+k3s1
 
       - name: Basic role check in wn
         run: sudo ansible-playbook tests/test.yml -i tests/inventory -e kube_type_of_node=wn -e kube_server=localhost -e kube_install_method=k3s -e kube_version=v1.22.2+k3s1
