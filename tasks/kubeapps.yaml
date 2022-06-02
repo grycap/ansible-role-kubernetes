@@ -10,20 +10,14 @@
     ignore_errors: yes
     changed_when: false
 
-  - name: Install kubeapps
-    command: kubectl create namespace kubeapps
-    environment:
-      KUBECONFIG: "{{KUBECONFIG}}"
-    when: helm_status.rc != 0
-
   - name: Install kubeapps {{kube_kubeapps_chart_version}}
-    command: helm install kubeapps --namespace kubeapps bitnami/kubeapps --version={{kube_kubeapps_chart_version}}
+    command: helm install kubeapps --namespace kubeapps --create-namespace bitnami/kubeapps --version={{kube_kubeapps_chart_version}}
     environment:
       KUBECONFIG: "{{KUBECONFIG}}"
     when: helm_status.rc != 0 and kube_kubeapps_chart_version != "latest"
 
   - name: Install kubeapps latest
-    command: helm install kubeapps --namespace kubeapps bitnami/kubeapps
+    command: helm install kubeapps --namespace kubeapps --create-namespace bitnami/kubeapps
     environment:
       KUBECONFIG: "{{KUBECONFIG}}"
     when: helm_status.rc != 0 and kube_kubeapps_chart_version == "latest"
