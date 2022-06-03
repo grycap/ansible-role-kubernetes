@@ -49,7 +49,7 @@ kube_nvidia_driver_version: "410"
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
-kube_kubeapps_chart_version: "8.1.8"
+kube_kubeapps_chart_version: "8.1.7"
 # Flag to set nfs-client-provisioner to be installed
 kube_install_nfs_client: false
 # NFS path used by nfs-client-provisioner
