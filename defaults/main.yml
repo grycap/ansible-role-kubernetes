@@ -1,5 +1,5 @@
 # Version to install or latest
-kube_version: 1.19.14
+kube_version: 1.23.7
 # Type of node front or wn
 kube_type_of_node: front
 # How to install K8s: kubeadm or k3s
@@ -25,7 +25,7 @@ kube_cri_runtime: docker # docker or containerd
 # Flag to set HELM to be installed
 kube_install_helm: true
 # Helm version
-kube_install_helm_version: "v3.2.1"
+kube_install_helm_version: "v3.8.2"
 # Deploy the Dashboard
 kube_deploy_dashboard: false
 # Value to pass to the kubeadm init --apiserver-advertise-address option
@@ -49,7 +49,7 @@ kube_nvidia_driver_version: "410"
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
-kube_kubeapps_chart_version: "7.3.2"
+kube_kubeapps_chart_version: "8.1.8"
 # Flag to set nfs-client-provisioner to be installed
 kube_install_nfs_client: false
 # NFS path used by nfs-client-provisioner
