@@ -5166,6 +5166,8 @@ spec:
       tolerations:
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
 ---
 # Source: cert-manager/templates/deployment.yaml
 apiVersion: apps/v1
@@ -5227,6 +5229,8 @@ spec:
       # Comment the following tolerations if it must not be deployed on master
       tolerations:
         - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
           effect: NoSchedule
 ---
 # Source: cert-manager/templates/webhook-deployment.yaml
@@ -5306,6 +5310,8 @@ spec:
       # Comment the following tolerations if it must not be deployed on master
       tolerations:
         - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
           effect: NoSchedule
 ---
 # Source: cert-manager/templates/webhook-mutating-webhook.yaml
