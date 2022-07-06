@@ -5162,6 +5162,10 @@ spec:
             allowPrivilegeEscalation: false
       nodeSelector:
         kubernetes.io/os: linux
+      # Comment the following tolerations if it must not be deployed on master
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
 ---
 # Source: cert-manager/templates/deployment.yaml
 apiVersion: apps/v1
@@ -5220,6 +5224,10 @@ spec:
                 fieldPath: metadata.namespace
       nodeSelector:
         kubernetes.io/os: linux
+      # Comment the following tolerations if it must not be deployed on master
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
 ---
 # Source: cert-manager/templates/webhook-deployment.yaml
 apiVersion: apps/v1
@@ -5295,6 +5303,10 @@ spec:
                 fieldPath: metadata.namespace
       nodeSelector:
         kubernetes.io/os: linux
+      # Comment the following tolerations if it must not be deployed on master
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
 ---
 # Source: cert-manager/templates/webhook-mutating-webhook.yaml
 apiVersion: admissionregistration.k8s.io/v1
