@@ -3,7 +3,7 @@
   roles:
     - role: ansible-role-kubernetes
       kube_install_metrics: true
-      kube_cert_manager: true
+      kube_cert_manager: false
       kube_install_kubeapps: false
       kube_install_kyverno: true
       kube_deploy_dashboard: true
