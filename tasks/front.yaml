@@ -5,10 +5,7 @@
 - name: force handlers
   meta: flush_handlers
 
-- import_tasks: helm.yaml
-  environment:
-    KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_install_helm | bool
+
 
 - block:
 
@@ -82,6 +79,11 @@
 
   when: kube_install_method == "k3s"
 
+- import_tasks: helm.yaml
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
+  when: kube_install_helm | bool
+  
 - include_tasks: cert-manager.yaml
 
 - block:

@@ -37,6 +37,11 @@
 
 - block:
 
+    - import_tasks: helm.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+      when: kube_install_helm | bool
+
     - name: Edit /etc/sysctl.d/99-override_cilium_rp_filter.conf
       lineinfile:
         dest: /etc/sysctl.d/99-override_cilium_rp_filter.conf
@@ -86,6 +91,6 @@
       
       - name: Wait until cilium was deployed
         command: cilium status  --wait
-        
+
       when: helm_status.rc != 0
   when: kube_network == 'cilium''

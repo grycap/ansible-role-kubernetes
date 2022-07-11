@@ -898,12 +898,12 @@ hubble:
 
     # -- hubble-ui ingress configuration.
     ingress:
-      enabled: false
+      enabled: true
       annotations: {}
         # kubernetes.io/ingress.class: nginx
         # kubernetes.io/tls-acme: "true"
       hosts:
-        - chart-example.local
+        - {{ kube_public_dns_name }}
       tls: []
       #  - secretName: chart-example-tls
       #    hosts:
