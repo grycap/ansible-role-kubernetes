@@ -5,6 +5,11 @@
 - name: force handlers
   meta: flush_handlers
 
+- import_tasks: helm.yaml
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
+  when: kube_install_helm | bool
+
 - block:
 
   - name: Create kubeadm-config file
@@ -76,11 +81,6 @@
       KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
   when: kube_install_method == "k3s"
-
-- import_tasks: helm.yaml
-  environment:
-    KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_install_helm | bool
 
 - include_tasks: cert-manager.yaml
 
