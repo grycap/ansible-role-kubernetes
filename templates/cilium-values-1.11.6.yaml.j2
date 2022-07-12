@@ -441,7 +441,7 @@ encryption:
     mountPath: ""
 
     # -- Name of the Kubernetes secret containing the encryption keys.
-    secretName: ""
+    secretName: "cilium-ipsec-keys"
 
     # -- The interface to use for encrypted traffic.
     interface: ""
@@ -463,7 +463,7 @@ encryption:
   # -- Deprecated in favor of encryption.ipsec.secretName.
   # Name of the Kubernetes secret containing the encryption keys.
   # This option is only effective when encryption.type is set to ipsec.
-  secretName: cilium-ipsec-keys
+  secretName: ""
 
   # -- Deprecated in favor of encryption.ipsec.interface.
   # The interface to use for encrypted traffic.
