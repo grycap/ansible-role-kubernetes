@@ -114,5 +114,5 @@ kube_install_yunikorn: false
 kube_yunikorn_version: 0.12.2
 
 
-cilium:
-  debug_log: true
+cilium_debug_log: true
+cilium_k8s_endpoint: "{{ ansible_default_ipv4.address }}"

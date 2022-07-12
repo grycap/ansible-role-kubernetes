@@ -91,6 +91,8 @@
       
       - name: Wait until cilium was deployed
         command: cilium status  --wait
-
+        environment:
+          KUBECONFIG: "{{KUBECONFIG}}"
+          
       when: helm_status.rc != 0
   when: kube_network == 'cilium'
