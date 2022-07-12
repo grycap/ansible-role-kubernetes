@@ -42,6 +42,11 @@
         KUBECONFIG: "{{KUBECONFIG}}"
       when: kube_install_helm | bool
 
+    - import_tasks: cert-manager.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+      when: kube_install_helm | bool
+
     - name: Edit /etc/sysctl.d/99-override_cilium_rp_filter.conf
       lineinfile:
         dest: /etc/sysctl.d/99-override_cilium_rp_filter.conf
