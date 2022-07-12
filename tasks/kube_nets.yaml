@@ -36,7 +36,6 @@
   when: kube_network == 'weave'
 
 - block:
-    
     # Helm is the installation method of Cilium
     - import_tasks: helm.yaml
       environment:
@@ -69,6 +68,12 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
       when: k_status.rc != 0
 
+      - name: Download cilium cli
+        command: curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz{,.sha256sum}
+
+      - name: Install cilium cli
+        command: tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
+
     - name: Add Cilium Helm repo
       command: helm repo add cilium https://helm.cilium.io/
       environment:
@@ -93,18 +98,12 @@
         command: helm install cilium cilium/cilium --version 1.11.6 --namespace kube-system -f /tmp/cilium-values-1.11.6.yaml
         environment:
           KUBECONFIG: "{{KUBECONFIG}}"
-      
-      - name: Download cilium cli
-        command: curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz{,.sha256sum}
-
-      - name: Install cilium cli
-        command: tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
            
-      - name: Wait until cilium was deployed
-        command: cilium status  --wait
-        environment:
-          KUBECONFIG: "{{KUBECONFIG}}"
-
       when: helm_status.rc != 0
+
+    - name: Wait until cilium was deployed
+      command: cilium status  --wait
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
 
   when: kube_network == 'cilium'
