@@ -566,7 +566,7 @@ certgen:
 
 hubble:
   # -- Enable Hubble (true by default).
-  enabled: true
+  enabled: {{ cilium_enable_hubble }}
 
   # -- Buffer size of the channel Hubble uses to receive monitor events. If this
   # value is not set, the queue size is set to the default monitor queue size.
@@ -711,7 +711,7 @@ hubble:
 
   relay:
     # -- Enable Hubble Relay (requires hubble.enabled=true)
-    enabled: true
+    enabled: {{ cilium_enable_hubble }}
 
     # -- Roll out Hubble Relay pods automatically when configmap is updated.
     rollOutPods: false
