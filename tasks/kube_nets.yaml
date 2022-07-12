@@ -49,11 +49,18 @@
         line: 'net.ipv4.conf.lxc*.rp_filter = 0'
         create: yes
       notify: sysctl-system
-    
+
+    - name: Check if cilium-ipsec-keys secret exists
+      command:  kubectl -n kube-system get secret cilium-ipsec-keys
+      register: k_status
+      ignore_errors: yes
+      changed_when: false
+
     - name: Create cilium-ipsec-keys secret
       command: kubectl create -n kube-system secret generic cilium-ipsec-keys  --from-literal=keys="3 rfc4106(gcm(aes)) $(echo $(dd if=/dev/urandom count=20 bs=1 2> /dev/null | xxd -p -c 64)) 128"
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
+      when: k_status.rc != 0
 
     - name: Add Cilium Helm repo
       command: helm repo add cilium https://helm.cilium.io/
@@ -92,4 +99,5 @@
           KUBECONFIG: "{{KUBECONFIG}}"
 
       when: helm_status.rc != 0
+
   when: kube_network == 'cilium'
