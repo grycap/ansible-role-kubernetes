@@ -42,6 +42,8 @@
       KUBECONFIG: /etc/kubernetes/admin.conf
   
   - import_tasks: kube_nets.yaml
+    environment:
+      KUBECONFIG: "{{KUBECONFIG}}"
 
   when: kube_install_method == "kubeadm"
 
@@ -83,7 +85,7 @@
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_install_helm | bool
-  
+
 - include_tasks: cert-manager.yaml
 
 - block:
