@@ -660,7 +660,12 @@ hubble:
       #                 certificates not provided by the user at installation
       #                 time.
       # - certmanager:  This method use cert-manager to generate & rotate certificates.
+      # method: helm
+{% if kube_cert_manager %}
+      method: certmanager
+{% else %}
       method: helm
+{% endif %}
       # -- Generated certificates validity duration in days.
       certValidityDuration: 1095
       # -- Schedule for certificates regeneration (regardless of their expiration date).
@@ -679,7 +684,15 @@ hubble:
       #   name: ca-issuer
       # -- certmanager issuer used when hubble.tls.auto.method=certmanager.
       # If not specified, a CA issuer will be created.
+{% if kube_cert_manager %}
+      certManagerIssuerRef: 
+        group: cert-manager.io
+        kind: ClusterIssuer
+        name: letsencrypt-prod
+{% else %}
       certManagerIssuerRef: {}
+{% endif %}
+      #certManagerIssuerRef: {}
     # -- base64 encoded PEM values for the Hubble CA certificate and private key.
     ca:
       cert: ""
@@ -1776,7 +1789,11 @@ clustermesh:
         #                 certificates not provided by the user at installation
         #                 time.
         # - certmanager:  This method use cert-manager to generate & rotate certificates.
+{% if kube_cert_manager %}
+        method: certmanager
+{% else %}
         method: helm
+{% endif %}
         # -- Generated certificates validity duration in days.
         certValidityDuration: 1095
         # -- Schedule for certificates regeneration (regardless of their expiration date).
@@ -1800,7 +1817,14 @@ clustermesh:
         #   name: ca-issuer
         # -- certmanager issuer used when clustermesh.apiserver.tls.auto.method=certmanager.
         # If not specified, a CA issuer will be created.
+{% if kube_cert_manager %}
+        certManagerIssuerRef: 
+          group: cert-manager.io
+          kind: ClusterIssuer
+          name: letsencrypt-prod
+{% else %}
         certManagerIssuerRef: {}
+{% endif %}
       # -- base64 encoded PEM values for the ExternalWorkload CA certificate and private key.
       ca:
         # -- Optional CA cert. If it is provided, it will be used by the 'cronJob' method to
