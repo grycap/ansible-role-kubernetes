@@ -68,11 +68,11 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
       when: k_status.rc != 0
 
-      - name: Download cilium cli
-        command: curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz{,.sha256sum}
+    - name: Download cilium cli
+      command: curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz{,.sha256sum}
 
-      - name: Install cilium cli
-        command: tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
+    - name: Install cilium cli
+      command: tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
 
     - name: Add Cilium Helm repo
       command: helm repo add cilium https://helm.cilium.io/
