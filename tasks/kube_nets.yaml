@@ -36,15 +36,16 @@
   when: kube_network == 'weave'
 
 - block:
-
+    
+    # Helm is the installation method of Cilium
     - import_tasks: helm.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
       when: kube_install_helm | bool
 
-    - import_tasks: cert-manager.yaml
-      environment:
-        KUBECONFIG: "{{KUBECONFIG}}"
+    # Cert-manager is used for creating the certificates
+    - name: Add cert-manager CRDs
+      shell: kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.8.2/cert-manager.crds.yaml
       when: kube_install_helm | bool
 
     - name: Edit /etc/sysctl.d/99-override_cilium_rp_filter.conf
@@ -55,6 +56,7 @@
         create: yes
       notify: sysctl-system
 
+    # IPSec secret
     - name: Check if cilium-ipsec-keys secret exists
       command:  kubectl -n kube-system get secret cilium-ipsec-keys
       register: k_status
