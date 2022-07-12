@@ -93,4 +93,4 @@
         command: cilium status  --wait
 
       when: helm_status.rc != 0
-  when: kube_network == 'cilium''
+  when: kube_network == 'cilium'
