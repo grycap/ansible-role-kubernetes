@@ -26,7 +26,6 @@ controlPlaneEndpoint: "{{kube_api_server}}:6443"
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
 cgroupDriver: systemd
-serverTLSBootstrap: true
 ---
 kind: InitConfiguration
 apiVersion: kubeadm.k8s.io/v1beta2
