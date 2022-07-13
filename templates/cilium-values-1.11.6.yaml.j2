@@ -110,7 +110,7 @@ affinity:
       topologyKey: kubernetes.io/hostname
 
 # -- The priority class to use for cilium-agent.
-priorityClassName: ""
+priorityClassName: "{{ cilium_priorityClassName }}"
 
 # -- Additional agent container arguments.
 extraArgs: []
@@ -483,7 +483,7 @@ endpointStatus:
 endpointRoutes:
   # -- Enable use of per endpoint routes instead of routing via
   # the cilium_host interface.
-  enabled: false
+  enabled: true
 
 eni:
   # -- Enable Elastic Network Interface (ENI) integration.
@@ -566,7 +566,7 @@ certgen:
 
 hubble:
   # -- Enable Hubble (true by default).
-  enabled: {{ cilium_enable_hubble }}
+  enabled: {{ cilium_hubble_enable }}
 
   # -- Buffer size of the channel Hubble uses to receive monitor events. If this
   # value is not set, the queue size is set to the default monitor queue size.
@@ -711,10 +711,10 @@ hubble:
 
   relay:
     # -- Enable Hubble Relay (requires hubble.enabled=true)
-    enabled: {{ cilium_enable_hubble }}
+    enabled: {{ cilium_hubble_enable }}
 
     # -- Roll out Hubble Relay pods automatically when configmap is updated.
-    rollOutPods: false
+    rollOutPods: true
 
     # -- Hubble-relay container image.
     image:
@@ -831,7 +831,7 @@ hubble:
           #         path: hubble-relay-ca.crt
 
     # -- Roll out Hubble-ui pods automatically when configmap is updated.
-    rollOutPods: false
+    rollOutPods: true
 
     tls:
       # -- base64 encoded PEM values used to connect to hubble-relay
@@ -909,18 +909,26 @@ hubble:
       # -- Whether to set the security context on the Hubble UI pods.
       enabled: true
 
-    # -- hubble-ui ingress configuration.
+    # -- hubble-ui ingress configuration
     ingress:
-      enabled: true
+      enabled: {{ cilium_hubble-ui_enable }}
       annotations: {}
         # kubernetes.io/ingress.class: nginx
         # kubernetes.io/tls-acme: "true"
       hosts:
         - {{ kube_public_dns_name }}
+{% if kube_cert_manager %}
+      tls:
+        - secretName: {{ kube_public_dns_name }}
+          hosts:
+            - {{ kube_public_dns_name }}
+{% else %}
       tls: []
       #  - secretName: chart-example-tls
       #    hosts:
       #      - chart-example.local
+{% endif %}
+      
 
 
 # -- Method to use for identity allocation (`crd` or `kvstore`).
@@ -1119,10 +1127,10 @@ monitor:
 # -- Configure N-S k8s service loadbalancing
 nodePort:
   # -- Enable the Cilium NodePort service implementation.
-  enabled: true
+  enabled: {{ cilium_nodeport_enable }}
 
   # -- Port range to use for NodePort services.
-  # range: "30000,32767"
+  # range: "{{ cilium_nodeport_range }}"
 
   # -- Set to true to prevent applications binding to service ports.
   bindProtection: true
@@ -1139,7 +1147,7 @@ nodePort:
 # -- The agent can be put into one of the three policy enforcement modes:
 # default, always and never.
 # ref: https://docs.cilium.io/en/stable/policy/intro/#policy-enforcement-modes
-policyEnforcementMode: "default"
+policyEnforcementMode: "{{ cilium_policyEnforcementMode }}"
 
 pprof:
   # -- Enable Go pprof debugging
@@ -1147,19 +1155,19 @@ pprof:
 
 # -- Configure prometheus metrics on the configured port at /metrics
 prometheus:
-  enabled: false
+  enabled: {{ cilium_prometheus_enable }}
   port: 9090
   serviceMonitor:
     # -- Enable service monitors.
     # This requires the prometheus CRDs to be available (see https://github.com/prometheus-operator/prometheus-operator/blob/master/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
-    enabled: false
+    enabled: {{ cilium_prometheus_enable }}
     # -- Labels to add to ServiceMonitor cilium-agent
     labels: {}
     # -- Annotations to add to ServiceMonitor cilium-agent
     annotations: {}
     # -- Specify the Kubernetes namespace where Prometheus expects to find
     # service monitors configured.
-    # namespace: ""
+    namespace: "kube-system"
   # -- Metrics that should be enabled or disabled from the default metric
   # list. (+metric_foo to enable metric_foo , -metric_bar to disable
   # metric_bar).
@@ -1332,7 +1340,7 @@ operator:
   enabled: true
 
   # -- Roll out cilium-operator pods automatically when configmap is updated.
-  rollOutPods: false
+  rollOutPods: true
 
   # -- cilium-operator image.
   image:
