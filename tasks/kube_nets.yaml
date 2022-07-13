@@ -110,7 +110,8 @@
       command: cilium status --wait
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
-      when: not cilium_enable_hubble
+      #hubble is deployed in WN
+      when: not cilium_hubble_enable 
     
 
   when: kube_network == 'cilium'
