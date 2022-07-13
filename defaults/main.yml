@@ -124,4 +124,4 @@ cilium_nodeport_range: "30000,32767"
 cilium_priorityClassName: ""
 cilium_prometheus_enable: false 
 cilium_hubble_enable: false
-cilium_hubble-ui_enable: false
+cilium_hubble_ui_enable: false
