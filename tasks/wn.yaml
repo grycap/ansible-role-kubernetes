@@ -1,4 +1,12 @@
 ---
+- name: Edit /etc/sysctl.d/99-override_cilium_rp_filter.conf
+  lineinfile:
+    dest: /etc/sysctl.d/99-override_cilium_rp_filter.conf
+    regexp: '^net.ipv4.conf.lxc*.rp_filter'
+    line: 'net.ipv4.conf.lxc*.rp_filter = 0'
+    create: yes
+  notify: sysctl-system
+  when: kube_network == 'cilium'
 
 - name: Wait for Kube master
   wait_for:
@@ -52,11 +60,4 @@
 
   when: kube_install_method == "kubeadm"
 
-  - name: Edit /etc/sysctl.d/99-override_cilium_rp_filter.conf
-    lineinfile:
-      dest: /etc/sysctl.d/99-override_cilium_rp_filter.conf
-      regexp: '^net.ipv4.conf.lxc*.rp_filter'
-      line: 'net.ipv4.conf.lxc*.rp_filter = 0'
-      create: yes
-    notify: sysctl-system
-    when: kube_network == 'cilium'
+
