@@ -71,7 +71,7 @@ agent: true
 name: cilium
 
 # -- Roll out cilium agent pods automatically when configmap is updated.
-rollOutCiliumPods: false
+rollOutCiliumPods: true
 
 # -- Agent container image.
 image:
@@ -964,7 +964,8 @@ ipam:
     # IPv4 CIDR range to delegate to individual nodes for IPAM.
     clusterPoolIPv4PodCIDR: "10.88.0.0/16"
     # -- IPv4 CIDR list range to delegate to individual nodes for IPAM.
-    clusterPoolIPv4PodCIDRList: []
+    clusterPoolIPv4PodCIDRList: 
+      - "10.88.0.0/16"
     # -- IPv4 CIDR mask size to delegate to individual nodes for IPAM.
     clusterPoolIPv4MaskSize: 24
     # -- Deprecated in favor of ipam.operator.clusterPoolIPv6PodCIDRList.

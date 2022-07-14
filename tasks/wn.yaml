@@ -51,3 +51,12 @@
     command: kubeadm join --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
 
   when: kube_install_method == "kubeadm"
+
+  - name: Edit /etc/sysctl.d/99-override_cilium_rp_filter.conf
+    lineinfile:
+      dest: /etc/sysctl.d/99-override_cilium_rp_filter.conf
+      regexp: '^net.ipv4.conf.lxc*.rp_filter'
+      line: 'net.ipv4.conf.lxc*.rp_filter = 0'
+      create: yes
+    notify: sysctl-system
+    when: kube_network == 'cilium'
