@@ -749,13 +749,10 @@ hubble:
       #                 certificates not provided by the user at installation
       #                 time.
       # - certmanager:  This method use cert-manager to generate & rotate certificates.
-{% if kube_cert_manager %}
-      method: certmanager
-{% else %}
       method: helm
-{% endif %}
+
       # -- Generated certificates validity duration in days.
-      certValidityDuration: 1095
+      certValidityDuration: {{ cilium_hubble_certValidityDuration }}
       # -- Schedule for certificates regeneration (regardless of their expiration date).
       # Only used if method is "cronJob". If nil, then no recurring job will be created.
       # Instead, only the one-shot job is deployed to generate the certificates at
@@ -772,14 +769,8 @@ hubble:
       #   name: ca-issuer
       # -- certmanager issuer used when hubble.tls.auto.method=certmanager.
       # If not specified, a CA issuer will be created.
-{% if kube_cert_manager %}
-      certManagerIssuerRef: 
-        group: cert-manager.io
-        kind: ClusterIssuer
-        name: letsencrypt-prod
-{% else %}
        certManagerIssuerRef: {}
-{% endif %}
+
 
     # -- Deprecated in favor of tls.ca. To be removed in 1.13.
     # base64 encoded PEM values for the Hubble CA certificate and private key.
