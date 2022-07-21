@@ -100,7 +100,7 @@
         template: src=cilium-values-1.11.6.yaml.j2 dest=/tmp/cilium-values-1.11.6.yaml
 
       - name: Deploy cilium 
-        command: helm install cilium cilium/cilium --version 1.11.6 --namespace kube-system -f /tmp/cilium-values-1.11.6.yaml
+        command: helm install cilium cilium/cilium --version 1.12.0 --namespace kube-system -f /tmp/cilium-values-1.12.0.yaml
         environment:
           KUBECONFIG: "{{KUBECONFIG}}"
            
