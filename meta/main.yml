@@ -23,7 +23,7 @@ dependencies:
     docker_version: '19.03.15'
     docker_compatible_versions: "{{kube_docker_compatible_versions}}"
     docker_config_values: "{{ {'exec-opts': ['native.cgroupdriver=systemd'], 'log-driver': 'json-file', 'log-opts': {'max-size': '100m'}, 'storage-driver': 'devicemapper'} | combine(kube_docker_options) }}"
-    docker_nvidia_support: kube_nvidia_support and kube_type_of_node == "wn"
+    docker_nvidia_support: '{{ kube_nvidia_support and kube_type_of_node == "wn" }}'
     docker_install_criu: false
     docker_install_pip: "{{kube_install_docker_pip}}"
     docker_compose_version: ""
@@ -33,7 +33,7 @@ dependencies:
     docker_version: "5:19.03.11~3-0~{{ansible_distribution | lower}}-{{ansible_distribution_release}}"
     docker_compatible_versions: "{{kube_docker_compatible_versions}}"
     docker_config_values: "{{ {'exec-opts': ['native.cgroupdriver=systemd'], 'log-driver': 'json-file', 'log-opts': {'max-size': '100m'}, 'storage-driver': 'overlay2'} | combine(kube_docker_options) }}"
-    docker_nvidia_support: kube_nvidia_support | bool and kube_type_of_node == "wn"
+    docker_nvidia_support: '{{ kube_nvidia_support and kube_type_of_node == "wn" }}'
     docker_install_criu: false
     docker_install_pip: "{{kube_install_docker_pip}}"
     docker_compose_version: ""
