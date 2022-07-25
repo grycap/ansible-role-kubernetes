@@ -701,7 +701,7 @@ hubble:
       # -- Create ServiceMonitor resources for Prometheus Operator.
       # This requires the prometheus CRDs to be available.
       # ref: https://github.com/prometheus-operator/prometheus-operator/blob/master/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
-      enabled: false
+      enabled: {{ cilium_prometheus_enable }}
       # -- Labels to add to ServiceMonitor hubble
       labels: {}
       # -- Annotations to add to ServiceMonitor hubble
@@ -1695,12 +1695,12 @@ operator:
   # -- Enable prometheus metrics for cilium-operator on the configured port at
   # /metrics
   prometheus:
-    enabled: true
+    enabled: {{ cilium_prometheus_enable }}
     port: 9963
     serviceMonitor:
       # -- Enable service monitors.
       # This requires the prometheus CRDs to be available (see https://github.com/prometheus-operator/prometheus-operator/blob/master/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
-      enabled: false
+      enabled: {{ cilium_prometheus_enable }}
       # -- Labels to add to ServiceMonitor cilium-operator
       labels: {}
       # -- Annotations to add to ServiceMonitor cilium-operator
