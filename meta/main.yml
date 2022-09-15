@@ -28,6 +28,7 @@ dependencies:
     docker_install_pip: "{{kube_install_docker_pip}}"
     docker_compose_version: ""
     docker_containerd_only: "{{ (kube_cri_runtime == 'containerd') | bool }}"
+    docker_nvidia_driver_version: "{{ kube_nvidia_driver_version }}"
     when: ansible_os_family == "RedHat" and kube_install_method == 'kubeadm'
   - role: 'grycap.docker'
     docker_version: "5:19.03.11~3-0~{{ansible_distribution | lower}}-{{ansible_distribution_release}}"
@@ -38,4 +39,5 @@ dependencies:
     docker_install_pip: "{{kube_install_docker_pip}}"
     docker_compose_version: ""
     docker_containerd_only: "{{ (kube_cri_runtime == 'containerd') | bool }}"
+    docker_nvidia_driver_version: "{{ kube_nvidia_driver_version }}"
     when: ansible_os_family == "Debian" and kube_install_method == 'kubeadm'
