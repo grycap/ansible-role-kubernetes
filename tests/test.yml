@@ -11,7 +11,7 @@
       - {option: "--service-node-port-range", value: "80-32767"}
       kube_docker_options:
         data-root: /var/lib/docker
-      kube_version: 1.21.1
+      kube_version: 1.23.1
       kube_docker_compatible_versions: ['17.03.', '18.06.', '18.09.', '19.03.', '20.10.']
       kube_install_docker_pip: true
       kubelet_extra_args:  '-node-labels=somelabel'
