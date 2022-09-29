@@ -1,6 +1,10 @@
 ---
 kind: ClusterConfiguration
+{% if kube_version is version_compare('1.22.0', '<') %}
+apiVersion: kubeadm.k8s.io/v1beta2
+{% else %}
 apiVersion: kubeadm.k8s.io/v1beta3
+{% endif %}
 networking:
   podSubnet: "{{kube_pod_network_cidr}}"            # --pod-network-cidr
 apiServer:
