@@ -32,7 +32,11 @@ apiVersion: kubelet.config.k8s.io/v1beta1
 cgroupDriver: systemd
 ---
 kind: InitConfiguration
+{% if kube_version is version_compare('1.22.0', '<') %}
+apiVersion: kubeadm.k8s.io/v1beta2
+{% else %}
 apiVersion: kubeadm.k8s.io/v1beta3
+{% endif %}
 bootstrapTokens:
 - token: "{{kube_token}}"                          # --token
   description: "kubeadm bootstrap token"
