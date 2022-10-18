@@ -5,7 +5,7 @@
   - command: kubectl apply -f /tmp/ingress-nginx-namespace.yaml
     environment:
       KUBECONFIG: "{{KUBECONFIG}}"
-    notify: restart kubelet
+    notify: restart kubelet to restart kubeapi
 
 - name: Check if certs are created
   block:
