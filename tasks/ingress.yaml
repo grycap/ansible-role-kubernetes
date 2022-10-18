@@ -41,6 +41,9 @@
     KUBECONFIG: "{{KUBECONFIG}}"
   when: certs_secret.rc == 1
 
+- name: Restart kubelet
+  command: service kubelet restart
+  
 - name: Deploy ingress-nginx
   block:
   - copy: src=ingress-nginx.yaml dest=/tmp/ingress-nginx.yaml
