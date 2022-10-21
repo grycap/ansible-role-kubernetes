@@ -8,6 +8,7 @@
       kube_install_kyverno: true
       kube_deploy_dashboard: true
       kube_install_ingress: true
+      kube_public_dns_name: test.domain.com
       kube_docker_options:
         data-root: /var/lib/docker
       kube_version: 1.25.3
