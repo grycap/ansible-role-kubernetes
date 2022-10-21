@@ -34,7 +34,7 @@
   - name: Add Kube API server --service-node-port-rang option
     set_fact:
       kube_apiserver_options: "{{ [{'option': '--service-node-port-range', 'value': '80-35000'}] + kube_apiserver_options }}"
-    when: "{{kube_install_ingress | bool}} and {{not node_port_exists | bool}}"
+    when: kube_install_ingress | bool and not node_port_exists | bool
 
   - name: Add Kube API server options
     lineinfile:
@@ -42,11 +42,26 @@
       line: '    - {{item.option}}={{item.value}}'
       regexp: '^    - {{item.option}}='
       insertafter: '    - kube-apiserver'
-    notify: restart kubeapi
+    register: add_kube_api_server_options
     with_items: "{{ kube_apiserver_options }}"
 
-  - name: force handlers
-    meta: flush_handlers
+  - name: Restart Kube API server
+    block:
+    - name: kill kubeapi
+      command: killall kube-apiserver
+      ignore_errors: true
+
+    - name: restart kubelet to restart kubeapi
+      service:
+        name: kubelet
+        state: restarted
+
+    - name: wait kubeapi port on "{{kube_wait_api_server_ip}}"
+      wait_for:
+        port: 6443
+        host: "{{kube_wait_api_server_ip}}"
+        delay: 5
+    when: add_kube_api_server_options is changed
 
   - name: wait Kube to start on "{{kube_wait_api_server_ip}}"
     wait_for: port=6443 host="{{kube_wait_api_server_ip}}"

@@ -5,21 +5,3 @@
   service:
     name: kubelet
     state: restarted
-
-- name: kill kubeapi
-  command: killall kube-apiserver
-  ignore_errors: yes
-  listen: "restart kubeapi"
-
-- name: restart kubelet to restart kubeapi
-  service:
-    name: kubelet
-    state: restarted
-  listen: "restart kubeapi"
-
-- name: wait kubeapi port on "{{kube_wait_api_server_ip}}"
-  wait_for:
-    port: 6443
-    host: "{{kube_wait_api_server_ip}}"
-    delay: 5
-  listen: "restart kubeapi"

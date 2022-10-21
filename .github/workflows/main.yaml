@@ -25,7 +25,7 @@ jobs:
         run: sudo apt remove buildah podman kubectl containers-image containers-common docker -y
 
       - name: Install Ansible
-        run: sudo pip3 install ansible==2.9.22
+        run: sudo pip3 install dnspython ansible==2.9.22
 
       - name: Create ansible.cfg with correct roles_path
         run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
