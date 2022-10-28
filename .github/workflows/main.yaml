@@ -76,9 +76,7 @@ jobs:
         run: sudo ansible-playbook tests/test.yml -i tests/inventory -e kube_install_metrics=false -e kube_install_method=k3s -e kube_version=v1.25.2+k3s1
 
       - name: Basic role check in wn
-        run: sudo ansible-playbook tests/test.yml -i tests/inventory -e kube_type_of_node=wn -e kube_server=localhost -e kube_install_method=k3s -e kube_version=v1.25.2+k3s1
-        env:
-          K3S_LB_SERVER_PORT: 6445
+        run: sudo ansible-playbook tests/test.yml -i tests/inventory -e kube_type_of_node=wn -e kube_server=localhost -e kube_install_method=k3s -e kube_version=v1.25.2+k3s1 -e kube_k3_exec='--lb-server-port=6445'
 
       - name: Test nodes
         run: sudo kubectl -s https://localhost:6443 --insecure-skip-tls-verify --kubeconfig /etc/rancher/k3s/k3s.yaml get nodes
