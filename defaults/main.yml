@@ -112,3 +112,21 @@ kyverno_validationFailureAction: ensure
 kube_install_yunikorn: false
 # Apache Yunikorn's version to be installed
 kube_yunikorn_version: 0.12.2
+
+
+cilium_debug_log: true
+cilium_k8s_endpoint: "{{ ansible_default_ipv4.address }}"
+# https://docs.cilium.io/en/stable/policy/intro/#policy-enforcement-modes. Values: default, always and never
+cilium_policyEnforcementMode: "default"
+cilium_nodeEncryption: true
+cilium_nodeport_enable: true
+cilium_nodeport_range: "30000,32767"
+cilium_priorityClassName: ""
+cilium_prometheus_enable: false 
+cilium_hubble_certValidityDuration: 365
+cilium_hubble_enable: false
+cilium_hubble_ui_enable: false
+cilium_hubble_priorityClassName: ""
+cilium_hubble_ui_ingress_enable: true
+cilium_hubble_ui_ingress_host: ""
+cilium_hubble_ui_ingress_tls_host: ""

@@ -35,3 +35,83 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
   when: kube_network == 'weave'
 
+- block:
+    # Helm is the installation method of Cilium
+    - import_tasks: helm.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+      when: kube_install_helm | bool
+
+    # Cert-manager is used for creating the certificates
+    - name: Add cert-manager CRDs
+      shell: kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.8.2/cert-manager.crds.yaml
+      when: kube_install_helm | bool
+
+    # Prometheus
+    - name: Add cert-manager of Prometheus
+      shell: kubectl apply -f https://github.com/prometheus-operator/prometheus-operator/blob/master/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+      when: cilium_prometheus_enable | bool
+      
+    - name: Edit /etc/sysctl.d/99-override_cilium_rp_filter.conf
+      lineinfile:
+        dest: /etc/sysctl.d/99-override_cilium_rp_filter.conf
+        regexp: '^net.ipv4.conf.lxc*.rp_filter'
+        line: 'net.ipv4.conf.lxc*.rp_filter = 0'
+        create: yes
+      notify: sysctl-system
+
+    # IPSec secret
+    - name: Check if cilium-ipsec-keys secret exists
+      command:  kubectl -n kube-system get secret cilium-ipsec-keys
+      register: k_status
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Create cilium-ipsec-keys secret
+      shell: kubectl create -n kube-system secret generic cilium-ipsec-keys  --from-literal=keys="3 rfc4106(gcm(aes)) $(echo $(dd if=/dev/urandom count=20 bs=1 2> /dev/null | xxd -p -c 64)) 128"
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+      when: k_status.rc != 0
+
+    - name: Download cilium cli
+      command: curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz{,.sha256sum}
+
+    - name: Install cilium cli
+      command: tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
+
+    - name: Add Cilium Helm repo
+      command: helm repo add cilium https://helm.cilium.io/
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+
+    - name: Check if Cilium is installed
+      command: helm status cilium -n kube-system
+      register: helm_status
+      ignore_errors: yes
+      changed_when: false
+
+    - block:
+      - name: Helm update
+        command: helm repo update
+        environment:
+          KUBECONFIG: "{{KUBECONFIG}}"
+
+      - name: Create file with Cilium values
+        template: src=cilium-values-1.12.0.yaml.j2 dest=/tmp/cilium-values-1.12.0.yaml
+
+      - name: Deploy cilium 
+        command: helm install cilium cilium/cilium --version 1.12.0 --namespace kube-system -f /tmp/cilium-values-1.12.0.yaml
+        environment:
+          KUBECONFIG: "{{KUBECONFIG}}"
+           
+      when: helm_status.rc != 0
+
+    - name: Wait until cilium was deployed
+      command: cilium status --wait
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+      #hubble is deployed in WN
+      when: not cilium_hubble_enable 
+    
+
+  when: kube_network == 'cilium'
