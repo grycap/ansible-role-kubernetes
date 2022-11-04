@@ -90,8 +90,8 @@
       ignore_errors: yes
       changed_when: false
 
-      - name: Create file with Cilium values
-        template: src=cilium-values-1.12.0.yaml.j2 dest=/tmp/cilium-values-1.12.0.yaml
+    - name: Create file with Cilium values
+      template: src=cilium-values-1.12.0.yaml.j2 dest=/tmp/cilium-values-1.12.0.yaml
 
     - block:
       - name: Helm update
