@@ -2,11 +2,6 @@
 - name: Copy 'is_cluster_ready' file
   copy: dest=/bin/is_cluster_ready src=is_cluster_ready mode=0755
 
-- name: force handlers
-  meta: flush_handlers
-
-
-
 - block:
 
   - name: Create kubeadm-config file
