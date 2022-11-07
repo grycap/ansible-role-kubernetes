@@ -91,7 +91,7 @@
       changed_when: false
 
     - name: Create file with Cilium values
-      template: src=cilium-values-1.12.0.yaml.j2 dest=/tmp/cilium-values-1.12.0.yaml
+      template: src=cilium-values-1.12.3.yaml.j2 dest=/tmp/cilium-values-1.12.3.yaml
 
     - block:
       - name: Helm update
@@ -100,7 +100,7 @@
           KUBECONFIG: "{{KUBECONFIG}}"
 
       - name: Deploy cilium 
-        command: helm install cilium cilium/cilium --version 1.12.0 --namespace kube-system -f /tmp/cilium-values-1.12.0.yaml
+        command: helm install cilium cilium/cilium --version 1.12.3 --namespace kube-system -f /tmp/cilium-values-1.12.3.yaml
         environment:
           KUBECONFIG: "{{KUBECONFIG}}"
            
