@@ -68,3 +68,6 @@
     KUBECONFIG: "{{KUBECONFIG}}"
   ignore_errors: yes
 
+- name: Pause for 5 seconds to wait ingress-nginx
+  pause:
+    seconds: 5
