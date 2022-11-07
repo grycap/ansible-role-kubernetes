@@ -37,6 +37,10 @@
       - cert-manager-cainjector
       - cert-manager-webhook
 
+  - name: Pause for 5 seconds to wait cert-manager
+    pause:
+      seconds: 5
+
   - template: src=dns01_secret.j2 dest=/tmp/dns01_secret.yaml
   - name: Create DNS01 secret
     command: kubectl apply -f /tmp/dns01_secret.yaml
