@@ -2,11 +2,6 @@
 - name: Copy 'is_cluster_ready' file
   copy: dest=/bin/is_cluster_ready src=is_cluster_ready mode=0755
 
-- name: force handlers
-  meta: flush_handlers
-
-
-
 - block:
 
   - name: Create kubeadm-config file
@@ -112,6 +107,11 @@
 
   when: kube_install_method == "k3s"
 
+- name: Set KUBECONFIG environment variable
+  lineinfile:
+    dest: /etc/environment
+    line: "KUBECONFIG={{KUBECONFIG}}"
+
 - import_tasks: helm.yaml
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
@@ -157,11 +157,6 @@
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
   with_items: "{{ kube_apply_repos }}"
-
-- name: Set KUBECONFIG environment variable
-  lineinfile:
-    dest: /etc/environment
-    line: "KUBECONFIG={{KUBECONFIG}}"
 
 - block:
     - template: src=nfs-client.j2 dest=/tmp/nfs-client.yaml
