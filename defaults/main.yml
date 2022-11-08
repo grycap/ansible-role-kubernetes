@@ -130,3 +130,4 @@ cilium_hubble_priorityClassName: ""
 cilium_hubble_ui_ingress_enable: true
 cilium_hubble_ui_ingress_host: ""
 cilium_hubble_ui_ingress_tls_host: ""
+cilium_hubble_ui_ingress_annotations: {}
