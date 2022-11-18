@@ -111,7 +111,7 @@ kyverno_validationFailureAction: ensure
 # Option to install Apache Yunikorn
 kube_install_yunikorn: false
 # Apache Yunikorn's version to be installed
-kube_yunikorn_version: 0.12.2
+kube_yunikorn_version: 1.1.0
 
 
 cilium_debug_log: true
