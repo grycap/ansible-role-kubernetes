@@ -1,6 +1,6 @@
 ---
   - name: Add Apache Yunikorn Helm repo
-    command: helm repo add yunikorn  https://apache.github.io/incubator-yunikorn-release
+    command: helm repo add yunikorn  https://apache.github.io/yunikorn-release
     environment:
       KUBECONFIG: "{{KUBECONFIG}}"
 
