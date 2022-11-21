@@ -12,3 +12,9 @@ configuration: |
     queues:
     - name: root
       submitacl: '*'
+
+tolerations:
+- key: node-role.kubernetes.io/master
+  effect: NoSchedule
+- key: node-role.kubernetes.io/control-plane
+  effect: NoSchedule
