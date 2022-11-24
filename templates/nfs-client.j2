@@ -123,5 +123,6 @@ metadata:
 provisioner: fuseim.pri/ifs # or choose another name, must match deployment's env PROVISIONER_NAME'
 parameters:
   archiveOnDelete: "false"
+reclaimPolicy: {{ kube_nfs_reclaim_policy }}
 mountOptions:
     - nfsvers=4

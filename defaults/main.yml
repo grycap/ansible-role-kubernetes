@@ -56,6 +56,8 @@ kube_install_nfs_client: false
 kube_nfs_path: /pv
 # NFS server used by nfs-client-provisioner
 kube_nfs_server: kubeserver.localdomain
+# Set reclaimPolicy of NFS StorageClass Delete or Retain
+kube_nfs_reclaim_policy: Delete
 # Extra options for the flannel plugin
 kube_flanneld_extra_args: []
 # Enable to install and manage Certificates with Cert-manager
