@@ -7,11 +7,11 @@
       kube_install_kubeapps: false
       kube_install_kyverno: true
       kube_deploy_dashboard: true
-      kube_apiserver_options:
-      - {option: "--service-node-port-range", value: "80-32767"}
+      kube_install_ingress: true
+      kube_public_dns_name: test.domain.com
       kube_docker_options:
         data-root: /var/lib/docker
-      kube_version: 1.21.1
-      kube_docker_compatible_versions: ['17.03.', '18.06.', '18.09.', '19.03.', '20.10.']
+      kube_version: 1.25.3
+      kube_cri_runtime: containerd
       kube_install_docker_pip: true
       kubelet_extra_args:  '-node-labels=somelabel'

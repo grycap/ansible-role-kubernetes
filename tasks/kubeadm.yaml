@@ -31,6 +31,11 @@
         net.bridge.bridge-nf-call-ip6tables = 1
       dest: /etc/sysctl.d/99-kubernetes-cri.conf
 
+  #- name: Containerd CNI for Cilium network
+  #  template: src=10-containerd-net.conflist.j2 dest=/etc/cni/net.d/10-containerd-net.conflist
+  #  notify: sysctl-system
+  #  when: kube_network == 'cilium''
+
   - name: Apply sysctl params
     command: sysctl --system
     when: containerd_sysctl is changed

@@ -45,7 +45,9 @@ kube_install_ingress: false
 # Flag to set add the nvidia support to the cluster
 kube_nvidia_support: false
 # Driver version to install: specific version or "latest"
-kube_nvidia_driver_version: "410"
+kube_nvidia_driver_version: "515"
+# Tag of the nvidia device plugin docker container
+kube_nvidia_device_plugin_version: "v0.12.2"
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
@@ -111,4 +113,23 @@ kyverno_validationFailureAction: ensure
 # Option to install Apache Yunikorn
 kube_install_yunikorn: false
 # Apache Yunikorn's version to be installed
-kube_yunikorn_version: 0.12.2
+kube_yunikorn_version: 1.1.0
+
+
+cilium_debug_log: true
+cilium_k8s_endpoint: "{{ ansible_default_ipv4.address }}"
+# https://docs.cilium.io/en/stable/policy/intro/#policy-enforcement-modes. Values: default, always and never
+cilium_policyEnforcementMode: "default"
+cilium_nodeEncryption: true
+cilium_nodeport_enable: true
+cilium_nodeport_range: "30000,32767"
+cilium_priorityClassName: ""
+cilium_prometheus_enable: false 
+cilium_hubble_certValidityDuration: 365
+cilium_hubble_enable: false
+cilium_hubble_ui_enable: false
+cilium_hubble_priorityClassName: ""
+cilium_hubble_ui_ingress_enable: true
+cilium_hubble_ui_ingress_host: ""
+cilium_hubble_ui_ingress_tls_host: ""
+cilium_hubble_ui_ingress_annotations: {}

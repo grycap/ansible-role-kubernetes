@@ -11,5 +11,8 @@
 - name: Include "{{kube_install_method}}" tasks
   include_tasks: "{{kube_install_method}}.yaml"
 
+- name: force handlers
+  meta: flush_handlers
+
 - name: Include "{{kube_type_of_node}}" tasks
   include_tasks: "{{kube_type_of_node}}.yaml"
