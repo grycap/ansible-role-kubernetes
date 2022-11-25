@@ -190,3 +190,5 @@
 
 - import_tasks: yunikorn.yaml
   when: kube_install_yunikorn | bool
+
+- import_tasks: delete_wns.yaml
