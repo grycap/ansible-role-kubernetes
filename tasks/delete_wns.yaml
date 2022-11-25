@@ -1,7 +1,11 @@
 ---
+- set_fact:
+    all_nodes: []
+
 - name: Get the FQDN of all nodes
   set_fact:
     all_nodes: "{{ groups['all']|map('extract', hostvars,'IM_NODE_FQDN')|list }}"
+  when: IM_NODE_FQDN is defined
 
 - name: Get list of NotReady nodes
   shell: kubectl get nodes | grep NotReady | awk '{print $1}'
@@ -13,6 +17,6 @@
   command: kubectl delete node {{item}}
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
-  when: item not in all_nodes
+  when: all_nodes and item not in all_nodes
   with_items: "{{ kube_nodes.stdout_lines }}"
   ignore_errors: true
