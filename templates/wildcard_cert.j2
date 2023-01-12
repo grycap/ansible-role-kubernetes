@@ -7,6 +7,6 @@ spec:
   issuerRef: 
     kind: Issuer
     name: letsencrypt-prod
-  commonName: "*.{{ kube_cert_manager_wildcard_cert_dns_name }}"
+  commonName: "{{ kube_cert_manager_wildcard_cert_dns_name }}"
   dnsNames:
-    - "*.{{ kube_cert_manager_wildcard_cert_dns_name }}"
+    - "{{ kube_cert_manager_wildcard_cert_dns_name }}"
