@@ -50,4 +50,11 @@
     environment:
       KUBECONFIG: "{{KUBECONFIG}}"
 
+  - template: src=wildcard_cert.j2 dest=/tmp/wildcard_cert.yaml
+  - name: Create Let's encrypt Wildcard Certificate for '{{ kube_cert_manager_wildcard_cert_dns_name }}'
+    command: kubectl apply -f /tmp/wildcard_cert.yaml
+    environment:
+      KUBECONFIG: "{{KUBECONFIG}}"
+    when: kube_cert_manager_wildcard_cert_dns_name != '' and kube_cert_manager_challenge == 'dns01'
+
   when: kube_cert_manager | bool

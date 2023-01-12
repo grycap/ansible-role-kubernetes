@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: le-crt
+spec:
+  secretName: tls-secret
+  issuerRef: 
+    kind: Issuer
+    name: letsencrypt-prod
+  commonName: "*.{{ kube_cert_manager_wildcard_cert_dns_name }}"
+  dnsNames:
+    - "*.{{ kube_cert_manager_wildcard_cert_dns_name }}"
