@@ -4,9 +4,14 @@ metadata:
   name: le-crt
 spec:
   secretName: tls-secret
-  issuerRef: 
-    kind: Issuer
-    name: letsencrypt-prod
-  commonName: "{{ kube_cert_manager_wildcard_cert_dns_name }}"
   dnsNames:
-    - "{{ kube_cert_manager_wildcard_cert_dns_name }}"
+  - '*.{{ kube_cert_manager_wildcard_cert_dns_name }}'
+  acme:
+   config:
+     - dns01:
+         provider: dns
+       domains:
+         - '*.{{ kube_cert_manager_wildcard_cert_dns_name }}'
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
