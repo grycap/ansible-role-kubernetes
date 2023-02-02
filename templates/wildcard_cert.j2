@@ -5,7 +5,7 @@ metadata:
 spec:
   secretName: tls-secret
   issuerRef: 
-    kind: Issuer
+    kind: ClusterIssuer
     name: letsencrypt-prod
   commonName: "{{ kube_cert_manager_wildcard_cert_dns_name }}"
   dnsNames:
