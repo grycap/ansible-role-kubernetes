@@ -68,6 +68,8 @@ kube_cert_manager: false
 kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
 # Public DNS name to use in the dashboard tls certificate
 kube_public_dns_name: ""
+# Enable bin packing strategy in the scheduler
+kube_scheduler_bin_packing: false
 # Email to be used in the Let's Encrypt issuer
 kube_cert_user_email: jhondoe@server.com
 # Cert Manager type of challenge provider: http01 or dns01

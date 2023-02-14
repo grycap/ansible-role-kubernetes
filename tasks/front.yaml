@@ -40,6 +40,23 @@
     register: add_kube_api_server_options
     with_items: "{{ kube_apiserver_options }}"
 
+  - block:
+    - name: Copy kube_scheduler_config.yaml file
+      copy: src=kube_scheduler_config.yaml dest=/etc/kubernetes/kube_scheduler_config.yaml
+    - name: Add Kube schedule conf file
+      lineinfile:
+        dest: /etc/kubernetes/manifests/kube-scheduler.yaml
+        line: '    - --config=/etc/kubernetes/kube_scheduler_config.yaml'
+        regexp: '^    - --config='
+        insertafter: '    - kube-scheduler'
+      register: add_kube_scheduler_conf
+    when: kube_scheduler_bin_packing 
+
+  - name: kill kube-scheduler
+    command: killall kube-scheduler
+    ignore_errors: true
+    when: add_kube_scheduler_conf is changed
+
   - name: Restart Kube API server
     block:
 
