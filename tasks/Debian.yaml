@@ -1,8 +1,22 @@
 ---
 - name: Add repo key
-  apt_key:
+  get_url:
     url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-    state: present
+    dest: /etc/apt/trusted.gpg.d/google.asc
+    mode: '0644'
+    force: true
+  register: add_key
+  ignore_errors: yes
+
+# Sometimes google key fails with error 500
+# https://github.com/kubernetes/release/issues/100
+# So we copied it at GRyCAP and use it in case of error
+- name: Add repo key backup
+  get_url:
+    url: "http://ftpgrycap.i3m.upv.es/ubuntu/google-apt-key.gpg"
+    dest: /etc/apt/trusted.gpg.d/google.asc
+    mode: '0644'
+  when: add_key is failed
 
 - name: Add kubernetes repo
   apt_repository: repo='deb http://apt.kubernetes.io/ kubernetes-xenial main' state=present update_cache=yes
