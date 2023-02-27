@@ -2,7 +2,7 @@
 - name: Add repo key
   get_url:
     url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-    dest: /etc/apt/trusted.gpg.d/google.asc
+    dest: /etc/apt/trusted.gpg.d/google.gpg
     mode: '0644'
     force: true
   register: add_key
