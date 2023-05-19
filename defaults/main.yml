@@ -78,6 +78,9 @@ kube_cert_manager_challenge_dns01_ak: ''
 kube_cert_manager_challenge_dns01_sk: ''
 # Optionally a wildcard dns certificate name can be set
 kube_cert_manager_wildcard_cert_dns_name: ''
+# Override default docker version
+# (installed when not in kube_docker_compatible_versions)
+kube_docker_version: ""
 # Options to add in the docker.json file
 kube_docker_options: {}
 # Compatible docker versions
