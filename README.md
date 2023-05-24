@@ -60,6 +60,9 @@ The variables that can be passed to this role and a brief description about them
 	kube_public_dns_name: ""
 	# Email to be used in the Let's Encrypt issuer
 	kube_cert_user_email: jhondoe@server.com
+	# Override default docker version
+	# (installed when not in kube_docker_compatible_versions)
+	kube_docker_version: ""
 	# Options to add in the docker.json file
 	kube_docker_options: {}
 	# Compatible docker versions
