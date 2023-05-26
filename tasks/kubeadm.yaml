@@ -40,7 +40,7 @@
     command: sysctl --system
     when: containerd_sysctl is changed
 
-  when: kube_cri_runtime == "containerd"
+  when: kube_cri_runtime in ["containerd", "crio"]
 
 - name: Include "{{ansible_os_family}}" Kubernetes recipe
   include_tasks: "{{ansible_os_family}}.yaml"
