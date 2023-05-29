@@ -103,7 +103,7 @@ jobs:
         run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
 
       - name: Install geerlingguy.ntp
-        run: sudo ansible-galaxy install geerlingguy.ntp grycap.cri_o
+        run: sudo ansible-galaxy install geerlingguy.ntp grycap.docker grycap.cri_o
 
       - name: Basic role syntax check
         run: sudo ansible-playbook tests/test-crio.yml -i tests/inventory --syntax-check
