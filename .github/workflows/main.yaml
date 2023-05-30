@@ -22,7 +22,7 @@ jobs:
         run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
     
       - name: Remove pre-installed kubectl to avoid errors
-        run: sudo apt remove buildah podman docker -y
+        run: sudo apt remove buildah podman docker-ce containerd.io -y
 
       - name: Install Ansible
         run: sudo pip3 install dnspython ansible==2.9.22
@@ -58,7 +58,7 @@ jobs:
         run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
     
       - name: Remove pre-installed kubectl to avoid errors
-        run: sudo apt remove buildah podman docker -y
+        run: sudo apt remove buildah podman docker-ce containerd.io -y
 
       - name: Install Ansible
         run: sudo pip3 install ansible==2.9.22
@@ -94,7 +94,7 @@ jobs:
         run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
     
       - name: Remove pre-installed kubectl to avoid errors
-        run: sudo apt remove buildah podman docker -y
+        run: sudo apt remove buildah podman docker-ce containerd.io -y
 
       - name: Install Ansible
         run: sudo pip3 install ansible==2.9.22
