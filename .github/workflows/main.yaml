@@ -24,6 +24,12 @@ jobs:
       - name: Remove pre-installed kubectl to avoid errors
         run: sudo apt remove buildah podman docker-ce containerd.io -y
 
+      - name: Show installed packages
+        run: sudo dpkq-query -l
+
+      - name: Stop containerd
+        run: sudo systemctl stop containerd; sudo rm -f /var/run/containerd/containerd.sock
+
       - name: Install Ansible
         run: sudo pip3 install dnspython ansible==2.9.22
 
