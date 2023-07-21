@@ -11,11 +11,11 @@ etcd:
   local:
     extraArgs:
       cipher-suites: "{{kube_tls_cipher_suites}}"
-      {% if IM_NODE_PRIVATE_IP is defined %}
+{% if IM_NODE_PRIVATE_IP is defined %}
       advertise-client-urls: "https://{{ IM_NODE_PRIVATE_IP }}:2379"
       listen-client-urls: "https://127.0.0.1:2379,https://{{ IM_NODE_PRIVATE_IP }}:2379"
       listen-peer-urls: "https://{{ IM_NODE_PRIVATE_IP }}:2380"
-      {% endif %}
+{% endif %}
 apiServer:
   extraArgs:
     advertise-address: "{{kube_api_server}}"        # --apiserver-advertise-address
@@ -40,7 +40,7 @@ controlPlaneEndpoint: "{{kube_api_server}}:6443"
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
 cgroupDriver: systemd
-tlsCipherSuites: "{{kube_tls_cipher_suites.split(',')}}"
+tlsCipherSuites: {{kube_tls_cipher_suites.split(',')}}
 ---
 kind: InitConfiguration
 {% if kube_version is version_compare('1.22.0', '<') %}
