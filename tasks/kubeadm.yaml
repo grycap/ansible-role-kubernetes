@@ -1,5 +1,5 @@
 - name: Include cri-docker tasks
-  include_tasks: "cri-docker.yaml"
+  include_tasks: "cri-dockerd.yaml"
   when: kube_cri_runtime == "docker"
 
 - name: Check kube version
