@@ -8,6 +8,10 @@
     regexp: '^([^#].*?\sswap\s+sw.*)$'
     replace: '# \1'
 
+- name: Include cri-docker tasks
+  include_tasks: "cri-docker.yaml"
+  when: kube_cri_runtime == "docker"
+
 - name: Include "{{kube_install_method}}" tasks
   include_tasks: "{{kube_install_method}}.yaml"
 
