@@ -1,7 +1,7 @@
 ---
 - name: Download cri-dockerd tarball
   get_url:
-    utl: https://github.com/Mirantis/cri-dockerd/releases/download/v{{ kube_cri_dockerd_version }}/cri-dockerd-{{ kube_cri_dockerd_version }}.amd64.tgz
+    url: https://github.com/Mirantis/cri-dockerd/releases/download/v{{ kube_cri_dockerd_version }}/cri-dockerd-{{ kube_cri_dockerd_version }}.amd64.tgz
     dest: /tmp/cri-dockerd-{{ kube_cri_dockerd_version }}.amd64.tgz
 
 - name: Extract cri-dockerd tarball
