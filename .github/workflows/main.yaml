@@ -119,3 +119,38 @@ jobs:
 
       - name: Test nodes
         run: sudo kubectl -s https://localhost:6443 --insecure-skip-tls-verify --kubeconfig /etc/kubernetes/admin.conf  get nodes
+
+  test-docker:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Install python
+        run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
+    
+      - name: Remove pre-installed kubectl to avoid errors
+        run: sudo apt remove buildah podman -y
+
+      - name: Install Ansible
+        run: sudo pip3 install dnspython ansible==2.9.22
+
+      - name: Create ansible.cfg with correct roles_path
+        run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
+  
+      - name: Install geerlingguy.ntp
+        run: sudo ansible-galaxy install geerlingguy.ntp grycap.docker grycap.cri_o
+
+      - name: Basic role syntax check
+        run: sudo ansible-playbook tests/test-docker.yml -i tests/inventory --syntax-check
+
+      - name: Basic role check in front
+        run: sudo ansible-playbook tests/test-docker.yml -i tests/inventory
+
+      - name: Basic role check in wn
+        run: sudo ansible-playbook tests/test-docker.yml -i tests/inventory -e kube_type_of_node=wn -e kube_server=localhost
+
+      - name: Test nodes
+        run: sudo kubectl -s https://localhost:6443 --insecure-skip-tls-verify --kubeconfig /etc/kubernetes/admin.conf  get nodes
