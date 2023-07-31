@@ -17,7 +17,10 @@ kube_pod_network_cidr: 10.244.0.0/16
 # Type of network to install: currently supported: flannel, kube-router, calico, weave
 kube_network: flannel
 # Kubelet extra args
-kubelet_extra_args: ''
+kubelet_extra_args: '' # deprecated move to kubelet_extra_args_dict
+# dict of kubelet extra args, if set kubelet_extra_args is ignored
+# A key in this map is the flag name as it appears on the command line except without leading dash(es).
+kubelet_extra_args_dict: {}
 # Kube API server options
 kube_apiserver_options: []
 # CRI runtime

@@ -42,10 +42,11 @@
 
 - block:
 
+  # to deprecate and move to kubelet_extra_args_dict
   - name: Add KUBELET_EXTRA_ARGS
     lineinfile:
       dest: "{{item}}/kubelet"
-      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd {{kubelet_extra_args}}'
+      line: 'KUBELET_EXTRA_ARGS={{kubelet_extra_args}}'
       regexp: 'KUBELET_EXTRA_ARGS='
       create: yes
     notify: restart kubelet
@@ -54,9 +55,13 @@
         - /etc/sysconfig/
         - /etc/default/
     ignore_errors: true
+    when: kubelet_extra_args != "" and kubelet_extra_args_dict == {}
+
+  - name: Create kubeadm-config file
+    template: src=kubeadm-config-join.j2 dest=/tmp/kubeadm-config.yml
 
   - name: Add node to kube cluster
-    command: kubeadm join --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
+    command: kubeadm join --config /tmp/kubeadm-config.yml creates=/etc/kubernetes/kubelet.conf
 
   when: kube_install_method == "kubeadm"
 
