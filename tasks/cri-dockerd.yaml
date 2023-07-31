@@ -1,18 +1,18 @@
 ---
 - name: Download cri-dockerd tarball
   get_url:
-    url: https://github.com/Mirantis/cri-dockerd/releases/download/v{{ kube_cri_dockerd_version }}/cri-dockerd-v{{ kube_cri_dockerd_version }}-linux-amd64.tar.gz
-    dest: /tmp/cri-dockerd-v{{ kube_cri_dockerd_version }}-linux-amd64.tar.gz
+    utl: https://github.com/Mirantis/cri-dockerd/releases/download/v{{ kube_cri_dockerd_version }}/cri-dockerd-{{ kube_cri_dockerd_version }}.amd64.tgz
+    dest: /tmp/cri-dockerd-{{ kube_cri_dockerd_version }}.amd64.tgz
 
 - name: Extract cri-dockerd tarball
   unarchive:
-    src: /tmp/cri-dockerd-v{{ kube_cri_dockerd_version }}-linux-amd64.tar.gz
+    src: /tmp/cri-dockerd-{{ kube_cri_dockerd_version }}.amd64.tgz
     dest: /tmp
     remote_src: yes
 
 - name: Copy cri-dockerd binary
   copy:
-    src: /tmp/cri-dockerd-v{{ kube_cri_dockerd_version }}-linux-amd64/cri-dockerd
+    src: /tmp/cri-dockerd/cri-dockerd
     dest: /usr/bin/cri-dockerd
     mode: '0755'
 
