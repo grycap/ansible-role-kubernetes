@@ -28,7 +28,7 @@ dependencies:
     docker_compose_version: ""
     docker_containerd_only: "{{ (kube_cri_runtime == 'containerd') | bool }}"
     docker_nvidia_driver_version: "{{ kube_nvidia_driver_version }}"
-    when: ansible_os_family == "RedHat" and kube_install_method == 'kubeadm' and kube_cri_runtime != 'crio'
+    when: ansible_os_family == "RedHat" and kube_install_method == 'kubeadm' and kube_cri_runtime != 'crio' and kube_cri_runtime_install
   - role: 'grycap.docker'
     docker_version: "{{ kube_docker_version | default('latest', true) }}"
     docker_config_values: "{{ {'exec-opts': ['native.cgroupdriver=systemd'], 'log-driver': 'json-file', 'log-opts': {'max-size': '100m'}, 'storage-driver': 'overlay2'} | combine(kube_docker_options) }}"
@@ -38,7 +38,7 @@ dependencies:
     docker_compose_version: ""
     docker_containerd_only: "{{ (kube_cri_runtime == 'containerd') | bool }}"
     docker_nvidia_driver_version: "{{ kube_nvidia_driver_version }}"
-    when: ansible_os_family == "Debian" and kube_install_method == 'kubeadm' and kube_cri_runtime != 'crio'
+    when: ansible_os_family == "Debian" and kube_install_method == 'kubeadm' and kube_cri_runtime != 'crio' and kube_cri_runtime_install
   - role: 'grycap.cri_o'
-    when: ansible_os_family == "Debian" and kube_install_method == 'kubeadm' and kube_cri_runtime == 'crio'
+    when: ansible_os_family == "Debian" and kube_install_method == 'kubeadm' and kube_cri_runtime == 'crio' and kube_cri_runtime_install
   
