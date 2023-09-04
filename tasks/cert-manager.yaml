@@ -27,6 +27,7 @@
     command: kubectl apply -f /tmp/cert-manager.yaml
     environment:
       KUBECONFIG: "{{KUBECONFIG}}"
+    register: cert_manager
 
   - name: Wait for cert-manager ready status
     command: kubectl rollout status deployment/{{ item }} -n cert-manager
@@ -36,6 +37,11 @@
       - cert-manager
       - cert-manager-cainjector
       - cert-manager-webhook
+
+  - name: Pause for 5 seconds to wait cert-manager to fully start
+    pause:
+      seconds: 5
+    when: cert_manager is changed
 
   - block:
     - template: src=dns01_secret.j2 dest=/tmp/dns01_secret.yaml
