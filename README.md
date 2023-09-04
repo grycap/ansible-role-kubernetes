@@ -61,12 +61,9 @@ The variables that can be passed to this role and a brief description about them
 	# Email to be used in the Let's Encrypt issuer
 	kube_cert_user_email: jhondoe@server.com
 	# Override default docker version
-	# (installed when not in kube_docker_compatible_versions)
 	kube_docker_version: ""
 	# Options to add in the docker.json file
 	kube_docker_options: {}
-	# Compatible docker versions
-	kube_docker_compatible_versions: ['17.03.', '18.06.', '18.09.', '19.03.']
 	# Install docker with pip
 	kube_install_docker_pip
 	# Command flags to use for launching k3s in the systemd service

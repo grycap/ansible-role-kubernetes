@@ -10,7 +10,8 @@
       kube_install_ingress: true
       kube_public_dns_name: test.domain.com
       kube_version: 1.25.3
-      kube_cri_runtime: containerd
+      kube_cri_runtime: docker
+      kube_cri_runtime_install: false
       kube_install_docker_pip: true
       kubelet_extra_args_dict: 
         node-labels: somelabel
