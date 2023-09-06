@@ -107,6 +107,11 @@
 
   when: kube_install_method == "k3s"
 
+- name: Set KUBECONFIG environment variable
+  lineinfile:
+    dest: /etc/environment
+    line: "KUBECONFIG={{KUBECONFIG}}"
+
 - import_tasks: helm.yaml
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
@@ -152,11 +157,6 @@
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
   with_items: "{{ kube_apply_repos }}"
-
-- name: Set KUBECONFIG environment variable
-  lineinfile:
-    dest: /etc/environment
-    line: "KUBECONFIG={{KUBECONFIG}}"
 
 - block:
     - template: src=nfs-client.j2 dest=/tmp/nfs-client.yaml
