@@ -94,7 +94,7 @@ jobs:
         run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
     
       - name: Remove pre-installed kubectl to avoid errors
-        run: sudo apt remove buildah podman -y
+        run: sudo apt remove kubeadm kubelet kubectl buildah podman -y
 
       - name: Stop containerd
         run: sudo systemctl stop containerd; sudo rm -f /var/run/containerd/containerd.sock
