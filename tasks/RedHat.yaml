@@ -3,10 +3,12 @@
   block:
   when: "kube_version is version('1.24', '>=')"
 
-  - set_fact:
-     kube_minor_version: "{{ kube_version.split('.')[0] }}"."{{ kube_version.split('.')[1] }}"
+  - name: Set kube_minor_version
+    set_fact:
+      kube_minor_version: "{{ kube_version.split('.')[0] }}"."{{ kube_version.split('.')[1] }}"
 
-  - copy:
+  - name: Set repo file
+    copy:
       dest: /etc/yum.repos.d/kubernetes.repo
       content: |
         [kubernetes]
