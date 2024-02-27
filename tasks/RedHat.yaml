@@ -1,7 +1,5 @@
 --- 
-- name: Add repo for new Kubernetes versions
-  block:
-  when: "kube_version is version('1.24', '>=')"
+- block:
 
   - name: Set kube_minor_version
     set_fact:
@@ -25,10 +23,12 @@
       key: https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/rpm/repodata/repomd.xml.key
       state: present
 
-- name: Add repo for old Kubernetes versions
-  block:
-  when: "kube_version is version('1.24', '<')"
-  - copy:
+  when: "kube_version is version('1.24', '>=')"
+
+- block:
+
+  - name: Set repo file
+    copy:
       dest: /etc/yum.repos.d/kubernetes.repo
       content: |
           [kubernetes]
@@ -43,6 +43,8 @@
     rpm_key:
       key: https://packages.cloud.google.com/yum/doc/yum-key.gpg
       state: present
+
+  when: "kube_version is version('1.24', '<')"
 
 - name: Install kubernetes packages
   package: name=psmisc,kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}},yum-plugin-versionlock state=present update_cache=yes

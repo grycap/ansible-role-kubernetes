@@ -1,7 +1,4 @@
----
-- name: Add repo for new Kubernetes versions
-  block:
-  when: "kube_version is version('1.24', '>=')"
+- block:
 
   - name: Set kube_minor_version
     set_fact:
@@ -16,10 +13,9 @@
   - name: Add kubernetes repo
     apt_repository: repo='deb https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/deb/ /' state=present update_cache=yes
 
+  when: "kube_version is version('1.24', '>=')"
 
-- name: Add repo for old Kubernetes versions
-  block:
-  when: "kube_version is version('1.24', '<')"
+- block:
 
   - name: Add repo key
     get_url:
@@ -40,6 +36,8 @@
 
   - name: Add kubernetes repo
     apt_repository: repo='deb http://apt.kubernetes.io/ kubernetes-xenial main' state=present update_cache=yes
+
+  when: "kube_version is version('1.24', '<')"
 
 - name: Install kubernetes packages
   apt: name=kubelet={{ kube_version }}*,kubeadm={{ kube_version }}*,kubectl={{ kube_version }}*
