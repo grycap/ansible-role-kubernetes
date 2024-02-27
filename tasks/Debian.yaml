@@ -1,7 +1,7 @@
 ---
 - name: Add repo for new Kubernetes versions
   block:
-  when: kube_version is version('1.24', '>=')
+  when: "kube_version is version('1.24', '>=')"
 
   - set_fact:
      kube_minor_version: "{{ kube_version.split('.')[0] }}"."{{ kube_version.split('.')[1] }}"
@@ -17,7 +17,7 @@
 
 - name: Add repo for old Kubernetes versions
   block:
-  when: kube_version is version('1.24', '<')
+  when: "kube_version is version('1.24', '<')"
 
   - name: Add repo key
     get_url:
