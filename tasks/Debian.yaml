@@ -5,7 +5,7 @@
 
   - name: Set kube_minor_version
     set_fact:
-      kube_minor_version: "{{ kube_version.split('.')[0] }}"."{{ kube_version.split('.')[1] }}"
+      kube_minor_version: "{{ kube_version.split('.')[0] }}.{{ kube_version.split('.')[1] }}"
 
   - name: Add repo key
     get_url:
