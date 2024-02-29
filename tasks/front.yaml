@@ -59,10 +59,14 @@
     when: add_kube_api_server_options is changed
 
   - name: wait Kube to start on "{{kube_wait_api_server_ip}}"
-    wait_for:
-      port: 6443
-      host: "{{kube_wait_api_server_ip}}"
-      delay: 5
+    uri:
+      url: "https://{{kube_wait_api_server_ip}}:6443/livez"
+      status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 60
+      delay: 1
+      validate_certs: false
 
   - set_fact:
       KUBECONFIG: /etc/kubernetes/admin.conf
