@@ -62,11 +62,11 @@
     uri:
       url: "https://{{kube_wait_api_server_ip}}:6443/livez"
       status_code: 200
-      register: result
-      until: result.status == 200
-      retries: 60
-      delay: 1
       validate_certs: false
+    register: result
+    until: result.status == 200
+    retries: 60
+    delay: 1
 
   - set_fact:
       KUBECONFIG: /etc/kubernetes/admin.conf
