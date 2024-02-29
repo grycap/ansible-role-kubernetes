@@ -1,5 +1,5 @@
 # Version to install or latest
-kube_version: 1.23.7
+kube_version: 1.24.17
 # Type of node front or wn
 kube_type_of_node: front
 # How to install K8s: kubeadm or k3s
