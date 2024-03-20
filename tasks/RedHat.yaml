@@ -1,50 +1,30 @@
 --- 
-- block:
-
-  - name: Set kube_minor_version
-    set_fact:
-      kube_minor_version: "{{ kube_version.split('.')[0] }}.{{ kube_version.split('.')[1] }}"
-
-  - name: Set repo file
-    copy:
-      dest: /etc/yum.repos.d/kubernetes.repo
-      content: |
-        [kubernetes]
-        name=Kubernetes
-        baseurl=https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/rpm/
-        enabled=1
-        gpgcheck=0
-        repo_gpgcheck=0
-        gpgkey=https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/rpm/repodata/repomd.xml.key
-        exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
-
-  - name: import gpg key
-    rpm_key:
-      key: https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/rpm/repodata/repomd.xml.key
-      state: present
-
-  when: "kube_version is version('1.24', '>=')"
-
-- block:
-
-  - name: Set repo file
-    copy:
-      dest: /etc/yum.repos.d/kubernetes.repo
-      content: |
-          [kubernetes]
-          name=Kubernetes
-          baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-          enabled=1
-          gpgcheck=0
-          repo_gpgcheck=0
-          gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-
-  - name: import gpg key
-    rpm_key:
-      key: https://packages.cloud.google.com/yum/doc/yum-key.gpg
-      state: present
-
+- fail:
+    msg: "Kubernetes version {{ kube_version }} is not supported"
   when: "kube_version is version('1.24', '<')"
+
+- name: Set kube_minor_version
+  set_fact:
+    kube_minor_version: "{{ kube_version.split('.')[0] }}.{{ kube_version.split('.')[1] }}"
+
+- name: Set repo file
+  copy:
+    dest: /etc/yum.repos.d/kubernetes.repo
+    content: |
+      [kubernetes]
+      name=Kubernetes
+      baseurl=https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/rpm/
+      enabled=1
+      gpgcheck=0
+      repo_gpgcheck=0
+      gpgkey=https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/rpm/repodata/repomd.xml.key
+      exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+
+- name: import gpg key
+  rpm_key:
+    key: https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/rpm/repodata/repomd.xml.key
+    state: present
+
 
 - name: Install kubernetes packages
   package: name=psmisc,kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}},yum-plugin-versionlock state=present update_cache=yes
