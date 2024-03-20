@@ -1,43 +1,19 @@
-- block:
-
-  - name: Set kube_minor_version
-    set_fact:
-      kube_minor_version: "{{ kube_version.split('.')[0] }}.{{ kube_version.split('.')[1] }}"
-
-  - name: Add repo key
-    get_url:
-      url: "https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/deb/Release.key"
-      dest: /etc/apt/trusted.gpg.d/kubernetes.asc
-      mode: '0644'
-
-  - name: Add kubernetes repo
-    apt_repository: repo='deb https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/deb/ /' state=present update_cache=yes
-
-  when: "kube_version is version('1.24', '>=')"
-
-- block:
-
-  - name: Add repo key
-    get_url:
-      url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-      dest: /etc/apt/trusted.gpg.d/google.gpg
-      mode: '0644'
-      force: true
-    register: add_key
-    ignore_errors: yes
-
-  - name: Add repo key copy with asc extension to workarond issues
-    copy:
-      src: /etc/apt/trusted.gpg.d/google.gpg
-      dest: /etc/apt/trusted.gpg.d/google.asc
-      mode: '0644'
-      remote_src: yes
-    when: add_key is changed
-
-  - name: Add kubernetes repo
-    apt_repository: repo='deb http://apt.kubernetes.io/ kubernetes-xenial main' state=present update_cache=yes
-
+- fail:
+    msg: "Kubernetes version {{ kube_version }} is not supported"
   when: "kube_version is version('1.24', '<')"
+
+- name: Set kube_minor_version
+  set_fact:
+    kube_minor_version: "{{ kube_version.split('.')[0] }}.{{ kube_version.split('.')[1] }}"
+
+- name: Add repo key
+  get_url:
+    url: "https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/deb/Release.key"
+    dest: /etc/apt/trusted.gpg.d/kubernetes.asc
+    mode: '0644'
+
+- name: Add kubernetes repo
+  apt_repository: repo='deb https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/deb/ /' state=present update_cache=yes
 
 - name: Install kubernetes packages
   apt: name=kubelet={{ kube_version }}*,kubeadm={{ kube_version }}*,kubectl={{ kube_version }}*
