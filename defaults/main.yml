@@ -142,3 +142,14 @@ cilium_hubble_ui_ingress_enable: true
 cilium_hubble_ui_ingress_host: ""
 cilium_hubble_ui_ingress_tls_host: ""
 cilium_hubble_ui_ingress_annotations: {}
+
+# Longhorn support, if it is activated, the NFS client will be not installed
+kube_install_longhorn: false
+# Install ingress for Longhorn UI
+kube_install_longhorn_ingress: false
+# Default pass: longhorn_pass (openssl passwd -stdin -apr1)
+kube_longhorn_ingress_auth: "longhorn:$apr1$e6BbrO3Q$llbCJ6cWJS/RWnLGYQhxX."
+# Number of replicas for volumes in Longhorn
+longhorn_num_replicas: 3
+# Set reclaimPolicy of Longhorn StorageClass Delete or Retain
+longhorn_reclaim_policy: Delete
