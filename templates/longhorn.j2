@@ -90,7 +90,7 @@ data:
     reclaimPolicy: "{{ longhorn_reclaim_policy }}"
     volumeBindingMode: Immediate
     parameters:
-      numberOfReplicas: "{{ longhorn_replicas }}"
+      numberOfReplicas: "{{ longhorn_num_replicas }}"
       staleReplicaTimeout: "30"
       fromBackup: ""
       fsType: "ext4"
@@ -4656,14 +4656,6 @@ spec:
       - emptyDir: {}
         name: var-run
       priorityClassName: "longhorn-critical"
-{%- if kube_install_longhorn_in_master %}
-      tolerations:
-      - key: node-role.kubernetes.io/control-plane
-        operator: Exists
-        effect: NoSchedule
-      nodeSelector:
-        node-role.kubernetes.io/control-plane: ''
-{%- endif %}
 ---
 # Source: longhorn/templates/validate-psp-install.yaml
 #
