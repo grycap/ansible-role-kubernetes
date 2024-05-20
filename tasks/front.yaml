@@ -15,9 +15,6 @@
       kube_wait_api_server_ip: "{{kube_api_server}}"
     when: kube_api_server != "0.0.0.0"
 
-  - name: wait Kube to start on "{{kube_wait_api_server_ip}}"
-    wait_for: port=6443 host="{{kube_wait_api_server_ip}}"
-
   - set_fact:
       node_port_exists: false
 
@@ -26,7 +23,7 @@
     when: " '{{item.option}}' == '--service-node-port-range'"
     loop: "{{ kube_apiserver_options }}"
 
-  - name: Add Kube API server --service-node-port-rang option
+  - name: Add Kube API server --service-node-port-range option
     set_fact:
       kube_apiserver_options: "{{ [{'option': '--service-node-port-range', 'value': '80-35000'}] + kube_apiserver_options }}"
     when: kube_install_ingress | bool and not node_port_exists | bool
@@ -59,10 +56,14 @@
     when: add_kube_api_server_options is changed
 
   - name: wait Kube to start on "{{kube_wait_api_server_ip}}"
-    wait_for:
-      port: 6443
-      host: "{{kube_wait_api_server_ip}}"
-      delay: 5
+    uri:
+      url: "https://{{kube_wait_api_server_ip}}:6443/livez"
+      status_code: 200
+      validate_certs: false
+    register: result
+    until: result.status == 200
+    retries: 30
+    delay: 2
 
   - set_fact:
       KUBECONFIG: /etc/kubernetes/admin.conf
@@ -107,6 +108,11 @@
 
   when: kube_install_method == "k3s"
 
+- name: Set KUBECONFIG environment variable
+  lineinfile:
+    dest: /etc/environment
+    line: "KUBECONFIG={{KUBECONFIG}}"
+
 - import_tasks: helm.yaml
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
@@ -115,15 +121,19 @@
 - include_tasks: cert-manager.yaml
 
 - block:
-    - copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
-    - command: kubectl apply -f /tmp/kubernetes-dashboard.yaml
+    - name: Create kubernetes-dashboard.yaml
+      copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
+    - name: Apply kubernetes-dashboard.yaml
+      command: kubectl apply -f /tmp/kubernetes-dashboard.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_deploy_dashboard | bool
 
 - block:
-    - copy: src=metrics-server.yaml dest=/tmp/metrics-server.yaml
-    - command: kubectl apply -f /tmp/metrics-server.yaml
+    - name: Create metrics-server.yaml
+      copy: src=metrics-server.yaml dest=/tmp/metrics-server.yaml
+    - name: Apply metrics-server.yaml
+      command: kubectl apply -f /tmp/metrics-server.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_install_metrics | bool
@@ -153,31 +163,41 @@
     KUBECONFIG: "{{KUBECONFIG}}"
   with_items: "{{ kube_apply_repos }}"
 
-- name: Set KUBECONFIG environment variable
-  lineinfile:
-    dest: /etc/environment
-    line: "KUBECONFIG={{KUBECONFIG}}"
-
 - block:
-    - template: src=nfs-client.j2 dest=/tmp/nfs-client.yaml
-    - command: kubectl apply -f /tmp/nfs-client.yaml
+    - name: Create nfs-client.yaml
+      template: src=nfs-client.j2 dest=/tmp/nfs-client.yaml
+    - name: Apply nfs-client.yaml
+      command: kubectl apply -f /tmp/nfs-client.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_install_nfs_client | bool
+  when: kube_install_nfs_client | bool and not kube_install_longhorn | bool
+
+- block:
+    - name: Create longhorn.yaml
+      template: src=longhorn.j2 dest=/tmp/longhorn.yaml
+    - name: Apply longhorn.yaml
+      command: kubectl apply -f /tmp/longhorn.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+  when: kube_install_longhorn | bool
 
 - import_tasks: ingress.yaml
   when: kube_install_ingress | bool
 
 - block:
-    - template: src=nvidia-device-plugin.j2 dest=/tmp/nvidia-device-plugin.yml
-    - command: kubectl apply -f /tmp/nvidia-device-plugin.yml
+    - name: Create nvidia-device-plugin.yaml
+      template: src=nvidia-device-plugin.j2 dest=/tmp/nvidia-device-plugin.yml
+    - name: Apply nvidia-device-plugin.yaml
+      command: kubectl apply -f /tmp/nvidia-device-plugin.yml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_nvidia_support | bool
 
 - block:
-    - template: src=kubernetes-dashboard-ingress.j2 dest=/tmp/kubernetes-dashboard-ingress.yaml
-    - command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
+    - name: Create kubernetes-dashboard-ingress.yaml
+      template: src=kubernetes-dashboard-ingress.j2 dest=/tmp/kubernetes-dashboard-ingress.yaml
+    - name: Apply kubernetes-dashboard-ingress.yaml
+      command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_install_ingress | bool and kube_deploy_dashboard | bool
@@ -190,3 +210,5 @@
 
 - import_tasks: yunikorn.yaml
   when: kube_install_yunikorn | bool
+
+- import_tasks: delete_wns.yaml

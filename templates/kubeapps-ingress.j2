@@ -9,13 +9,19 @@ metadata:
       nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
 {% if kube_cert_manager %}
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
+{% if kube_cert_manager_challenge == 'dns01' %}
+    certmanager.k8s.io/acme-challenge-type: dns01
+    certmanager.k8s.io/acme-dns01-provider: route53
+{% endif %}
 {% endif %}
 spec:
 {% if kube_cert_manager %}
   tls:
   - hosts:
     - {{ public_hostname }}
+{% if kube_cert_manager_wildcard_cert_dns_name == '' %}
     secretName: {{ public_hostname }}
+{% endif %}
 {% endif %}
   rules:
 {% if kube_cert_manager %}

@@ -1,5 +1,5 @@
 # Version to install or latest
-kube_version: 1.23.7
+kube_version: 1.24.17
 # Type of node front or wn
 kube_type_of_node: front
 # How to install K8s: kubeadm or k3s
@@ -17,11 +17,18 @@ kube_pod_network_cidr: 10.244.0.0/16
 # Type of network to install: currently supported: flannel, kube-router, calico, weave
 kube_network: flannel
 # Kubelet extra args
-kubelet_extra_args: ''
+kubelet_extra_args: '' # deprecated move to kubelet_extra_args_dict
+# dict of kubelet extra args, if set kubelet_extra_args is ignored
+# A key in this map is the flag name as it appears on the command line except without leading dash(es).
+kubelet_extra_args_dict: {}
 # Kube API server options
 kube_apiserver_options: []
 # CRI runtime
-kube_cri_runtime: docker # docker or containerd
+kube_cri_runtime: docker # docker, containerd or crio
+# Install CRI runtime
+kube_cri_runtime_install: true
+# CRI dockerd version
+kube_cri_dockerd_version: "0.3.4"
 # Flag to set HELM to be installed
 kube_install_helm: true
 # Helm version
@@ -76,10 +83,12 @@ kube_cert_manager_challenge: 'http01'
 kube_cert_manager_challenge_dns01_domain: ''
 kube_cert_manager_challenge_dns01_ak: ''
 kube_cert_manager_challenge_dns01_sk: ''
+# Optionally a wildcard dns certificate name can be set
+kube_cert_manager_wildcard_cert_dns_name: ''
+# Override default docker version
+kube_docker_version: ""
 # Options to add in the docker.json file
 kube_docker_options: {}
-# Compatible docker versions
-kube_docker_compatible_versions: ['17.03.', '18.06.', '18.09.', '19.03.']
 # Nvidia docker options to add in the docker.json file
 docker_nvidia_options:
   default-runtime: nvidia
@@ -113,7 +122,7 @@ kyverno_validationFailureAction: ensure
 # Option to install Apache Yunikorn
 kube_install_yunikorn: false
 # Apache Yunikorn's version to be installed
-kube_yunikorn_version: 0.12.2
+kube_yunikorn_version: 1.1.0
 
 
 cilium_debug_log: true
@@ -132,3 +141,15 @@ cilium_hubble_priorityClassName: ""
 cilium_hubble_ui_ingress_enable: true
 cilium_hubble_ui_ingress_host: ""
 cilium_hubble_ui_ingress_tls_host: ""
+cilium_hubble_ui_ingress_annotations: {}
+
+# Longhorn support, if it is activated, the NFS client will be not installed
+kube_install_longhorn: false
+# Install ingress for Longhorn UI
+kube_install_longhorn_ingress: false
+# Default pass: longhorn_pass (openssl passwd -stdin -apr1)
+kube_longhorn_ingress_auth: "longhorn:$apr1$e6BbrO3Q$llbCJ6cWJS/RWnLGYQhxX."
+# Number of replicas for volumes in Longhorn
+longhorn_num_replicas: 3
+# Set reclaimPolicy of Longhorn StorageClass Delete or Retain
+longhorn_reclaim_policy: Delete

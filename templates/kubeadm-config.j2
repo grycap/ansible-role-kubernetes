@@ -41,3 +41,7 @@ bootstrapTokens:
 - token: "{{kube_token}}"                          # --token
   description: "kubeadm bootstrap token"
   ttl: "{{kube_token_ttl}}"                         # --token-ttl
+{% if kube_cri_runtime == "docker" %}
+nodeRegistration:
+  criSocket: "/run/cri-dockerd.sock"
+{% endif %}
