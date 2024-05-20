@@ -83,8 +83,10 @@ data:
     apiVersion: storage.k8s.io/v1
     metadata:
       name: longhorn
+{% if longhorn_set_default %}
       annotations:
         storageclass.kubernetes.io/is-default-class: "true"
+{% endif %}
     provisioner: driver.longhorn.io
     allowVolumeExpansion: true
     reclaimPolicy: "{{ longhorn_reclaim_policy }}"
