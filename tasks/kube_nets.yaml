@@ -88,10 +88,6 @@
     - name: Install cilium cli
       command: tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
 
-    - name: Add Cilium Helm repo
-      command: helm repo add cilium https://helm.cilium.io/
-      environment:
-        KUBECONFIG: "{{KUBECONFIG}}"
 
     - name: Check if Cilium is installed
       command: helm status cilium -n kube-system
@@ -99,17 +95,22 @@
       ignore_errors: yes
       changed_when: false
 
-    - name: Create file with Cilium values
-      template: src=cilium-values-1.12.3.yaml.j2 dest=/tmp/cilium-values-1.12.3.yaml
-
     - block:
+      - name: Add Cilium Helm repo
+        command: helm repo add cilium https://helm.cilium.io/
+        environment:
+          KUBECONFIG: "{{KUBECONFIG}}"
+        
       - name: Helm update
         command: helm repo update
         environment:
           KUBECONFIG: "{{KUBECONFIG}}"
+      
+      - name: Create file with Cilium values
+        template: src=cilium-values-1.15.6.yaml.j2 dest=/tmp/cilium-values-1.15.6.yaml
 
       - name: Deploy cilium 
-        command: helm install cilium cilium/cilium --version 1.12.3 --namespace kube-system -f /tmp/cilium-values-1.12.3.yaml
+        command: helm install cilium cilium/cilium --version 1.15.6 --namespace kube-system -f /tmp/cilium-values-1.15.6.yaml
         environment:
           KUBECONFIG: "{{KUBECONFIG}}"
            
@@ -122,5 +123,4 @@
       #hubble is deployed in WN
       when: not cilium_hubble_enable 
     
-
   when: kube_network == 'cilium'
