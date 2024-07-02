@@ -83,7 +83,7 @@
           KUBECONFIG: /etc/kubernetes/admin.conf
         when: k_status.rc != 0
       
-      when: {{ cilium_nodeEncryption }}
+      when: cilium_nodeEncryption | bool
     
     - name: Check if Cilium cli is installed
       command: ls /usr/local/bin/cilium
