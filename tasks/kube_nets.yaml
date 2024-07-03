@@ -116,7 +116,15 @@
         command: helm repo update
         environment:
           KUBECONFIG: "{{KUBECONFIG}}"
-      
+
+      - block:
+        - copy: src=cillium-default-priorityclass.yaml dest=/tmp/cillium-default-priorityclass.yaml
+        - name: Apply cillium-default-priorityclass.yaml
+          command: kubectl apply -f /tmp/cillium-default-priorityclass.yaml
+          environment:
+            KUBECONFIG: "{{KUBECONFIG}}"
+        when: cilium_priorityClassName == 'network'
+        
       - name: Create file with Cilium values
         template: src=cilium-values-1.15.6.yaml.j2 dest=/tmp/cilium-values-1.15.6.yaml
 
