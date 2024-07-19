@@ -132,7 +132,7 @@ cilium_policyEnforcementMode: "default"
 cilium_nodeEncryption: true
 cilium_nodeport_enable: true
 cilium_nodeport_range: "30000,32767"
-cilium_priorityClassName: ""
+cilium_priorityClassName: "network"
 cilium_prometheus_enable: false 
 cilium_hubble_certValidityDuration: 365
 cilium_hubble_enable: false
@@ -141,6 +141,7 @@ cilium_hubble_priorityClassName: ""
 cilium_hubble_ui_ingress_enable: true
 cilium_hubble_ui_ingress_host: ""
 cilium_hubble_ui_ingress_tls_host: ""
+cilium_hubble_ui_ingress_path: "/"
 cilium_hubble_ui_ingress_annotations: {}
 
 # Longhorn support, if it is activated, the NFS client will be not installed
