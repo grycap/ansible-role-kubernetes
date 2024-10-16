@@ -28,7 +28,7 @@ kube_cri_runtime: docker # docker, containerd or crio
 # Install CRI runtime
 kube_cri_runtime_install: true
 # CRI dockerd version
-kube_cri_dockerd_version: "0.3.4"
+kube_cri_dockerd_version: "0.3.15"
 # Flag to set HELM to be installed
 kube_install_helm: true
 # Helm version
