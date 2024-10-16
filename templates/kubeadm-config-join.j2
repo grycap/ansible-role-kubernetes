@@ -12,7 +12,7 @@ nodeRegistration:
     {{key}}: {{value}}
 {% endfor %}
 {% if kube_cri_runtime == "docker" %}
-  criSocket: "/run/cri-dockerd.sock"
+  criSocket: "unix:///run/cri-dockerd.sock"
 {% endif %}
 discovery:
   bootstrapToken:

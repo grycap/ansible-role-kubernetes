@@ -43,5 +43,5 @@ bootstrapTokens:
   ttl: "{{kube_token_ttl}}"                         # --token-ttl
 {% if kube_cri_runtime == "docker" %}
 nodeRegistration:
-  criSocket: "/run/cri-dockerd.sock"
+  criSocket: "unix:///run/cri-dockerd.sock"
 {% endif %}
