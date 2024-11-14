@@ -17,7 +17,7 @@
 
 - name: Install kubernetes packages
   apt: name=kubelet={{ kube_version }}*,kubeadm={{ kube_version }}*,kubectl={{ kube_version }}*
-  when: kube_version != "latest" and (kubeadm_output.stdout == '' or kubeadm_output.stdout is version(kube_version, '<='))
+  when: kube_version != "latest" and (kubeadm_output.stdout == '' or kubeadm_output.stdout is version(kube_version, '<'))
 
 - name: Install kubernetes packages
   apt: name=kubelet,kubeadm,kubectl state=latest
