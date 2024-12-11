@@ -6,6 +6,10 @@
   set_fact:
     kube_minor_version: "{{ kube_version.split('.')[0] }}.{{ kube_version.split('.')[1] }}"
 
+- name: Set kube_key_version
+  set_fact:
+    kube_key_version: "{{ kube_minor_version }}"
+
 # for some reason, the key for 1.27 or lower is does not work
 - name: Set kube_key_version
   set_fact:
