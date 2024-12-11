@@ -6,9 +6,15 @@
   set_fact:
     kube_minor_version: "{{ kube_version.split('.')[0] }}.{{ kube_version.split('.')[1] }}"
 
+# for some reason, the key for 1.27 or lower is does not work
+- name: Set kube_key_version
+  set_fact:
+    kube_key_version: "1.30"
+  when: "kube_version is version('1.27', '<')"
+
 - name: Add repo key
   get_url:
-    url: "https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/deb/Release.key"
+    url: "https://pkgs.k8s.io/core:/stable:/v{{ kube_key_version }}/deb/Release.key"
     dest: /etc/apt/trusted.gpg.d/kubernetes.asc
     mode: '0644'
 
