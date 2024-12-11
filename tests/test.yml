@@ -9,7 +9,7 @@
       kube_deploy_dashboard: false
       kube_install_ingress: false
       kube_public_dns_name: test.domain.com
-      kube_version: 1.27.3
+      kube_version: 1.30.2
       kube_cri_runtime: containerd
       kube_install_docker_pip: false
       kubelet_extra_args_dict: 
