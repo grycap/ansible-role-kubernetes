@@ -1,16 +1,16 @@
 - fail:
     msg: "Kubernetes version {{ kube_version }} is not supported"
-  when: "kube_version is version('1.24', '<')"
+  when: "kube_version is version('1.24.0', '<')"
 
 - name: Set kube_minor_version
   set_fact:
     kube_minor_version: "{{ kube_version.split('.')[0] }}.{{ kube_version.split('.')[1] }}"
 
-# for some reason, the key for 1.27 or lower is does not work
+# for some reason, the key for 1.27 or lower does not work
 - name: Set kube_key_version
   set_fact:
     kube_key_version: "1.30"
-  when: "kube_version is version('1.27', '<')"
+  when: "kube_version is version('1.27.0', '<')"
 
 - name: Add repo key
   get_url:
