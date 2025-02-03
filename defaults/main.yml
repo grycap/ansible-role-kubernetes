@@ -28,11 +28,11 @@ kube_cri_runtime: docker # docker, containerd or crio
 # Install CRI runtime
 kube_cri_runtime_install: true
 # CRI dockerd version
-kube_cri_dockerd_version: "0.3.4"
+kube_cri_dockerd_version: "0.3.16"
 # Flag to set HELM to be installed
 kube_install_helm: true
 # Helm version
-kube_install_helm_version: "v3.8.2"
+kube_install_helm_version: "v3.17.0"
 # Deploy the Dashboard
 kube_deploy_dashboard: false
 # Value to pass to the kubeadm init --apiserver-advertise-address option
