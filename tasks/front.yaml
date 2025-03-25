@@ -202,9 +202,6 @@
         KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_install_ingress | bool and kube_deploy_dashboard | bool
 
-- import_tasks: kubeapps.yaml
-  when: kube_install_kubeapps | bool
-
 - import_tasks: kyverno.yaml
   when: kube_install_kyverno | bool
 
