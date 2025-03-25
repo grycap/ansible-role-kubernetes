@@ -61,7 +61,7 @@ jobs:
         run: sudo apt remove kubectl buildah podman -y
 
       - name: Install Ansible
-        run: sudo pip3 install ansible==2.9.22
+        run: sudo pip3 install dnspython ansible==8.7.0
 
       - name: Create ansible.cfg with correct roles_path
         run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
@@ -100,7 +100,7 @@ jobs:
         run: sudo systemctl stop containerd; sudo rm -f /var/run/containerd/containerd.sock
 
       - name: Install Ansible
-        run: sudo pip3 install ansible==2.9.22
+        run: sudo pip3 install dnspython ansible==8.7.0
 
       - name: Create ansible.cfg with correct roles_path
         run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
@@ -135,7 +135,7 @@ jobs:
         run: sudo apt remove kubectl buildah podman -y
 
       - name: Install Ansible
-        run: sudo pip3 install dnspython ansible==2.9.22
+        run: sudo pip3 install dnspython ansible==8.7.0
 
       - name: Create ansible.cfg with correct roles_path
         run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
