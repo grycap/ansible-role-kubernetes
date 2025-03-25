@@ -63,7 +63,7 @@
   ignore_errors: yes
 
 - name: Wait ingress-nginx jobs
-  command: kubectl wait --for=condition=complete --timeout=300s -n ingress-nginx job/ingress-nginx-admission-create
+  command: kubectl wait --for=condition=complete --timeout=600s -n ingress-nginx job/ingress-nginx-admission-create
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
   ignore_errors: yes
