@@ -63,7 +63,16 @@
   ignore_errors: yes
 
 - name: Wait ingress-nginx jobs
-  command: kubectl wait --for=condition=complete --timeout=600s -n ingress-nginx job/ingress-nginx-admission-create
+  command: kubectl wait --for=condition=complete --timeout=300s -n ingress-nginx job/ingress-nginx-admission-create
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
+  ignore_errors: yes
+
+- name: Debug ingress-nginx
+  shell:  |
+    kubectl logs -n ingress-nginx job/ingress-nginx-admission-create ;
+    kubectl describe -n ingress-nginx job/ingress-nginx-admission-create ;
+    kubectl get pods -n ingress-nginx ;
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
   ignore_errors: yes
