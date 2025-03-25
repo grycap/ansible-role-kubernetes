@@ -76,3 +76,8 @@
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
   ignore_errors: yes
+  register: debug_output
+
+- name: show outputs
+  debug:
+    var: debug_output.stdout_lines
