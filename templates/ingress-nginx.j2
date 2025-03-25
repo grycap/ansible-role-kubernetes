@@ -415,8 +415,9 @@ spec:
         app.kubernetes.io/part-of: ingress-nginx
         app.kubernetes.io/version: 1.12.1
     spec:
-{% if kube_ingress_in_master %}
       nodeSelector:
+        kubernetes.io/os: linux
+{% if kube_ingress_in_master %}
         node-role.kubernetes.io/control-plane: ""
 {% endif %}
       tolerations:
@@ -506,8 +507,6 @@ spec:
           name: webhook-cert
           readOnly: true
       dnsPolicy: ClusterFirst
-      nodeSelector:
-        kubernetes.io/os: linux
       serviceAccountName: ingress-nginx
       terminationGracePeriodSeconds: 300
       volumes:
