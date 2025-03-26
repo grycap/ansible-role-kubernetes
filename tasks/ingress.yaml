@@ -41,9 +41,12 @@
     KUBECONFIG: "{{KUBECONFIG}}"
   when: certs_secret.rc == 1
 
-- template: src=ingress-values.j2 dest=/var/tmp/ingress-values.yaml
+- name: Create ingress-values.yaml
+  template:
+    src: ingress-values.j2
+    dest: /var/tmp/ingress-values.yaml
 
-- name: Install helm chart
+- name: Install ingress-nginx helm chart
   import_tasks: helm_chart.yaml
   vars:
     helm_chart_name: ingress-nginx
