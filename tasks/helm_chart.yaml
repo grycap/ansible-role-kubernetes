@@ -29,6 +29,8 @@
 
   - name: Check if {{ helm_chart_name }} is installed
     command: helm status {{ helm_chart_name }} -n {{ helm_chart_namespace }}
+    environment:
+      KUBECONFIG: "{{KUBECONFIG}}"
     register: helm_status
     ignore_errors: yes
     changed_when: false
