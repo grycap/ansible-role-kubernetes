@@ -4,6 +4,23 @@ controller:
     nodePorts:
       http: 80
       https: 443
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/control-plane
+      effect: NoSchedule
+  nodeSelector:
+    kubernetes.io/os: linux
+{% if kube_ingress_in_master %}
+    node-role.kubernetes.io/control-plane: ""
+{% endif %}
+  admissionWebhooks:
+    patch:
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
 defaultBackend:
   tolerations:
     - key: node-role.kubernetes.io/master
