@@ -136,7 +136,7 @@
       command: kubectl apply -f /tmp/metrics-server.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_install_metrics | bool or kube_install_ingress | bool
+  when: kube_install_metrics | bool
 
 - name: Add persistent volumes to kube cluster  
   block:
