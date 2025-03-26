@@ -2,16 +2,16 @@
 - hosts: localhost
   roles:
     - role: ansible-role-kubernetes
-      kube_install_metrics: false
-      kube_cert_manager: true
+      kube_install_metrics: true
+      kube_cert_manager: false
       kube_install_kubeapps: false
       kube_install_kyverno: false
-      kube_deploy_dashboard: true
-      kube_install_ingress: false # for some reason, this is not working in the github runners
+      kube_deploy_dashboard: false
+      kube_install_ingress: false
       kube_public_dns_name: test.domain.com
-      kube_version: 1.31.1
+      kube_version: 1.30.2
       kube_cri_runtime: docker
       kube_cri_runtime_install: false
-      kube_install_docker_pip: true
+      kube_install_docker_pip: false
       kubelet_extra_args_dict: 
         node-labels: somelabel

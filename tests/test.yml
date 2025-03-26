@@ -3,14 +3,14 @@
   roles:
     - role: ansible-role-kubernetes
       kube_install_metrics: true
-      kube_cert_manager: false
+      kube_cert_manager: true
       kube_install_kubeapps: false
       kube_install_kyverno: false
-      kube_deploy_dashboard: false
-      kube_install_ingress: false
+      kube_deploy_dashboard: true
+      kube_install_ingress: true
       kube_public_dns_name: test.domain.com
-      kube_version: 1.30.2
+      kube_version: 1.31.1
       kube_cri_runtime: containerd
-      kube_install_docker_pip: false
+      kube_install_docker_pip: true
       kubelet_extra_args_dict: 
         node-labels: somelabel
