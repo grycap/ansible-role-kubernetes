@@ -38,7 +38,6 @@
       helm_chart_version: "{{ kube_cert_manager_chart_version }}"
       helm_wait: true
       helm_timeout: 300s
-      helm_values_file: /var/tmp/ingress-values.yaml
 
   - name: Pause for 5 seconds to wait cert-manager to fully start
     pause:
