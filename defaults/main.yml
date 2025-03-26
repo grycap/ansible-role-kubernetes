@@ -77,6 +77,8 @@ kube_nfs_chart_version: "4.0.18"
 kube_flanneld_extra_args: []
 # Enable to install and manage Certificates with Cert-manager
 kube_cert_manager: false
+# Cert Manager Helm chart version to install
+kube_cert_manager_chart_version: "1.17.1"
 # Public IP to use by the cert-manager (not needed if kube_public_dns_name is set)
 kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
 # Public DNS name to use in the dashboard tls certificate

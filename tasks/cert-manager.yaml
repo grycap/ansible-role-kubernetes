@@ -23,7 +23,7 @@
 
 - block:
   - name: Creating cert-manager CRDs
-    command: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/{{ kube_cert_manager_chart_version }}/cert-manager.crds.yaml
+    command: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v{{ kube_cert_manager_chart_version }}/cert-manager.crds.yaml
     environment:
       KUBECONFIG: "{{KUBECONFIG}}"
     register: cert_manager
