@@ -22,12 +22,12 @@
   when: kube_cert_manager | bool and kube_public_dns_name != ""
 
 - block:
-  - name: Creating cert-manager CRDs
-    command: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v{{ kube_cert_manager_chart_version }}/cert-manager.crds.yaml
-    environment:
-      KUBECONFIG: "{{KUBECONFIG}}"
+  - name: Create ingress-values.yaml
+    copy:
+      src: cert-manager-values.yaml
+      dest: /var/tmp/cert-manager-values.yaml
 
-  - name: Install cert-managerx helm chart
+  - name: Install cert-manager helm chart
     import_tasks: helm_chart.yaml
     vars:
       helm_chart_name: cert-manager 
@@ -35,6 +35,7 @@
       helm_repo_name: jetstack
       helm_repo_url: https://charts.jetstack.io
       helm_chart_version: "{{ kube_cert_manager_chart_version }}"
+      helm_values_file: /var/tmp/cert-manager-values.yaml
       helm_wait: true
       helm_timeout: 300s
 
