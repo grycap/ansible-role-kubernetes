@@ -17,7 +17,7 @@ metadata:
 {% endif %}
 spec:
   ingressClassName: nginx
-{% if kube_cert_manager %}
+{% if kube_cert_manager and public_hostname is defined %}
   tls:
   - hosts:
     - {{ public_hostname }}
@@ -26,7 +26,7 @@ spec:
 {% endif %}
 {% endif %}
   rules:
-{% if kube_cert_manager %}
+{% if kube_cert_manager and public_hostname is defined %}
   - host: {{ public_hostname }}
     http:
 {% else %}
