@@ -23,8 +23,7 @@ jobs:
     
       - name: Remove pre-installed kubectl to avoid errors
         run: |
-          sudo kubeadm reset
-          sudo apt-get purge kubeadm kubectl kubelet kubernetes-cni kube* buildah podman -y
+          sudo apt-get purge kube* buildah podman -y
           sudo apt autoremove
           sudo rm -rf ~/.kube
           sudo rm -rf /etc/cni /etc/kubernetes
@@ -138,8 +137,7 @@ jobs:
     
       - name: Remove pre-installed kubectl to avoid errors
         run: |
-          sudo kubeadm reset
-          sudo apt-get purge kubeadm kubectl kubelet kubernetes-cni kube* buildah podman -y
+          sudo apt-get purge kube* buildah podman -y
           sudo apt autoremove
           sudo rm -rf ~/.kube
           sudo rm -rf /etc/cni /etc/kubernetes
