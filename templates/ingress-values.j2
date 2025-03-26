@@ -4,7 +4,7 @@ controller:
     nodePorts:
       http: 80
       https: 443
-defaultBackend
+defaultBackend:
   tolerations:
     - key: node-role.kubernetes.io/master
       effect: NoSchedule
