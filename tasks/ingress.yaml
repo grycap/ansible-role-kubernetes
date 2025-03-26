@@ -41,30 +41,16 @@
     KUBECONFIG: "{{KUBECONFIG}}"
   when: certs_secret.rc == 1
 
-- name: Deploy ingress-nginx
-  block:
-  - copy: src=ingress-nginx.yaml dest=/tmp/ingress-nginx.yaml
-  - command: kubectl apply -f /tmp/ingress-nginx.yaml
-    environment:
-      KUBECONFIG: "{{KUBECONFIG}}"
+- template: src=ingress-values.j2 dest=/var/tmp/ingress-values.yaml
 
-- name: Deploy ingress-nginx jobs
-  block:
-  - copy: src=ingress-nginx-jobs.yaml dest=/tmp/ingress-nginx-jobs.yaml
-  - command: kubectl apply -f /tmp/ingress-nginx-jobs.yaml
-    environment:
-      KUBECONFIG: "{{KUBECONFIG}}"
-  ignore_errors: yes
-
-- name: Wait ingress-nginx jobs
-  command: kubectl wait --for=condition=complete --timeout=300s -n ingress-nginx job/ingress-nginx-admission-create
-  environment:
-    KUBECONFIG: "{{KUBECONFIG}}"
-  ignore_errors: yes
-
-- name: Wait ingress-nginx deployment
-  command: kubectl wait --for=condition=available --timeout=300s -n ingress-nginx deployment/ingress-nginx-controller
-  environment:
-    KUBECONFIG: "{{KUBECONFIG}}"
-  ignore_errors: yes
-
+- name: Install helm chart
+  import_tasks: helm_chart.yaml
+  vars:
+    helm_chart_name: ingress-nginx
+    helm_chart_namespace: ingress-nginx
+    helm_repo_name: ingress-nginx
+    helm_repo_url: https://kubernetes.github.io/ingress-nginx
+    helm_chart_version: latest
+    helm_wait: true
+    helm_timeout: 300s
+    helm_values_file: /var/tmp/ingress-values.yaml

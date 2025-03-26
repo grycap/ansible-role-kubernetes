@@ -46,6 +46,8 @@ The variables that can be passed to this role and a brief description about them
 	kube_install_metrics: false
 	# Flag to set the nginx ingress controller to be installed
 	kube_install_ingress: false
+	# Nginx ingress controller Helm chart version to install
+	kube_ingress_chart_version: "4.12.1"
 	# Flag to set the kubeapps UI to be installed
 	kube_install_kubeapps: false
 	# KubeApps chart version to install (or latest)

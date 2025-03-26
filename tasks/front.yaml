@@ -116,7 +116,7 @@
 - import_tasks: helm.yaml
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_install_helm | bool
+  when: kube_install_helm | bool or kube_install_ingress | bool
 
 - include_tasks: cert-manager.yaml
 

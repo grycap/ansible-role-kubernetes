@@ -1,0 +1,40 @@
+  - name: Add Helm repo
+    command: helm repo add {{ helm_repo_name }} {{ helm_repo_url }}
+    environment:
+      KUBECONFIG: "{{KUBECONFIG}}"
+
+  - name: Set empty extra args
+    set_fact:
+      extra_args: ""
+
+  - name: Set values file arg
+    set_fact:
+      extra_args: "{{ extra_args }} -f {{ helm_values_file }}"
+    when: helm_values_file is defined and helm_values_file != ""
+
+  - name: Set chart version arg {{ helm_chart_version }}
+    set_fact:
+      extra_args: "{{ extra_args }} --version={{ helm_chart_version }}"
+    when: helm_chart_version is defined and helm_chart_version != "latest"
+
+  - name: Set wait arg
+    set_fact:
+      extra_args: "{{ extra_args }} --wait"
+    when: helm_wait is defined and helm_wait
+  
+  - name: Set timeout arg
+    set_fact:
+      extra_args: "{{ extra_args }} --timeout {{ helm_timeout }}"
+    when: helm_timeout is defined
+
+  - name: Check if {{ helm_chart_name }} is installed
+    command: helm status {{ helm_chart_name }} -n {{ helm_chart_namespace }}
+    register: helm_status
+    ignore_errors: yes
+    changed_when: false
+
+  - name: Install {{ helm_chart_name }} {{ helm_chart_version }}
+    command: helm install {{ helm_chart_name }} --namespace {{ helm_chart_namespace }} --create-namespace {{ helm_repo_name }}/{{ helm_chart_name }} {{ extra_args }}
+    environment:
+      KUBECONFIG: "{{KUBECONFIG}}"
+    when: helm_status.rc != 0

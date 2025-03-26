@@ -1,28 +1,14 @@
 ---
-  - name: Add Bitnami Helm repo
-    command: helm repo add bitnami https://charts.bitnami.com/bitnami
-    environment:
-      KUBECONFIG: "{{KUBECONFIG}}"
+- name: Install helm chart
+  import_tasks: helm_chart.yaml
+  vars:
+    helm_chart_name: kubeapps
+    helm_chart_namespace: kubeapps
+    helm_repo_name: bitnami
+    helm_repo_url: https://charts.bitnami.com/bitnami
+    helm_chart_version: "{{ kube_kubeapps_chart_version }}"
 
-  - name: Check if kubeapps is installed
-    command: helm status kubeapps -n kubeapps
-    register: helm_status
-    ignore_errors: yes
-    changed_when: false
-
-  - name: Install kubeapps {{kube_kubeapps_chart_version}}
-    command: helm install kubeapps --namespace kubeapps --create-namespace bitnami/kubeapps --version={{kube_kubeapps_chart_version}}
-    environment:
-      KUBECONFIG: "{{KUBECONFIG}}"
-    when: helm_status.rc != 0 and kube_kubeapps_chart_version != "latest"
-
-  - name: Install kubeapps latest
-    command: helm install kubeapps --namespace kubeapps --create-namespace bitnami/kubeapps
-    environment:
-      KUBECONFIG: "{{KUBECONFIG}}"
-    when: helm_status.rc != 0 and kube_kubeapps_chart_version == "latest"
-
-  - template: src=kubeapps-ingress.j2 dest=/tmp/kubeapps-ingress.yaml
-  - command: kubectl apply -f /tmp/kubeapps-ingress.yaml
-    environment:
-      KUBECONFIG: "{{KUBECONFIG}}"
+- template: src=kubeapps-ingress.j2 dest=/tmp/kubeapps-ingress.yaml
+- command: kubectl apply -f /tmp/kubeapps-ingress.yaml
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
