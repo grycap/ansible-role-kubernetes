@@ -37,7 +37,7 @@
       helm_chart_version: "{{ kube_cert_manager_chart_version }}"
       helm_values_file: /var/tmp/cert-manager-values.yaml
       helm_wait: true
-      helm_timeout: 300s
+      helm_timeout: 600s
 
   - block:
     - template: src=dns01_secret.j2 dest=/tmp/dns01_secret.yaml

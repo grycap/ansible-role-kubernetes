@@ -49,6 +49,8 @@ jobs:
       - name: Test nodes
         run: sudo kubectl -s https://localhost:6443 --insecure-skip-tls-verify --kubeconfig /etc/kubernetes/admin.conf  get nodes
 
+      - name: Test ingress
+        run: curl -k https://localhost
 
   test-k3s:
 
