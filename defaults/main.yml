@@ -28,9 +28,9 @@ kube_cri_runtime: docker # docker, containerd or crio
 # Install CRI runtime
 kube_cri_runtime_install: true
 # CRI dockerd version
-kube_cri_dockerd_version: "0.3.15"
+kube_cri_dockerd_version: "0.3.16"
 # Helm version
-kube_install_helm_version: "v3.8.2"
+kube_install_helm_version: "v3.17.2"
 # Deploy the Dashboard
 kube_deploy_dashboard: false
 # Value to pass to the kubeadm init --apiserver-advertise-address option
@@ -58,7 +58,7 @@ kube_nvidia_support: false
 # Driver version to install: specific version or "latest"
 kube_nvidia_driver_version: "515"
 # Tag of the nvidia device plugin docker container
-kube_nvidia_device_plugin_version: "v0.12.2"
+kube_nvidia_device_plugin_version: "v0.17.1"
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
