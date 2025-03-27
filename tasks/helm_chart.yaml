@@ -35,8 +35,24 @@
     ignore_errors: yes
     changed_when: false
 
-  - name: Install {{ helm_chart_name }} {{ helm_chart_version }}
-    command: helm install {{ helm_chart_name }} --namespace {{ helm_chart_namespace }} --create-namespace {{ helm_repo_name }}/{{ helm_chart_name }} {{ extra_args }}
-    environment:
-      KUBECONFIG: "{{KUBECONFIG}}"
+  - block:
+
+    - name: Install {{ helm_chart_name }} {{ helm_chart_version }}
+      command: helm upgrade {{ helm_chart_name }} --install --namespace {{ helm_chart_namespace }} --create-namespace {{ helm_repo_name }}/{{ helm_chart_name }} {{ extra_args }}
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+      async: 900
+      poll: 5
+      ignore_errors: true
+      register: helm_install
+
+    - name: Undeploy {{ helm_chart_name }} app
+      command: helm uninstall --namespace {{ helm_chart_namespace }} {{ helm_chart_name }}
+      when: helm_install is failed
+
+    - name: Undeploy {{ helm_app_name }} app
+      fail:
+        msg: "Error installing {{ helm_app_name }} helm chat"
+      when: helm_install is failed
+
     when: helm_status.rc != 0
