@@ -48,6 +48,8 @@
 
     - name: Undeploy {{ helm_chart_name }} app
       command: helm uninstall --namespace {{ helm_chart_namespace }} {{ helm_chart_name }}
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
       when: helm_install is failed
 
     - name: Undeploy {{ helm_app_name }} app
