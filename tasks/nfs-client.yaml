@@ -1,0 +1,22 @@
+- name: Create ingress-values.yaml
+  copy:
+    content: |
+      nfs:
+        server: {{ kube_nfs_server }}
+        path: {{ kube_nfs_path }}
+        reclaimPolicy: {{ kube_nfs_reclaim_policy }}
+      storageClass:
+        defaultClass: true
+        reclaimPolicy: {{ kube_nfs_reclaim_policy }}
+    dest: /var/tmp/nfs-client-values.yaml
+
+- name: Install ingress-nginx helm chart
+  import_tasks: helm_chart.yaml
+  vars:
+    helm_chart_name: nfs-subdir-external-provisioner
+    helm_chart_namespace: nfs-client
+    helm_repo_name: nfs-subdir-external-provisioner
+    helm_repo_url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
+    helm_chart_version: "{{ kube_nfs_chart_version }}"
+    helm_wait: false
+    helm_values_file: /var/tmp/nfs-client-values.yaml

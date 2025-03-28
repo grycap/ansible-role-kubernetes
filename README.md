@@ -31,10 +31,8 @@ The variables that can be passed to this role and a brief description about them
 	kubelet_extra_args: ''
 	# Kube API server options
 	kube_apiserver_options: []
-	# Flag to set HELM to be installed
-	kube_install_helm: true
 	# Helm version
-	kube_install_helm_version: "v2.11.0"
+	kube_install_helm_version: "v3.8.2"
 	# Deploy the Dashboard
 	kube_deploy_dashboard: false
 	# value to pass to the kubeadm init --apiserver-advertise-address option
@@ -44,12 +42,26 @@ The variables that can be passed to this role and a brief description about them
 	kube_apply_repos: []
 	# Flag to set Metrics-Server to be installed
 	kube_install_metrics: false
+	# Metrics-Server Helm chart version to install
+	kube_metrics_chart_version: "3.12.2"
 	# Flag to set the nginx ingress controller to be installed
 	kube_install_ingress: false
+	# Nginx ingress controller Helm chart version to install
+	kube_ingress_chart_version: "4.12.1"
 	# Flag to set the kubeapps UI to be installed
 	kube_install_kubeapps: false
 	# KubeApps chart version to install (or latest)
 	kube_kubeapps_chart_version: "7.3.2"
+	# Flag to set nfs-client-provisioner to be installed
+	kube_install_nfs_client: false
+	# NFS path used by nfs-client-provisioner
+	kube_nfs_path: /pv
+	# NFS server used by nfs-client-provisioner
+	kube_nfs_server: kubeserver.localdomain
+	# Set reclaimPolicy of NFS StorageClass Delete or Retain
+	kube_nfs_reclaim_policy: Delete
+	# NFS client Helm chart version to install
+	kube_nfs_chart_version: "4.0.18"
 	# Extra options for the flannel plugin
 	kube_flanneld_extra_args: [] 
 	# Enable to install and manage Certificates with Cert-manager

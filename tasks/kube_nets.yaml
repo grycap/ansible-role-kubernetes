@@ -49,7 +49,6 @@
     - import_tasks: helm.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
-      when: kube_install_helm | bool
 
     # Cert-manager is used for creating the certificates
     - name: Add cert-manager CRDs

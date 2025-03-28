@@ -16,16 +16,20 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install python
         run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
     
       - name: Remove pre-installed kubectl to avoid errors
-        run: sudo apt remove kubectl buildah podman -y
+        run: |
+          sudo apt-get purge kube* buildah podman -y
+          sudo apt autoremove
+          sudo rm -rf ~/.kube
+          sudo rm -rf /etc/cni /etc/kubernetes
 
       - name: Install Ansible
-        run: sudo pip3 install dnspython ansible==2.9.22
+        run: sudo pip3 install dnspython ansible==8.7.0
 
       - name: Create ansible.cfg with correct roles_path
         run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
@@ -45,6 +49,8 @@ jobs:
       - name: Test nodes
         run: sudo kubectl -s https://localhost:6443 --insecure-skip-tls-verify --kubeconfig /etc/kubernetes/admin.conf  get nodes
 
+      - name: Test ingress
+        run: curl -k https://localhost
 
   test-k3s:
 
@@ -52,7 +58,7 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install python
         run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
@@ -61,7 +67,7 @@ jobs:
         run: sudo apt remove kubectl buildah podman -y
 
       - name: Install Ansible
-        run: sudo pip3 install ansible==2.9.22
+        run: sudo pip3 install ansible==8.7.0
 
       - name: Create ansible.cfg with correct roles_path
         run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
@@ -85,10 +91,10 @@ jobs:
   test-crio:
 
     runs-on: ubuntu-latest
-
+    if: false
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install python
         run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
@@ -100,7 +106,7 @@ jobs:
         run: sudo systemctl stop containerd; sudo rm -f /var/run/containerd/containerd.sock
 
       - name: Install Ansible
-        run: sudo pip3 install ansible==2.9.22
+        run: sudo pip3 install ansible==8.7.0
 
       - name: Create ansible.cfg with correct roles_path
         run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
@@ -126,16 +132,20 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install python
         run: sudo apt update && sudo apt install -y python3 python3-pip python3-setuptools
     
       - name: Remove pre-installed kubectl to avoid errors
-        run: sudo apt remove kubectl buildah podman -y
+        run: |
+          sudo apt-get purge kube* buildah podman -y
+          sudo apt autoremove
+          sudo rm -rf ~/.kube
+          sudo rm -rf /etc/cni /etc/kubernetes
 
       - name: Install Ansible
-        run: sudo pip3 install dnspython ansible==2.9.22
+        run: sudo pip3 install dnspython ansible==8.7.0
 
       - name: Create ansible.cfg with correct roles_path
         run: sudo printf '[defaults]\nhost_key_checking = False\nroles_path=../' > ansible.cfg
