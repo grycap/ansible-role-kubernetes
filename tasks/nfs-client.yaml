@@ -6,6 +6,7 @@
         path: {{ kube_nfs_path }}
         reclaimPolicy: {{ kube_nfs_reclaim_policy }}
       storageClass:
+        name: managed-nfs-storage
         defaultClass: true
         reclaimPolicy: {{ kube_nfs_reclaim_policy }}
     dest: /var/tmp/nfs-client-values.yaml
