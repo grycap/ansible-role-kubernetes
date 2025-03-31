@@ -13,6 +13,8 @@ controller:
     kubernetes.io/os: linux
   ingressClassResource:
     default: true
+  nodeSelector:
+    kubernetes.io/os: linux
 {% if kube_ingress_in_master %}
     node-role.kubernetes.io/control-plane: ""
 {% endif %}
