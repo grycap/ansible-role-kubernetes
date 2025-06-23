@@ -2,8 +2,10 @@
 kind: ClusterConfiguration
 {% if kube_version is version_compare('1.22.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta2
-{% else %}
+{% elif kube_version is version_compare('1.28.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta3
+{% else %}
+apiVersion: kubeadm.k8s.io/v1beta4
 {% endif %}
 networking:
 {% if kube_dual_stack %}
