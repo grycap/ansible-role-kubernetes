@@ -16,7 +16,12 @@ networking:
 {% endif %}
 apiServer:
   extraArgs:
+{% if kube_version is version_compare('1.28.0', '<') %}
     advertise-address: "{{kube_api_server}}"        # --apiserver-advertise-address
+{% else %}
+    - name: advertise-address
+      value: "{{kube_api_server}}"        # --apiserver-advertise-address
+{% endif %}
 {% if IM_NODE_PUBLIC_IP is defined %}
   certSANs:
   - "{{ IM_NODE_PUBLIC_IP }}"
