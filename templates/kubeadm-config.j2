@@ -2,7 +2,7 @@
 kind: ClusterConfiguration
 {% if kube_version is version_compare('1.22.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta2
-{% elif kube_version is version_compare('1.28.0', '<') %}
+{% elif kube_version is version_compare('1.31.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta3
 {% else %}
 apiVersion: kubeadm.k8s.io/v1beta4
@@ -16,7 +16,7 @@ networking:
 {% endif %}
 apiServer:
   extraArgs:
-{% if kube_version is version_compare('1.28.0', '<') %}
+{% if kube_version is version_compare('1.31.0', '<') %}
     advertise-address: "{{kube_api_server}}"        # --apiserver-advertise-address
 {% else %}
     - name: advertise-address
@@ -46,7 +46,7 @@ cgroupDriver: systemd
 kind: InitConfiguration
 {% if kube_version is version_compare('1.22.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta2
-{% elif kube_version is version_compare('1.28.0', '<') %}
+{% elif kube_version is version_compare('1.31.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta3
 {% else %}
 apiVersion: kubeadm.k8s.io/v1beta4
