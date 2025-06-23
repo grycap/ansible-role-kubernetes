@@ -52,9 +52,9 @@
         KUBECONFIG: "{{KUBECONFIG}}"
       when: helm_install is failed
 
-    - name: Undeploy {{ helm_app_name }} app
+    - name: Undeploy {{ helm_chart_name }} app
       fail:
-        msg: "Error installing {{ helm_app_name }} helm chat: {{ helm_install.stderr }}"
+        msg: "Error installing {{ helm_chart_name }} helm chart: {{ helm_install.stderr }}"
       when: helm_install is failed
 
     when: helm_status.rc != 0
