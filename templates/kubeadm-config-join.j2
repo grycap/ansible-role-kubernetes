@@ -14,9 +14,6 @@ nodeRegistration:
 {% for key, value in kubelet_extra_args_dict.items() %}
     {{key}}: {{value}}
 {% endfor %}
-{% if kube_dual_stack %}
-    node-ip: "{{ ansible_default_ipv4.address }},{{ ansible_default_ipv6.address }}"
-{% endif %}
 {% else %}
     - name: cgroup-driver
       value: systemd
@@ -24,10 +21,6 @@ nodeRegistration:
     - name: {{key}}
       value: {{value}}
 {% endfor %}
-{% if kube_dual_stack %}
-    - name: node-ip
-      value: "{{ ansible_default_ipv4.address }},{{ ansible_default_ipv6.address }}"
-{% endif %}
 {% endif %}
 
 {% if kube_cri_runtime == "docker" %}

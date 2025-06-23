@@ -8,12 +8,7 @@ apiVersion: kubeadm.k8s.io/v1beta3
 apiVersion: kubeadm.k8s.io/v1beta4
 {% endif %}
 networking:
-{% if kube_dual_stack %}
-  podSubnet: "{{kube_pod_network_cidr}},{{kube_pod_network_cidr_ipv6}}"
-  serviceSubnet: "{{kube_service_network_cidr}},{{kube_service_network_cidr_ipv6}}"
-{% else %}
   podSubnet: "{{kube_pod_network_cidr}}"            # --pod-network-cidr
-{% endif %}
 apiServer:
   extraArgs:
 {% if kube_version is version_compare('1.28.0', '<') %}
