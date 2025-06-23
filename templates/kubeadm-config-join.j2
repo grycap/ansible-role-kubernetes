@@ -15,7 +15,7 @@ nodeRegistration:
     {{key}}: {{value}}
 {% endfor %}
 {% if kube_dual_stack %}
-    node-ip: "{{ ansible_default_ipv4.address }},{{ ansible_default_ipv6.address }}"
+    node-ip: "{{ ansible_default_ipv4.address }},{{ ansible_all_ipv6_addresses | first}}"
 {% endif %}
 {% else %}
     - name: cgroup-driver
@@ -26,7 +26,7 @@ nodeRegistration:
 {% endfor %}
 {% if kube_dual_stack %}
     - name: node-ip
-      value: "{{ ansible_default_ipv4.address }},{{ ansible_default_ipv6.address }}"
+      value: "{{ ansible_default_ipv4.address }},{{ ansible_all_ipv6_addresses | first }}"
 {% endif %}
 {% endif %}
 
