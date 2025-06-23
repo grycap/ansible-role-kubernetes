@@ -38,6 +38,24 @@
 #  notify: sysctl-system
 #  when: kube_network == 'cilium''
 
+  - set_fact:
+      ipv6_forwarding: ""
+
+  - name: Activate IPv6 forwarding
+    set_fact:
+      ipv6_forwarding: "net.ipv6.conf.all.forwarding = 1"
+    when: kube_dual_stack
+
+  - name: Create /etc/sysctl.d/99-kubernetes-cri.conf
+    register: containerd_sysctl
+    copy:
+      content: |
+        net.bridge.bridge-nf-call-iptables  = 1
+        net.ipv4.ip_forward                 = 1
+        net.bridge.bridge-nf-call-ip6tables = 1
+        {{ ipv6_forwarding }}
+      dest: /etc/sysctl.d/99-kubernetes-cri.conf
+
 - name: Apply sysctl params
   command: sysctl --system
   when: containerd_sysctl is changed

@@ -1,5 +1,6 @@
 galaxy_info:
   role_name: kubernetes
+  namespace: grycap
   author: micafer1@upv.es
   description: Install Kubernetes cluster
   company: GRyCAP
@@ -41,4 +42,3 @@ dependencies:
     when: ansible_os_family == "Debian" and kube_install_method == 'kubeadm' and kube_cri_runtime != 'crio' and kube_cri_runtime_install
   - role: 'grycap.cri_o'
     when: ansible_os_family == "Debian" and kube_install_method == 'kubeadm' and kube_cri_runtime == 'crio' and kube_cri_runtime_install
-  

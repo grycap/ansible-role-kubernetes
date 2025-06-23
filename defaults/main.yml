@@ -14,8 +14,14 @@ kube_token: "kube01.{{ lookup('password', '/var/tmp/tokenpass chars=ascii_lowerc
 kube_token_ttl: 0
 # POD network cidr
 kube_pod_network_cidr: 10.244.0.0/16
+kube_pod_network_cidr_ipv6: 2001:db8:42:0::/56
 # Type of network to install: currently supported: flannel, kube-router, calico, weave
 kube_network: flannel
+# Flag to configue K8s with dual stack support
+kube_dual_stack: false
+# Service network cidr
+kube_service_network_cidr: 10.96.0.0/16
+kube_service_network_cidr_ipv6: 2001:db8:42:1::/112
 # Kubelet extra args
 kubelet_extra_args: '' # deprecated move to kubelet_extra_args_dict
 # dict of kubelet extra args, if set kubelet_extra_args is ignored
