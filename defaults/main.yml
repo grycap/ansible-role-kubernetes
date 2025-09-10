@@ -63,16 +63,16 @@ kube_nvidia_device_plugin_version: "v0.17.1"
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
 kube_kubeapps_chart_version: "12.2.10"
-# Flag to set nfs-client-provisioner to be installed
-kube_install_nfs_client: false
-# NFS path used by nfs-client-provisioner
+# Flag to set nfs-csi-driver to be installed
+kube_install_nfs_csi_driver: false
+# NFS path used by nfs-csi-driver
 kube_nfs_path: /pv
-# NFS server used by nfs-client-provisioner
+# NFS server used by nfs-csi-driver
 kube_nfs_server: kubeserver.localdomain
 # Set reclaimPolicy of NFS StorageClass Delete or Retain
 kube_nfs_reclaim_policy: Delete
-# NFS client Helm chart version to install
-kube_nfs_chart_version: "4.0.18"
+# NFS csi driver Helm chart version to install
+kube_nfs_chart_version: "4.11.0"
 # Extra options for the flannel plugin
 kube_flanneld_extra_args: []
 # Enable to install and manage Certificates with Cert-manager
