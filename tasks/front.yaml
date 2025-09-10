@@ -164,7 +164,7 @@
     KUBECONFIG: "{{KUBECONFIG}}"
   with_items: "{{ kube_apply_repos }}"
 
-- import_tasks: nfs-client.yaml
+- import_tasks: nfs-csi.yaml
   when: kube_install_nfs_client | bool and not kube_install_longhorn | bool
 
 - block:
