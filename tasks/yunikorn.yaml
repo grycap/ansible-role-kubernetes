@@ -1,0 +1,28 @@
+---
+  - name: Add Apache Yunikorn Helm repo
+    command: helm repo add yunikorn  https://apache.github.io/yunikorn-release
+    environment:
+      KUBECONFIG: "{{KUBECONFIG}}"
+
+  - name: Check if Apache Yunikorn is installed
+    command: helm status yunikorn -n yunikorn
+    register: helm_status
+    ignore_errors: yes
+    changed_when: false
+
+  - block:
+    - name: Helm update
+      command: helm repo update
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+    - name: Create namespace 
+      command: kubectl create namespace yunikorn
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+    - name: Copy Yunikorn values
+      copy: src=yunikorn-values.yaml dest=/tmp/yunikorn-values.yaml
+    - name: Install Apache Yunikorn
+      command: helm install yunikorn yunikorn/yunikorn --namespace yunikorn --version={{kube_yunikorn_version}} --values /tmp/yunikorn-values.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+    when: helm_status.rc != 0

@@ -1,61 +1,16 @@
----
-- name: Create ingress-nginx namespace
-  block:
-  - copy: src=ingress-nginx-namespace.yaml dest=/tmp/ingress-nginx-namespace.yaml
-  - command: kubectl apply -f /tmp/ingress-nginx-namespace.yaml
-    environment:
-      KUBECONFIG: /etc/kubernetes/admin.conf
+- name: Create ingress-values.yaml
+  template:
+    src: ingress-values.j2
+    dest: /var/tmp/ingress-values.yaml
 
-- name: Check if certs are created
-  block:
-  - stat:
-      path: /var/tmp/certs
-    register: certs_dir
-  - stat:
-      path: /var/tmp/certs/private.key
-    register: certs_private
-  - stat:
-      path: /var/tmp/certs/public.crt
-    register: certs_public
-
-- name: Create certs dir
-  file:
-    path: /var/tmp/certs
-    state: directory
-  when: not certs_dir.stat.exists
-
-- name: Create certs
-  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /var/tmp/certs/private.key -out /var/tmp/certs/public.crt -subj "/CN=kubeserver/O=kubeserver"
-  when: (not certs_private.stat.exists) or (not certs_public.stat.exists)
-
-- name: Check if certs secret is created
-  command: kubectl get secret certs -n ingress-nginx
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  register: certs_secret
-  failed_when: certs_secret.rc != 0 and certs_secret.rc != 1
-
-- name: Create certs secret
-  command: kubectl create secret tls certs --key /var/tmp/certs/private.key --cert /var/tmp/certs/public.crt -n ingress-nginx
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  when: certs_secret.rc == 1
-
-- name: Deploy ingress-nginx
-  block:
-  - copy: src=ingress-nginx.yaml dest=/tmp/ingress-nginx.yaml
-  - command: kubectl apply -f /tmp/ingress-nginx.yaml
-    environment:
-      KUBECONFIG: /etc/kubernetes/admin.conf
-
-- name: Wait ingress-nginx jobs
-  command: kubectl wait --for=condition=complete --timeout=300s -n ingress-nginx job/ingress-nginx-admission-create
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  ignore_errors: yes
-
-- name: Wait ingress-nginx deployment
-  command: kubectl wait --for=condition=available --timeout=300s -n ingress-nginx deployment/ingress-nginx-controller
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  ignore_errors: yes
+- name: Install ingress-nginx helm chart
+  import_tasks: helm_chart.yaml
+  vars:
+    helm_chart_name: ingress-nginx
+    helm_chart_namespace: ingress-nginx
+    helm_repo_name: ingress-nginx
+    helm_repo_url: https://kubernetes.github.io/ingress-nginx
+    helm_chart_version: "{{ kube_ingress_chart_version }}"
+    helm_wait: true
+    helm_timeout: 300s
+    helm_values_file: /var/tmp/ingress-values.yaml

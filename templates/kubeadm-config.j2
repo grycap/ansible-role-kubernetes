@@ -1,10 +1,17 @@
 ---
 kind: ClusterConfiguration
+{% if kube_version is version_compare('1.22.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta2
+{% elif kube_version is version_compare('1.31.0', '<') %}
+apiVersion: kubeadm.k8s.io/v1beta3
+{% else %}
+apiVersion: kubeadm.k8s.io/v1beta4
+{% endif %}
 networking:
   podSubnet: "{{kube_pod_network_cidr}}"            # --pod-network-cidr
 apiServer:
   extraArgs:
+{% if kube_version is version_compare('1.31.0', '<') %}
     advertise-address: "{{kube_api_server}}"        # --apiserver-advertise-address
 {% if kube_control_plane_ip != "" %}
 controlPlaneEndpoint: {{kube_control_plane_ip}}:{{kube_control_plane_port}}
@@ -17,6 +24,25 @@ etcd:
         caFile: /etc/kubernetes/pki/etcd/ca.crt
         certFile: /etc/kubernetes/pki/apiserver-etcd-client.crt
         keyFile: /etc/kubernetes/pki/apiserver-etcd-client.key
+{% else %}
+    - name: advertise-address
+      value: "{{kube_api_server}}"        # --apiserver-advertise-address
+{% endif %}
+{% if IM_NODE_PUBLIC_IP is defined %}
+  certSANs:
+  - "{{ IM_NODE_PUBLIC_IP }}"
+{% if kube_api_server != "0.0.0.0" %}
+  - "{{ kube_api_server }}"
+{% endif %}
+{% if kube_public_dns_name != "" %}
+  - "{{ kube_public_dns_name }}"
+{% endif %}
+{% if IM_NODE_PRIVATE_IP is defined %}
+  - "{{ IM_NODE_PRIVATE_IP }}"
+{% endif %}
+{% endif %}
+{% if kube_api_server != "0.0.0.0" %}
+controlPlaneEndpoint: "{{kube_api_server}}:6443"
 {% endif %}
 ---
 kind: KubeletConfiguration
@@ -24,8 +50,18 @@ apiVersion: kubelet.config.k8s.io/v1beta1
 cgroupDriver: systemd
 ---
 kind: InitConfiguration
+{% if kube_version is version_compare('1.22.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta2
+{% elif kube_version is version_compare('1.31.0', '<') %}
+apiVersion: kubeadm.k8s.io/v1beta3
+{% else %}
+apiVersion: kubeadm.k8s.io/v1beta4
+{% endif %}
 bootstrapTokens:
 - token: "{{kube_token}}"                          # --token
   description: "kubeadm bootstrap token"
   ttl: "{{kube_token_ttl}}"                         # --token-ttl
+{% if kube_cri_runtime == "docker" %}
+nodeRegistration:
+  criSocket: "unix:///run/cri-dockerd.sock"
+{% endif %}

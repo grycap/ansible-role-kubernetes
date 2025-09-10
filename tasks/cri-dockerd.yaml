@@ -1,0 +1,37 @@
+---
+- name: Download cri-dockerd tarball
+  get_url:
+    url: https://github.com/Mirantis/cri-dockerd/releases/download/v{{ kube_cri_dockerd_version }}/cri-dockerd-{{ kube_cri_dockerd_version }}.amd64.tgz
+    dest: /tmp/cri-dockerd-{{ kube_cri_dockerd_version }}.amd64.tgz
+
+- name: Extract cri-dockerd tarball
+  unarchive:
+    src: /tmp/cri-dockerd-{{ kube_cri_dockerd_version }}.amd64.tgz
+    dest: /tmp
+    remote_src: yes
+
+- name: Copy cri-dockerd binary
+  copy:
+    src: /tmp/cri-dockerd/cri-dockerd
+    dest: /usr/bin/cri-dockerd
+    mode: '0755'
+    remote_src: true
+
+- name: Download cri-docker service and socket
+  get_url:
+    url: https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/{{ item }}
+    dest: /etc/systemd/system/{{ item }}
+    mode: '0644'
+  loop: 
+    - cri-docker.service
+    - cri-docker.socket
+
+- name: Enable cri-dockerd service
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    daemon_reload: yes
+    state: started
+  loop: 
+    - cri-docker.service
+    - cri-docker.socket

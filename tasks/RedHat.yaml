@@ -1,30 +1,41 @@
 --- 
-- copy:
+- fail:
+    msg: "Kubernetes version {{ kube_version }} is not supported"
+  when: "kube_version is version('1.24', '<')"
+
+- name: Set kube_minor_version
+  set_fact:
+    kube_minor_version: "{{ kube_version.split('.')[0] }}.{{ kube_version.split('.')[1] }}"
+
+- name: Set repo file
+  copy:
     dest: /etc/yum.repos.d/kubernetes.repo
     content: |
-        [kubernetes]
-        name=Kubernetes
-        baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-        enabled=1
-        gpgcheck=1
-        repo_gpgcheck=1
-        gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+      [kubernetes]
+      name=Kubernetes
+      baseurl=https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/rpm/
+      enabled=1
+      gpgcheck=0
+      repo_gpgcheck=0
+      gpgkey=https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/rpm/repodata/repomd.xml.key
+      exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
 
 - name: import gpg key
   rpm_key:
-    key: https://packages.cloud.google.com/yum/doc/yum-key.gpg
+    key: https://pkgs.k8s.io/core:/stable:/v{{ kube_minor_version }}/rpm/repodata/repomd.xml.key
     state: present
 
+
 - name: Install kubernetes packages
-  package: name=psmisc,kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}},yum-plugin-versionlock state=present update_cache=yes
+  package: name=conntrack-tools,psmisc,kubelet-{{kube_version}},kubeadm-{{kube_version}},kubectl-{{kube_version}},yum-plugin-versionlock state=present update_cache=yes
   when: kube_version != "latest" and (kubeadm_output.stdout == '' or kubeadm_output.stdout is version(kube_version, '<='))
 
 - name: Install kubernetes packages
-  package: name=psmisc,kubelet,kubeadm,kubectl,yum-plugin-versionlock state=latest
+  package: name=conntrack-tools,psmisc,kubelet,kubeadm,kubectl,yum-plugin-versionlock state=latest
   when: kube_version == "latest"
 
 - name: Version lock kubernetes packages
-  command: yum versionlock add kubelet kubeadm kubectl
+  command: yum versionlock add kubelet kubeadm kubectl cri-tools kubernetes-cni
   register: yum_versionlock
   changed_when: "'versionlock added: 1' in yum_versionlock.stdout_lines"
   ignore_errors: yes

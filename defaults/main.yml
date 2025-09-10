@@ -1,7 +1,11 @@
 # Version to install or latest
-kube_version: 1.19.14
+kube_version: 1.24.17
 # Type of node front, control_plane or wn
 kube_type_of_node: front
+# How to install K8s: kubeadm or k3s
+kube_install_method: kubeadm
+# Servers to install and configure ntp. If [] ntp will not be configured
+kube_ntp_servers: [ntp.upv.es, ntp.uv.es]
 # IP address or name of the Kube front node
 kube_server: "{{ ansible_default_ipv4.address }}"
 # Token
@@ -13,15 +17,20 @@ kube_pod_network_cidr: 10.244.0.0/16
 # Type of network to install: currently supported: flannel, kube-router, calico, weave
 kube_network: flannel
 # Kubelet extra args
-kubelet_extra_args: ''
+kubelet_extra_args: '' # deprecated move to kubelet_extra_args_dict
+# dict of kubelet extra args, if set kubelet_extra_args is ignored
+# A key in this map is the flag name as it appears on the command line except without leading dash(es).
+kubelet_extra_args_dict: {}
 # Kube API server options
 kube_apiserver_options: []
 # CRI runtime
-kube_cri_runtime: docker # docker or containerd
-# Flag to set HELM to be installed
-kube_install_helm: true
+kube_cri_runtime: docker # docker, containerd or crio
+# Install CRI runtime
+kube_cri_runtime_install: true
+# CRI dockerd version
+kube_cri_dockerd_version: "0.3.16"
 # Helm version
-kube_install_helm_version: "v3.2.1"
+kube_install_helm_version: "v3.17.2"
 # Deploy the Dashboard
 kube_deploy_dashboard: false
 # Value to pass to the kubeadm init --apiserver-advertise-address option
@@ -36,26 +45,40 @@ kube_persistent_volumes: []
 kube_apply_repos: []
 # Flag to set Metrics-Server to be installed
 kube_install_metrics: false
+# Metrics-Server Helm chart version to install
+kube_metrics_chart_version: "3.12.2"
 # Flag to set the nginx ingress controller to be installed
 kube_install_ingress: false
+# Nginx ingress controller Helm chart version to install
+kube_ingress_chart_version: "4.12.1"
+# Flag to deploy the ingress controller in the master node
+kube_ingress_in_master: false
 # Flag to set add the nvidia support to the cluster
 kube_nvidia_support: false
 # Driver version to install: specific version or "latest"
-kube_nvidia_driver_version: "410"
+kube_nvidia_driver_version: "515"
+# Tag of the nvidia device plugin docker container
+kube_nvidia_device_plugin_version: "v0.17.1"
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
-kube_kubeapps_chart_version: "7.3.2"
+kube_kubeapps_chart_version: "12.2.10"
 # Flag to set nfs-client-provisioner to be installed
 kube_install_nfs_client: false
 # NFS path used by nfs-client-provisioner
 kube_nfs_path: /pv
 # NFS server used by nfs-client-provisioner
 kube_nfs_server: kubeserver.localdomain
+# Set reclaimPolicy of NFS StorageClass Delete or Retain
+kube_nfs_reclaim_policy: Delete
+# NFS client Helm chart version to install
+kube_nfs_chart_version: "4.0.18"
 # Extra options for the flannel plugin
 kube_flanneld_extra_args: []
 # Enable to install and manage Certificates with Cert-manager
 kube_cert_manager: false
+# Cert Manager Helm chart version to install
+kube_cert_manager_chart_version: "1.17.1"
 # Public IP to use by the cert-manager (not needed if kube_public_dns_name is set)
 kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
 # Public DNS name to use in the dashboard tls certificate
@@ -68,10 +91,12 @@ kube_cert_manager_challenge: 'http01'
 kube_cert_manager_challenge_dns01_domain: ''
 kube_cert_manager_challenge_dns01_ak: ''
 kube_cert_manager_challenge_dns01_sk: ''
+# Optionally a wildcard dns certificate name can be set
+kube_cert_manager_wildcard_cert_dns_name: ''
+# Override default docker version
+kube_docker_version: ""
 # Options to add in the docker.json file
 kube_docker_options: {}
-# Compatible docker versions
-kube_docker_compatible_versions: ['17.03.', '18.06.', '18.09.', '19.03.']
 # Nvidia docker options to add in the docker.json file
 docker_nvidia_options:
   default-runtime: nvidia
@@ -81,6 +106,8 @@ docker_nvidia_options:
       runtimeArgs: []
 # Install docker with pip
 kube_install_docker_pip: false
+# Command flags to use for launching k3s in the systemd service
+kube_k3_exec: ""
 
 
 # Endpoint for the control plane in case of HA mode with multiple master
@@ -113,3 +140,38 @@ kyverno_podSecuritySeverity: high
 # Set to get response in failed validation check. Supported values are audit and enforce. See: https://kyverno.io/docs/writing-policies/validate/       
 kyverno_validationFailureAction: ensure 
 
+# Option to install Apache Yunikorn
+kube_install_yunikorn: false
+# Apache Yunikorn's version to be installed
+kube_yunikorn_version: 1.1.0
+
+
+cilium_debug_log: true
+cilium_k8s_endpoint: "{{ ansible_default_ipv4.address }}"
+# https://docs.cilium.io/en/stable/policy/intro/#policy-enforcement-modes. Values: default, always and never
+cilium_policyEnforcementMode: "default"
+cilium_nodeEncryption: true
+cilium_nodeport_enable: true
+cilium_nodeport_range: "30000,32767"
+cilium_priorityClassName: "network"
+cilium_prometheus_enable: false 
+cilium_hubble_certValidityDuration: 365
+cilium_hubble_enable: false
+cilium_hubble_ui_enable: false
+cilium_hubble_priorityClassName: ""
+cilium_hubble_ui_ingress_enable: true
+cilium_hubble_ui_ingress_host: ""
+cilium_hubble_ui_ingress_tls_host: ""
+cilium_hubble_ui_ingress_path: "/"
+cilium_hubble_ui_ingress_annotations: {}
+
+# Longhorn support, if it is activated, the NFS client will be not installed
+kube_install_longhorn: false
+# Install ingress for Longhorn UI
+kube_install_longhorn_ingress: false
+# Default pass: longhorn_pass (openssl passwd -stdin -apr1)
+kube_longhorn_ingress_auth: "longhorn:$apr1$e6BbrO3Q$llbCJ6cWJS/RWnLGYQhxX."
+# Number of replicas for volumes in Longhorn
+longhorn_num_replicas: 3
+# Set reclaimPolicy of Longhorn StorageClass Delete or Retain
+longhorn_reclaim_policy: Delete

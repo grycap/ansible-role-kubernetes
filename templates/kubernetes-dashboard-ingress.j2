@@ -5,21 +5,28 @@ metadata:
   name: kubernetes-dashboard
   namespace: kubernetes-dashboard
   annotations:
-    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 {% if kube_cert_manager %}
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+{% if kube_cert_manager_challenge == 'dns01' %}
+    certmanager.k8s.io/acme-challenge-type: dns01
+    certmanager.k8s.io/acme-dns01-provider: route53
+{% endif %}
 {% endif %}
 spec:
-{% if kube_cert_manager %}
+  ingressClassName: nginx
+{% if kube_cert_manager and public_hostname is defined %}
   tls:
   - hosts:
     - {{ public_hostname }}
+{% if kube_cert_manager_wildcard_cert_dns_name == '' %}
     secretName: {{ public_hostname }}
 {% endif %}
+{% endif %}
   rules:
-{% if kube_cert_manager %}
+{% if kube_cert_manager and public_hostname is defined %}
   - host: {{ public_hostname }}
     http:
 {% else %}
@@ -32,4 +39,4 @@ spec:
             name: kubernetes-dashboard
             port:
               number: 8443
-        pathType: Prefix
+        pathType: ImplementationSpecific

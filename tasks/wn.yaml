@@ -1,14 +1,66 @@
 ---
+- name: Edit /etc/sysctl.d/99-override_cilium_rp_filter.conf
+  lineinfile:
+    dest: /etc/sysctl.d/99-override_cilium_rp_filter.conf
+    regexp: '^net.ipv4.conf.lxc*.rp_filter'
+    line: 'net.ipv4.conf.lxc*.rp_filter = 0'
+    create: yes
+  notify: sysctl-system
+  when: kube_network == 'cilium'
+
 - name: Wait for Kube master
   wait_for:
     path: /etc/environment
-    search_regex: "KUBECONFIG=/etc/kubernetes/admin.conf"
+    search_regex: "KUBECONFIG="
   delegate_to: "{{kube_server}}"
 
-- name: Add WN to kube cluster to master
-  command: kubeadm join --token {{kube_token}} {{kube_server}}:6443 --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
-  when: kube_control_plane_ip == ""
+- block:
 
-- name: Add WN to kube cluster control plane
-  command: kubeadm join --token {{kube_token}} {{kube_control_plane_ip}}:{{kube_control_plane_port}} --discovery-token-unsafe-skip-ca-verification creates=/etc/kubernetes/kubelet.conf
-  when: kube_control_plane_ip != ""
+  - name: Read node-token from FE
+    block:
+    - command: 'cat /var/lib/rancher/k3s/server/node-token'
+      register: token_read
+      delegate_to: '{{ kube_server }}'
+      delegate_facts: true
+    - set_fact:
+        node_token: "{{ token_read.stdout }}"
+
+  - name: Install k3s node
+    command: sh /tmp/k3s.sh creates=/var/lib/rancher/k3s/agent/etc/k3s-agent-load-balancer.json
+    environment:
+      INSTALL_K3S_EXEC: "{{kube_k3_exec}}"
+      K3S_URL: https://{{ kube_server }}:6443
+      K3S_TOKEN: "{{ node_token }}"
+
+  - name: Copy config.toml.tmpl for NVidia support
+    copy:
+      src: config.toml.tmpl
+      dest: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
+    when: kube_nvidia_support | bool
+
+  when: kube_install_method == "k3s"
+
+- block:
+
+  # to deprecate and move to kubelet_extra_args_dict
+  - name: Add KUBELET_EXTRA_ARGS
+    lineinfile:
+      dest: "{{item}}/kubelet"
+      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd {{kubelet_extra_args}}'
+      regexp: 'KUBELET_EXTRA_ARGS='
+      create: yes
+    notify: restart kubelet
+    with_first_found:
+      - files:
+        - /etc/sysconfig/
+        - /etc/default/
+    ignore_errors: true
+    when: kubelet_extra_args != "" and kubelet_extra_args_dict == {}
+
+  - name: Create kubeadm-config file
+    template: src=kubeadm-config-join.j2 dest=/tmp/kubeadm-config.yml
+
+  - name: Add node to kube cluster
+    command: kubeadm join --config /tmp/kubeadm-config.yml creates=/etc/kubernetes/kubelet.conf
+
+  when: kube_install_method == "kubeadm"

@@ -1,0 +1,5 @@
+- name: get k3s bin
+  get_url:
+    url: https://get.k3s.io
+    dest: /tmp/k3s.sh
+
