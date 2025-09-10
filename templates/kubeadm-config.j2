@@ -2,14 +2,21 @@
 kind: ClusterConfiguration
 {% if kube_version is version_compare('1.22.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta2
-{% else %}
+{% elif kube_version is version_compare('1.31.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta3
+{% else %}
+apiVersion: kubeadm.k8s.io/v1beta4
 {% endif %}
 networking:
   podSubnet: "{{kube_pod_network_cidr}}"            # --pod-network-cidr
 apiServer:
   extraArgs:
+{% if kube_version is version_compare('1.31.0', '<') %}
     advertise-address: "{{kube_api_server}}"        # --apiserver-advertise-address
+{% else %}
+    - name: advertise-address
+      value: "{{kube_api_server}}"        # --apiserver-advertise-address
+{% endif %}
 {% if IM_NODE_PUBLIC_IP is defined %}
   certSANs:
   - "{{ IM_NODE_PUBLIC_IP }}"
@@ -34,8 +41,10 @@ cgroupDriver: systemd
 kind: InitConfiguration
 {% if kube_version is version_compare('1.22.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta2
-{% else %}
+{% elif kube_version is version_compare('1.31.0', '<') %}
 apiVersion: kubeadm.k8s.io/v1beta3
+{% else %}
+apiVersion: kubeadm.k8s.io/v1beta4
 {% endif %}
 bootstrapTokens:
 - token: "{{kube_token}}"                          # --token
@@ -43,5 +52,5 @@ bootstrapTokens:
   ttl: "{{kube_token_ttl}}"                         # --token-ttl
 {% if kube_cri_runtime == "docker" %}
 nodeRegistration:
-  criSocket: "/run/cri-dockerd.sock"
+  criSocket: "unix:///run/cri-dockerd.sock"
 {% endif %}

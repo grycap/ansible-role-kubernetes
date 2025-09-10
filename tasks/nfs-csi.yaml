@@ -1,0 +1,24 @@
+- name: Create ingress-values.yaml
+  copy:
+    content: |
+      storageClass:
+        create: true
+        name: managed-nfs-storage
+        reclaimPolicy: {{ kube_nfs_reclaim_policy }}
+        annotations:
+          storageclass.kubernetes.io/is-default-class: "{{ 'true' if kube_nfs_set_default else 'false' }}"
+        parameters:
+          server: {{ kube_nfs_server }}
+          share: {{ kube_nfs_path }}
+    dest: /var/tmp/nfs-csi-values.yaml
+
+- name: Install ingress-nginx helm chart
+  import_tasks: helm_chart.yaml
+  vars:
+    helm_chart_name: csi-driver-nfs
+    helm_chart_namespace: kube-system
+    helm_repo_name: csi-driver-nfs
+    helm_repo_url: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
+    helm_chart_version: "{{ kube_nfs_chart_version }}"
+    helm_wait: false
+    helm_values_file: /var/tmp/nfs-csi-values.yaml

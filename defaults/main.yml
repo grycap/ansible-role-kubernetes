@@ -28,11 +28,9 @@ kube_cri_runtime: docker # docker, containerd or crio
 # Install CRI runtime
 kube_cri_runtime_install: true
 # CRI dockerd version
-kube_cri_dockerd_version: "0.3.4"
-# Flag to set HELM to be installed
-kube_install_helm: true
+kube_cri_dockerd_version: "0.3.16"
 # Helm version
-kube_install_helm_version: "v3.8.2"
+kube_install_helm_version: "v3.17.2"
 # Deploy the Dashboard
 kube_deploy_dashboard: false
 # Value to pass to the kubeadm init --apiserver-advertise-address option
@@ -47,32 +45,42 @@ kube_persistent_volumes: []
 kube_apply_repos: []
 # Flag to set Metrics-Server to be installed
 kube_install_metrics: false
+# Metrics-Server Helm chart version to install
+kube_metrics_chart_version: "3.12.2"
 # Flag to set the nginx ingress controller to be installed
 kube_install_ingress: false
+# Nginx ingress controller Helm chart version to install
+kube_ingress_chart_version: "4.12.1"
+# Flag to deploy the ingress controller in the master node
+kube_ingress_in_master: false
 # Flag to set add the nvidia support to the cluster
 kube_nvidia_support: false
 # Driver version to install: specific version or "latest"
 kube_nvidia_driver_version: "515"
 # Tag of the nvidia device plugin docker container
-kube_nvidia_device_plugin_version: "v0.12.2"
+kube_nvidia_device_plugin_version: "v0.17.1"
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
-kube_kubeapps_chart_version: "8.1.10"
-# Flag to set nfs-client-provisioner to be installed
+kube_kubeapps_chart_version: "12.2.10"
+# Flag to set nfs-csi-driver to be installed
 kube_install_nfs_client: false
-# NFS path used by nfs-client-provisioner
+# NFS path used by nfs-csi-driver
 kube_nfs_path: /pv
-# NFS server used by nfs-client-provisioner
+# NFS server used by nfs-csi-driver
 kube_nfs_server: kubeserver.localdomain
 # Set reclaimPolicy of NFS StorageClass Delete or Retain
 kube_nfs_reclaim_policy: Delete
 # Set default storage class
 kube_nfs_set_default: true
+# NFS csi driver Helm chart version to install
+kube_nfs_chart_version: "4.11.0"
 # Extra options for the flannel plugin
 kube_flanneld_extra_args: []
 # Enable to install and manage Certificates with Cert-manager
 kube_cert_manager: false
+# Cert Manager Helm chart version to install
+kube_cert_manager_chart_version: "1.17.1"
 # Public IP to use by the cert-manager (not needed if kube_public_dns_name is set)
 kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
 # Public DNS name to use in the dashboard tls certificate
@@ -134,7 +142,7 @@ cilium_policyEnforcementMode: "default"
 cilium_nodeEncryption: true
 cilium_nodeport_enable: true
 cilium_nodeport_range: "30000,32767"
-cilium_priorityClassName: ""
+cilium_priorityClassName: "network"
 cilium_prometheus_enable: false 
 cilium_hubble_certValidityDuration: 365
 cilium_hubble_enable: false
@@ -143,6 +151,7 @@ cilium_hubble_priorityClassName: ""
 cilium_hubble_ui_ingress_enable: true
 cilium_hubble_ui_ingress_host: ""
 cilium_hubble_ui_ingress_tls_host: ""
+cilium_hubble_ui_ingress_path: "/"
 cilium_hubble_ui_ingress_annotations: {}
 
 # Longhorn support
