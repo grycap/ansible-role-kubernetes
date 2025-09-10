@@ -166,3 +166,5 @@ longhorn_num_replicas: 3
 longhorn_reclaim_policy: Delete
 # Set default storage class
 longhorn_set_default: false
+# Longhorn Helm chart version to install
+kube_longhorn_chart_version: "1.9.1"
