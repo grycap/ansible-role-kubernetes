@@ -2,6 +2,7 @@
   copy:
     content: |
       storageClass:
+        create: true
         name: managed-nfs-storage
         reclaimPolicy: {{ kube_nfs_reclaim_policy }}
         annotations:
