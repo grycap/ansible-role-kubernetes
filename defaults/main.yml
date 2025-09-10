@@ -71,6 +71,8 @@ kube_nfs_path: /pv
 kube_nfs_server: kubeserver.localdomain
 # Set reclaimPolicy of NFS StorageClass Delete or Retain
 kube_nfs_reclaim_policy: Delete
+# Set default storage class
+kube_nfs_set_default: true
 # NFS csi driver Helm chart version to install
 kube_nfs_chart_version: "4.11.0"
 # Extra options for the flannel plugin
@@ -152,7 +154,7 @@ cilium_hubble_ui_ingress_tls_host: ""
 cilium_hubble_ui_ingress_path: "/"
 cilium_hubble_ui_ingress_annotations: {}
 
-# Longhorn support, if it is activated, the NFS client will be not installed
+# Longhorn support
 kube_install_longhorn: false
 # Install ingress for Longhorn UI
 kube_install_longhorn_ingress: false
@@ -162,3 +164,7 @@ kube_longhorn_ingress_auth: "longhorn:$apr1$e6BbrO3Q$llbCJ6cWJS/RWnLGYQhxX."
 longhorn_num_replicas: 3
 # Set reclaimPolicy of Longhorn StorageClass Delete or Retain
 longhorn_reclaim_policy: Delete
+# Set default storage class
+longhorn_set_default: false
+# Longhorn Helm chart version to install
+kube_longhorn_chart_version: "1.9.1"
