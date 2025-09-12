@@ -11,8 +11,11 @@
     search_regex: "KUBECONFIG=/etc/kubernetes/admin.conf"
   delegate_to: "{{kube_server}}"
 
-- name: Add node to kube cluster control_plane
-  command: kubeadm join --control-plane --token {{kube_token}} {{kube_control_plane_ip}}:{{kube_control_plane_port}} --discovery-token-unsafe-skip-ca-verification --ignore-preflight-errors=all creates=/etc/kubernetes/admin.conf
+- name: Create kubeadm-config file
+  template: src=kubeadm-config-cp.j2 dest=/tmp/kubeadm-config-cp.yml
+
+- name: Add node to kube cluster
+  command: kubeadm join --config /tmp/kubeadm-config-cp.yml creates=/etc/kubernetes/kubelet.conf
 
 - name: Add Kube API server options
   lineinfile:

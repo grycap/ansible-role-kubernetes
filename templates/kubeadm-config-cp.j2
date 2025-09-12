@@ -1,0 +1,34 @@
+---
+kind: JoinConfiguration
+{% if kube_version is version_compare('1.22.0', '<') %}
+apiVersion: kubeadm.k8s.io/v1beta2
+{% elif kube_version is version_compare('1.31.0', '<') %}
+apiVersion: kubeadm.k8s.io/v1beta3
+{% else %}
+apiVersion: kubeadm.k8s.io/v1beta4
+{% endif %}
+nodeRegistration:
+  kubeletExtraArgs:
+{% if kube_version is version_compare('1.31.0', '<') %}  
+    cgroup-driver: systemd
+{% for key, value in kubelet_extra_args_dict.items() %}
+    {{key}}: {{value}}
+{% endfor %}
+{% else %}
+    - name: cgroup-driver
+      value: systemd
+{% for key, value in kubelet_extra_args_dict.items() %}
+    - name: {{key}}
+      value: {{value}}
+{% endfor %}
+{% endif %}
+
+{% if kube_cri_runtime == "docker" %}
+  criSocket: "unix:///run/cri-dockerd.sock"
+{% endif %}
+discovery:
+  bootstrapToken:
+    token: "{{kube_token}}"
+    apiServerEndpoint: {{kube_control_plane_ip}}:{{kube_control_plane_port}}
+    unsafeSkipCAVerification: true
+controlPlane: {} 
