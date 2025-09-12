@@ -13,17 +13,6 @@ apiServer:
   extraArgs:
 {% if kube_version is version_compare('1.31.0', '<') %}
     advertise-address: "{{kube_api_server}}"        # --apiserver-advertise-address
-{% if kube_control_plane_ip != "" %}
-controlPlaneEndpoint: {{kube_control_plane_ip}}:{{kube_control_plane_port}}
-etcd:
-    external:
-        endpoints:
-        {% for peer_name, peer_ip in kube_etcd_peer_list.items() %}
-          - https://{{peer_ip}}:2379
-        {% endfor -%}
-        caFile: /etc/kubernetes/pki/etcd/ca.crt
-        certFile: /etc/kubernetes/pki/apiserver-etcd-client.crt
-        keyFile: /etc/kubernetes/pki/apiserver-etcd-client.key
 {% else %}
     - name: advertise-address
       value: "{{kube_api_server}}"        # --apiserver-advertise-address
@@ -41,8 +30,20 @@ etcd:
   - "{{ IM_NODE_PRIVATE_IP }}"
 {% endif %}
 {% endif %}
-{% if kube_api_server != "0.0.0.0" %}
+{% if kube_api_server != "0.0.0.0" and kube_control_plane_ip == "" %}
 controlPlaneEndpoint: "{{kube_api_server}}:6443"
+{% endif %}
+{% if kube_control_plane_ip != "" %}
+controlPlaneEndpoint: {{kube_control_plane_ip}}:{{kube_control_plane_port}}
+etcd:
+    external:
+        endpoints:
+        {% for peer_name, peer_ip in kube_etcd_peer_list.items() %}
+          - https://{{peer_ip}}:2379
+        {% endfor -%}
+        caFile: /etc/kubernetes/pki/etcd/ca.crt
+        certFile: /etc/kubernetes/pki/apiserver-etcd-client.crt
+        keyFile: /etc/kubernetes/pki/apiserver-etcd-client.key
 {% endif %}
 ---
 kind: KubeletConfiguration
