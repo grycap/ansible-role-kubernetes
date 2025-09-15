@@ -20,7 +20,7 @@
 
   - name: Get certificate-key
     set_fact:
-      kubeadm_certificate_key: "{{ kubeadm_init.stdout | regex_search('(?<=certificate-key: )[a-z0-9]{64}') }}"
+      kubeadm_certificate_key: "{{ kubeadm_init.stdout | regex_search('--certificate-key ([a-z0-9]{64})', '\\1') }}"
 
   - name: Save certificate-key
     copy:
