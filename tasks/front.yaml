@@ -25,7 +25,7 @@
   - name: Save certificate-key
     copy:
       dest: /var/tmp/kubeadm-certificate-key
-      content: "{{ kubeadm_certificate_key }}"
+      content: "{{ kubeadm_certificate_key[0] }}"
       mode: '0644'
 
   - name: Set kube_wait_api_server_ip
