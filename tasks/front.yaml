@@ -21,12 +21,14 @@
   - name: Get certificate-key
     set_fact:
       kubeadm_certificate_key: "{{ kubeadm_init.stdout | regex_search('--certificate-key ([a-z0-9]{64})', '\\1') }}"
+    when: kubeadm_init is changed
 
   - name: Save certificate-key
     copy:
       dest: /var/tmp/kubeadm-certificate-key
       content: "{{ kubeadm_certificate_key[0] }}"
       mode: '0644'
+    when: kubeadm_init is changed and kubeadm_certificate_key is defined
 
   - name: Set kube_wait_api_server_ip
     set_fact:
