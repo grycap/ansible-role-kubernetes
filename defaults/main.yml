@@ -116,10 +116,6 @@ kube_control_plane_port: 8443
 kube_control_plane_peer_ip: "{{ ansible_default_ipv4.address }}"
 kube_control_plane_peer_iface: "{{ ansible_default_ipv4.interface }}"
 kube_control_plane_remote_peer_list: ["{{ ansible_default_ipv4.address }}"]
-# ETCD Peer adress
-kube_etcd_peer_address: "{{ ansible_default_ipv4.address }}"
-kube_etcd_peer_list: {"kubeserver.localdomain": "{{ ansible_default_ipv4.address }}"}
-kube_etcd_peer_name: "kubeserver.localdomain"
 
 # Kyverno options
 kube_install_kyverno: false

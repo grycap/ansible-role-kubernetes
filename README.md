@@ -84,10 +84,6 @@ The variables that can be passed to this role and a brief description about them
 	kube_control_plane_peer_ip: "{{ ansible_default_ipv4.address }}"
 	kube_control_plane_peer_iface: "{{ ansible_default_ipv4.interface }}"
 	kube_control_plane_remote_peer_list: ["{{ ansible_default_ipv4.address }}"]
-	# ETCD Peer adress
-	kube_etcd_peer_address: "{{ ansible_default_ipv4.address }}"
-	kube_etcd_peer_list: {"kubeserver.localdomain": "{{ ansible_default_ipv4.address }}"}
-	kube_etcd_peer_name: "kubeserver.localdomain"
 	# Command flags to use for launching k3s in the systemd service
 	kube_k3_exec: ""
 	# How to install K8s: kubeadm or k3s
