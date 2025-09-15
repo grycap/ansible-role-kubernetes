@@ -2,14 +2,14 @@
 - name: Configure VIP LB
   import_tasks: lb.yaml
 
-- name: Configure HA ETDC
-  import_tasks: etcd.yaml
-
 - name: Wait for Kube master
   wait_for:
     path: /etc/environment
     search_regex: "KUBECONFIG=/etc/kubernetes/admin.conf"
   delegate_to: "{{kube_server}}"
+
+- set_fact:
+    certificate_key: "{{ lookup('file', '/var/tmp/kubeadm-certificate-key') }}"
 
 - name: Create kubeadm-config file
   template: src=kubeadm-config-cp.j2 dest=/tmp/kubeadm-config-cp.yml

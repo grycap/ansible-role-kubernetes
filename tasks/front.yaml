@@ -7,22 +7,26 @@
   - set_fact:
       init_params: ""
 
-  - block:
-      - name: Configure VIP LB
-        import_tasks: lb.yaml
-
-      - name: Configure HA ETDC
-        import_tasks: etcd.yaml
-
-      - set_fact:
-          init_params: "--ignore-preflight-errors=all"
+  - name: Configure VIP LB
+    import_tasks: lb.yaml
     when: kube_control_plane_ip != ""
 
   - name: Create kubeadm-config file
     template: src=kubeadm-config.j2 dest=/tmp/kubeadm-config.yml
 
   - name: Kubeadm init
-    command: kubeadm init --config /tmp/kubeadm-config.yml {{init_params}} creates=/etc/kubernetes/admin.conf 
+    command: kubeadm init --upload-certs --config /tmp/kubeadm-config.yml {{init_params}} creates=/etc/kubernetes/admin.conf 
+    register: kubeadm_init
+
+  - name: Get certificate-key
+    set_fact:
+      kubeadm_certificate_key: "{{ kubeadm_init.stdout | regex_search('(?<=certificate-key: )[a-z0-9]{64}') }}"
+
+  - name: Save certificate-key
+    copy:
+      dest: /var/tmp/kubeadm-certificate-key
+      content: "{{ kubeadm_certificate_key }}"
+      mode: '0644'
 
   - name: Set kube_wait_api_server_ip
     set_fact:

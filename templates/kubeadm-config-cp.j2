@@ -31,4 +31,6 @@ discovery:
     token: "{{kube_token}}"
     apiServerEndpoint: {{kube_control_plane_ip}}:{{kube_control_plane_port}}
     unsafeSkipCAVerification: true
-controlPlane: {} 
+controlPlane:
+  localAPIEndpoint: {}
+  certificateKey: "{{ certificate_key }}"
