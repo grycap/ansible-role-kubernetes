@@ -162,3 +162,5 @@ kube_longhorn_ingress_auth: "longhorn:$apr1$e6BbrO3Q$llbCJ6cWJS/RWnLGYQhxX."
 longhorn_num_replicas: 3
 # Set reclaimPolicy of Longhorn StorageClass Delete or Retain
 longhorn_reclaim_policy: Delete
+# Longhorn Helm chart version to install
+kube_longhorn_chart_version: 1.9.1
