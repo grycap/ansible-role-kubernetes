@@ -1,4 +1,4 @@
-- name: Create ingress-values.yaml
+- name: Create nfs-csi-values.yaml
   copy:
     content: |
       storageClass:
@@ -12,7 +12,7 @@
           share: {{ kube_nfs_path }}
     dest: /var/tmp/nfs-csi-values.yaml
 
-- name: Install ingress-nginx helm chart
+- name: Install nfs helm chart
   import_tasks: helm_chart.yaml
   vars:
     helm_chart_name: csi-driver-nfs
