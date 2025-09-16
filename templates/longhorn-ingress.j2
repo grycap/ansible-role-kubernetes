@@ -1,0 +1,52 @@
+{% if kube_install_longhorn_ingress %}
+---
+apiVersion: v1
+data:
+  auth: {{ kube_longhorn_ingress_auth | b64encode }}
+kind: Secret
+metadata:
+  name: basic-auth
+  namespace: longhorn-system
+type: Opaque
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: longhorn-ingress
+  namespace: longhorn-system
+  annotations:
+    # type of authentication
+    nginx.ingress.kubernetes.io/auth-type: basic
+    # name of the secret that contains the user/password definitions
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    # message to display with an appropriate context why the authentication is required
+    nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required '
+    # custom max body size for file uploading like backing image uploading
+    nginx.ingress.kubernetes.io/proxy-body-size: 10000m
+{% if kube_cert_manager %}
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+{% endif %}
+spec:
+  ingressClassName: nginx
+{% if kube_cert_manager and public_hostname is defined %}
+  tls:
+  - hosts:
+    - {{ public_hostname }}
+    secretName: {{ public_hostname }}
+{% endif %}
+  rules:
+{% if kube_cert_manager and public_hostname is defined %}
+  - host: {{ public_hostname }}
+    http:
+{% else %}
+  - http:
+{% endif %}
+      paths:
+      - pathType: ImplementationSpecific
+        path: "/"
+        backend:
+          service:
+            name: longhorn-frontend
+            port:
+              number: 80
+{% endif %}
