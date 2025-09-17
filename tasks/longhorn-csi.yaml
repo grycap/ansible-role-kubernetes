@@ -6,6 +6,7 @@
         defaultClassReplicaCount: {{ longhorn_num_replicas }}
       ingress:
         enabled: false
+      
     dest: /var/tmp/longhorn-csi-values.yaml
 
 - name: Install longhorn helm chart
@@ -21,7 +22,10 @@
 
 - name: Create longhorn-ingress.yaml
   template: src=longhorn-ingress.j2 dest=/tmp/longhorn-ingress.yaml
+  when: kube_install_longhorn_ingress | bool
+
 - name: Apply longhorn-ingress.yaml
   command: kubectl apply -f /tmp/longhorn-ingress.yaml
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
+  when: kube_install_longhorn_ingress | bool
