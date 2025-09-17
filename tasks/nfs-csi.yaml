@@ -10,6 +10,7 @@
         parameters:
           server: {{ kube_nfs_server }}
           share: {{ kube_nfs_path }}
+          mountPermissions: "0777"
     dest: /var/tmp/nfs-csi-values.yaml
 
 - name: Install nfs helm chart
