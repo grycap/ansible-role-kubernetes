@@ -1,6 +1,8 @@
 - name: Create longhorn-csi-values.yaml
   copy:
     content: |
+      defaultSettings:
+        defaultDataPath: {{ longhorn_default_data_path }}
       persistence:
         reclaimPolicy: {{ longhorn_reclaim_policy }}
         defaultClassReplicaCount: {{ longhorn_num_replicas }}
@@ -21,7 +23,10 @@
 
 - name: Create longhorn-ingress.yaml
   template: src=longhorn-ingress.j2 dest=/tmp/longhorn-ingress.yaml
+  when: kube_install_longhorn_ingress | bool
+
 - name: Apply longhorn-ingress.yaml
   command: kubectl apply -f /tmp/longhorn-ingress.yaml
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
+  when: kube_install_longhorn_ingress | bool
