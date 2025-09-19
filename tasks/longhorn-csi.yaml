@@ -1,12 +1,13 @@
 - name: Create longhorn-csi-values.yaml
   copy:
     content: |
+      defaultSettings:
+        defaultDataPath: {{ longhorn_default_data_path }}
       persistence:
         reclaimPolicy: {{ longhorn_reclaim_policy }}
         defaultClassReplicaCount: {{ longhorn_num_replicas }}
       ingress:
         enabled: false
-      
     dest: /var/tmp/longhorn-csi-values.yaml
 
 - name: Install longhorn helm chart
