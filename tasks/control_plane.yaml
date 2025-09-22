@@ -25,3 +25,8 @@
     insertafter: '    - kube-apiserver'
   notify: restart kubeapi
   with_items: "{{ kube_apiserver_options }}"
+
+- name: Set KUBECONFIG environment variable
+  lineinfile:
+    dest: /etc/environment
+    line: "KUBECONFIG=/etc/kubernetes/admin.conf"
