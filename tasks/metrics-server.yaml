@@ -1,4 +1,4 @@
-- name: Create nfs-csi-values.yaml
+- name: Create metrics-values.yaml
   copy:
     content: |
       apiService:
