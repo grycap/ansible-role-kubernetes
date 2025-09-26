@@ -1,0 +1,18 @@
+- name: Create nfs-csi-values.yaml
+  copy:
+    content: |
+      apiService:
+        insecureSkipTLSVerify: true
+    dest: /var/tmp/metrics-values.yaml
+
+- name: Install metrics-server helm chart
+  import_tasks: helm_chart.yaml
+  vars:
+    helm_chart_name: metrics-server
+    helm_chart_namespace: kube-system
+    helm_repo_name: metrics-server
+    helm_repo_url: https://kubernetes-sigs.github.io/metrics-server
+    helm_chart_version: "{{ kube_metrics_chart_version }}"
+    helm_wait: false
+    helm_values_file: /var/tmp/metrics-values.yaml
+  when: kube_install_metrics | bool
