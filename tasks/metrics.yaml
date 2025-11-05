@@ -1,0 +1,21 @@
+- name: Create metrics-values.yaml
+  copy:
+    content: |
+      defaultArgs:
+        - --cert-dir=/tmp
+        - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+        - --kubelet-use-node-status-port
+        - --metric-resolution=15s
+        - --kubelet-insecure-tls
+    dest: /var/tmp/metrics-values.yaml
+
+- name: Install metrics-server helm chart
+  import_tasks: helm_chart.yaml
+  vars:
+    helm_chart_name: metrics-server
+    helm_chart_namespace: kube-system
+    helm_repo_name: metrics-server
+    helm_repo_url: https://kubernetes-sigs.github.io/metrics-server
+    helm_chart_version: "{{ kube_metrics_chart_version }}"
+    helm_wait: false
+    helm_values_file: /var/tmp/metrics-values.yaml
