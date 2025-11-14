@@ -1,13 +1,11 @@
 service:
   enabled: true
   type: NodePort
-  ports:
-    web:
-      port: 80
-      nodePort: 80
-    websecure:
-      port: 443
-      nodePort: 443
+ports:
+  web:
+    nodePort: 80
+  websecure:
+    nodePort: 443
 tolerations:
   - key: "node-role.kubernetes.io/master"
     operator: "Exists"
