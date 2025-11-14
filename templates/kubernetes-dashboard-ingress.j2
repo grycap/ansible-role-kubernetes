@@ -19,6 +19,7 @@ metadata:
   annotations:
 {% if kube_ingress_type == "traefik" %}
     traefik.ingress.kubernetes.io/router.middlewares: kubernetes-dashboard-kubernetes-dashboard-rewrite@kubernetescrd
+    traefik.ingress.kubernetes.io/service.serversscheme: https
 {% endif %}
 {% if kube_ingress_type == "nginx" %}
     nginx.ingress.kubernetes.io/use-regex: "true"
