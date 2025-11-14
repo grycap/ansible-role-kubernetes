@@ -8,7 +8,6 @@ service:
     websecure:
       port: 443
       nodePort: 443
-
 tolerations:
   - key: "node-role.kubernetes.io/master"
     operator: "Exists"
@@ -16,24 +15,19 @@ tolerations:
   - key: "node-role.kubernetes.io/control-plane"
     operator: "Exists"
     effect: "NoSchedule"
-
 nodeSelector:
   kubernetes.io/os: linux
 {% if kube_ingress_in_master %}
     node-role.kubernetes.io/control-plane: ""
 {% endif %}
-
-# Configurar Traefik como el IngressClass por defecto
 ingressClass:
   enabled: true
   isDefaultClass: true
   name: traefik
-
 providers:
   kubernetesIngress:
     publishedService:
       enabled: true
-
 # Traefik Dashboard
 ports:
   traefik:

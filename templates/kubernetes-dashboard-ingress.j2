@@ -17,14 +17,14 @@ metadata:
   name: kubernetes-dashboard
   namespace: kubernetes-dashboard
   annotations:
-    {% if kube_ingress_type == "traefik" %}
+{% if kube_ingress_type == "traefik" %}
     traefik.ingress.kubernetes.io/router.middlewares: kubernetes-dashboard-kubernetes-dashboard-rewrite@kubernetescrd
-    {% endif %}
-    {% if kube_ingress_type == "nginx" %}
+{% endif %}
+{% if kube_ingress_type == "nginx" %}
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    {% endif %}
+ {% endif %}
 {% if kube_cert_manager %}
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 {% if kube_cert_manager_challenge == 'dns01' %}
