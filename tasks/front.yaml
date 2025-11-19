@@ -165,6 +165,9 @@
 - import_tasks: ingress.yaml
   when: kube_install_ingress | bool
 
+- import_tasks: gateway-api.yaml
+  when: kube_install_gateway_api | bool
+
 - block:
     - name: Create nvidia-device-plugin.yaml
       template: src=nvidia-device-plugin.j2 dest=/tmp/nvidia-device-plugin.yml

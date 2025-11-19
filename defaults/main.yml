@@ -78,7 +78,7 @@ kube_flanneld_extra_args: []
 # Enable to install and manage Certificates with Cert-manager
 kube_cert_manager: false
 # Cert Manager Helm chart version to install
-kube_cert_manager_chart_version: "1.17.1"
+kube_cert_manager_chart_version: "1.19.1"
 # Public IP to use by the cert-manager (not needed if kube_public_dns_name is set)
 kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
 # Public DNS name to use in the dashboard tls certificate
@@ -164,3 +164,7 @@ longhorn_num_replicas: 3
 longhorn_reclaim_policy: Delete
 # Longhorn Helm chart version to install
 kube_longhorn_chart_version: 1.9.1
+
+kube_install_gateway_api: false
+kube_gateway_api_version: 1.4.0
+kube_nginx_gateway_fabric_version: 2.2.1
