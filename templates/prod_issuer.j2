@@ -29,5 +29,5 @@ spec:
     # Enable the HTTP-01 challenge provider
     - http01:
         ingress:
-          class: nginx
+          class: {{ kube_ingress_type }}
 {% endif %}
