@@ -9,6 +9,6 @@
     dest: /var/tmp/nginx-gateway-values.yml.yaml
 
 - name: Install 
-  command: helm upgrade ngf --install --namespace nginx-gateway --create-namespace oci://ghcr.io/nginx/charts/nginx-gateway-fabric -f nginx-gateway-values.yaml
+  command: helm upgrade ngf --install --namespace nginx-gateway --create-namespace oci://ghcr.io/nginx/charts/nginx-gateway-fabric -f /var/tmp/nginx-gateway-values.yml.yaml
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
