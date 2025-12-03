@@ -165,6 +165,6 @@ longhorn_reclaim_policy: Delete
 # Longhorn Helm chart version to install
 kube_longhorn_chart_version: 1.9.1
 
-kube_install_gateway_api: false
+kube_install_gateway_api: true
 kube_gateway_api_version: 1.4.0
 kube_nginx_gateway_fabric_version: 2.2.1
