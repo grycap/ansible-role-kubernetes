@@ -21,6 +21,15 @@
     public_hostname: "{{ kube_public_dns_name }}"
   when: kube_cert_manager | bool and kube_public_dns_name != ""
 
+- name: Check if cert-manager is already installed
+  command: kubectl get deployment -n cert-manager cert-manager
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
+  register: cert_manager_deployment
+  failed_when: false
+  changed_when: false
+  when: kube_cert_manager | bool
+
 - block:
   - name: Create ingress-values.yaml
     copy:
@@ -61,4 +70,4 @@
         KUBECONFIG: "{{KUBECONFIG}}"
     when: kube_cert_manager_wildcard_cert_dns_name != '' and kube_cert_manager_challenge == 'dns01'
 
-  when: kube_cert_manager | bool
+  when: kube_cert_manager | bool and cert_manager_deployment.rc != 0
