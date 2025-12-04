@@ -8,9 +8,13 @@ nginx:
      - port: 443
        listenerPort: 443
 
+certGenerator:
+  enable: true
+  serverTLSSecretName: server-tls
+
 gateways:
   - name: nginx-gateway
-    namespace: default
+    namespace: nginx-gateway
     spec:
       gatewayClassName: nginx
       listeners:
@@ -26,4 +30,8 @@ gateways:
           allowedRoutes:
             namespaces:
               from: All
-
+          tls:
+            mode: Terminate
+            certificateRefs:
+              - name: server-tls
+                kind: Secret
