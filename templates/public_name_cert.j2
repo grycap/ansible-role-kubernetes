@@ -3,11 +3,11 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   namespace: nginx-gateway
-  name: {{ public_hostname }}-tls
+  name: {{ kube_public_dns_name }}-tls
 spec:
-  secretName: {{ public_hostname }}-tls
+  secretName: {{ kube_public_dns_name }}-tls
   issuerRef: 
     kind: ClusterIssuer
     name: letsencrypt-prod
   dnsNames:
-    - "{{ public_hostname }}"
+    - "{{ kube_public_dns_name }}"

@@ -16,17 +16,17 @@ metadata:
 {% endif %}
 spec:
   ingressClassName: nginx
-{% if kube_cert_manager and public_hostname is defined %}
+{% if kube_cert_manager and kube_public_dns_name != '' %}
   tls:
   - hosts:
-    - {{ public_hostname }}
+    - {{ kube_public_dns_name }}
 {% if kube_cert_manager_wildcard_cert_dns_name == '' %}
-    secretName: {{ public_hostname }}
+    secretName: {{ kube_public_dns_name }}
 {% endif %}
 {% endif %}
   rules:
-{% if kube_cert_manager and public_hostname is defined %}
-  - host: {{ public_hostname }}
+{% if kube_cert_manager and kube_public_dns_name != '' %}
+  - host: {{ kube_public_dns_name }}
     http:
 {% else %}
   - http:

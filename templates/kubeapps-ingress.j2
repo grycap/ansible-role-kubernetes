@@ -15,17 +15,17 @@ metadata:
 {% endif %}
 {% endif %}
 spec:
-{% if kube_cert_manager %}
+{% if kube_cert_manager and kube_public_dns_name != "" %}
   tls:
   - hosts:
-    - {{ public_hostname }}
+    - {{ kube_public_dns_name }}
 {% if kube_cert_manager_wildcard_cert_dns_name == '' %}
-    secretName: {{ public_hostname }}
+    secretName: {{ kube_public_dns_name }}
 {% endif %}
 {% endif %}
   rules:
 {% if kube_cert_manager %}
-  - host: {{ public_hostname }}
+  - host: {{ kube_public_dns_name }}
     http:
 {% else %}
   - http:
