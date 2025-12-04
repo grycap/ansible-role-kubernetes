@@ -8,6 +8,10 @@ nginx:
      - port: 443
        listenerPort: 443
 
+nginxGateway:
+  snippetsFilters:
+    enable: true
+
 certGenerator:
   enable: true
   serverTLSSecretName: server-tls
