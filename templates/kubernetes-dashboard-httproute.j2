@@ -1,0 +1,28 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+spec:
+  parentRefs:
+  - name: nginx-gateway
+    namespace: nginx-gateway
+{% if public_hostname is defined %}
+  hostnames:
+  - {{ public_hostname }}
+{% endif %}
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: "/dashboard"
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replaceFullPath: "/"
+    backendRefs:
+    - name: kubernetes-dashboard
+      port: 9090

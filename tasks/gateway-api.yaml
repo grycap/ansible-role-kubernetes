@@ -5,10 +5,10 @@
 
 - name: Create nginx-gateway-values.yaml
   template:
-    src: nginx-gateway-values.yml.j2
-    dest: /var/tmp/nginx-gateway-values.yml.yaml
+    src: nginx-gateway-values.j2
+    dest: /var/tmp/nginx-gateway-values.yaml
 
 - name: Install 
-  command: helm upgrade ngf --install --namespace nginx-gateway --create-namespace oci://ghcr.io/nginx/charts/nginx-gateway-fabric -f /var/tmp/nginx-gateway-values.yml.yaml
+  command: helm upgrade ngf --install --namespace nginx-gateway --create-namespace oci://ghcr.io/nginx/charts/nginx-gateway-fabric -f /var/tmp/nginx-gateway-values.yaml
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"

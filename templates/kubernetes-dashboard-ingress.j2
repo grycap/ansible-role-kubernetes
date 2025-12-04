@@ -7,7 +7,6 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 {% if kube_cert_manager %}
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 {% if kube_cert_manager_challenge == 'dns01' %}
@@ -38,5 +37,5 @@ spec:
           service:
             name: kubernetes-dashboard
             port:
-              number: 8443
+              number: 9090
         pathType: ImplementationSpecific

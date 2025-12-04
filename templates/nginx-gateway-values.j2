@@ -35,3 +35,17 @@ gateways:
             certificateRefs:
               - name: server-tls
                 kind: Secret
+{% if public_hostname is defined %}
+        - name: https
+          port: 443
+          hostname: {{ public_hostname }}
+          protocol: HTTPS
+          allowedRoutes:
+            namespaces:
+              from: All
+          tls:
+            mode: Terminate
+            certificateRefs:
+              - name: {{ public_hostname }}-tls
+                kind: Secret
+{% endif %}

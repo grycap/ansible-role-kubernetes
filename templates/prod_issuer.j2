@@ -28,6 +28,13 @@ spec:
 {% else %}
     # Enable the HTTP-01 challenge provider
     - http01:
+{% if kube_install_gateway_api %}
+        gatewayHTTPRoute:
+          parentRefs:
+          - name: nginx-gateway
+            namespace: nginx-gateway
+{% else %}
         ingress:
           class: nginx
+{% endif %}
 {% endif %}

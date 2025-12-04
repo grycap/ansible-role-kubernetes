@@ -193,6 +193,15 @@
         KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_install_ingress | bool and kube_deploy_dashboard | bool
 
+- block:
+    - name: Create kubernetes-dashboard-httproute.yaml
+      template: src=kubernetes-dashboard-httproute.j2 dest=/tmp/kubernetes-dashboard-httproute.yaml
+    - name: Apply kubernetes-dashboard-httproute.yaml
+      command: kubectl apply -f /tmp/kubernetes-dashboard-httproute.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+  when: kube_install_gateway_api | bool and kube_deploy_dashboard | bool
+
 - import_tasks: kubeapps.yaml
   when: kube_install_kubeapps | bool
 
