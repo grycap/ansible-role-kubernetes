@@ -61,4 +61,13 @@
         KUBECONFIG: "{{KUBECONFIG}}"
     when: kube_cert_manager_wildcard_cert_dns_name != '' and kube_cert_manager_challenge == 'dns01'
 
+  - block:
+    - template: src=public_name_cert.j2 dest=/tmp/public_name_cert.yaml
+    - name: Create Let's encrypt Certificate for '{{ public_name_cert }}'
+      command: kubectl apply -f /tmp/public_name_cert.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+    when: public_name_cert is defined and public_name_cert != '' and kube_install_gateway_api | bool
+
+
   when: kube_cert_manager | bool

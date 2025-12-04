@@ -8,10 +8,6 @@ spec:
   parentRefs:
   - name: nginx-gateway
     namespace: nginx-gateway
-{% if public_hostname is defined %}
-  hostnames:
-  - {{ public_hostname }}
-{% endif %}
   rules:
   - matches:
     - path:

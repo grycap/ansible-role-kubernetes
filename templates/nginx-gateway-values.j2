@@ -36,7 +36,7 @@ gateways:
               - name: server-tls
                 kind: Secret
 {% if public_hostname is defined %}
-        - name: https
+        - name: https-host
           port: 443
           hostname: {{ public_hostname }}
           protocol: HTTPS
