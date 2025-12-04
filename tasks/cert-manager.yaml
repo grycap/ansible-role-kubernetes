@@ -67,7 +67,7 @@
       command: kubectl apply -f /tmp/public_name_cert.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
-    when: public_name_cert is defined and public_name_cert != '' and kube_install_gateway_api | bool
+    when: public_hostname is defined and public_hostname != '' and kube_install_gateway_api | bool
 
 
   when: kube_cert_manager | bool
