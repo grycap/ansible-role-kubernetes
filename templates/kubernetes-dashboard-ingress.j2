@@ -1,3 +1,18 @@
+{% if kube_cert_manager and kube_public_dns_name != '' %}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+spec:
+  secretName: {{ kube_public_dns_name }}
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+  dnsNames:
+    - {{ kube_public_dns_name }}
+{% endif %}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
