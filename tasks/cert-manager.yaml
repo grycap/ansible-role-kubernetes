@@ -1,7 +1,7 @@
 - block:
-  - name: Create ingress-values.yaml
-    copy:
-      src: cert-manager-values.yaml
+  - name: Create cert-manager-value.yaml
+    template:
+      src: cert-manager-values.j2
       dest: /var/tmp/cert-manager-values.yaml
 
   - name: Install cert-manager helm chart
