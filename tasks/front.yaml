@@ -119,15 +119,6 @@
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
 
-- block:
-    - name: Create kubernetes-dashboard.yaml
-      copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
-    - name: Apply kubernetes-dashboard.yaml
-      command: kubectl apply -f /tmp/kubernetes-dashboard.yaml
-      environment:
-        KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_deploy_dashboard | bool
-
 - import_tasks: metrics.yaml
   when: kube_install_metrics | bool
 
@@ -184,23 +175,8 @@
         KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_nvidia_support | bool
 
-- block:
-    - name: Create kubernetes-dashboard-ingress.yaml
-      template: src=kubernetes-dashboard-ingress.j2 dest=/tmp/kubernetes-dashboard-ingress.yaml
-    - name: Apply kubernetes-dashboard-ingress.yaml
-      command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
-      environment:
-        KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_install_ingress | bool and kube_deploy_dashboard | bool
-
-- block:
-    - name: Create kubernetes-dashboard-httproute.yaml
-      template: src=kubernetes-dashboard-httproute.j2 dest=/tmp/kubernetes-dashboard-httproute.yaml
-    - name: Apply kubernetes-dashboard-httproute.yaml
-      command: kubectl apply -f /tmp/kubernetes-dashboard-httproute.yaml
-      environment:
-        KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_install_gateway_api | bool and kube_deploy_dashboard | bool
+- import_tasks: dashboard.yaml
+  when: kube_deploy_dashboard | bool
 
 - import_tasks: kubeapps.yaml
   when: kube_install_kubeapps | bool

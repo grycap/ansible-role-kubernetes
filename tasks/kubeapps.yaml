@@ -11,8 +11,20 @@
 - block:
 
   - template: src=kubeapps-ingress.j2 dest=/tmp/kubeapps-ingress.yaml
-  - command: kubectl apply -f /tmp/kubeapps-ingress.yaml
+  - name: Create KubeApps Ingress
+    command: kubectl apply -f /tmp/kubeapps-ingress.yaml
     environment:
       KUBECONFIG: "{{KUBECONFIG}}"
 
   when: kube_install_ingress | bool
+
+
+- block:
+
+  - template: src=kubeapps-httproute.j2 dest=/tmp/kubeapps-httproute.yaml
+  - name: Create KubeApps HTTPRoute
+    command: kubectl apply -f /tmp/kubeapps-httproute.yaml
+    environment:
+      KUBECONFIG: "{{KUBECONFIG}}"
+
+  when: kube_install_gateway_api | bool

@@ -84,6 +84,13 @@ The variables that can be passed to this role and a brief description about them
 	kube_install_method: kubeadm
 	# Servers to install and configure ntp. If [] ntp will not be configured
 	kube_ntp_servers: [ntp.upv.es, ntp.uv.es]
+	# Instal Gateway API
+	kube_install_gateway_api: false
+	# Gateway API CRDs Version
+	kube_gateway_api_version: 1.4.0
+	# Nginx Gateway Gabric_version
+	kube_nginx_gateway_fabric_version: 2.2.1
+
 
 Example Playbook
 ----------------
