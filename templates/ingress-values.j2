@@ -1,12 +1,10 @@
 controller:
-  enableCertManager: true
   service:
     type: NodePort
     httpPort:
       nodePort: 80
     httpsPort:
       nodePort: 443
-    externalTrafficPolicy: Cluster
   tolerations:
     - key: node-role.kubernetes.io/master
       effect: NoSchedule
