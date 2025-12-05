@@ -1,3 +1,4 @@
+# First generate a selfsigned certificate to assure that the secret is created
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -11,6 +12,7 @@ spec:
     name: selfsigned
   dnsNames:
     - "{{ kube_public_dns_name }}"
+# Then rewrite it with the prod issuer
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
