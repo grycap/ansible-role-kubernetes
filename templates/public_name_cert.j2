@@ -6,6 +6,19 @@ metadata:
   name: {{ kube_public_dns_name }}-tls
 spec:
   secretName: {{ kube_public_dns_name }}-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: selfsigned
+  dnsNames:
+    - "{{ kube_public_dns_name }}"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  namespace: nginx-gateway
+  name: {{ kube_public_dns_name }}-tls
+spec:
+  secretName: {{ kube_public_dns_name }}-tls
   issuerRef: 
     kind: ClusterIssuer
     name: letsencrypt-prod
