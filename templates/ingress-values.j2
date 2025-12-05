@@ -1,10 +1,9 @@
 controller:
   service:
     type: NodePort
-    httpPort:
-      nodePort: 80
-    httpsPort:
-      nodePort: 443
+    nodePorts:
+      http: 80
+      https: 443
   tolerations:
     - key: node-role.kubernetes.io/master
       effect: NoSchedule
