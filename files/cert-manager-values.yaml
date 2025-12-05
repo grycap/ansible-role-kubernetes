@@ -23,7 +23,5 @@ startupapicheck:
       effect: NoSchedule
     - key: node-role.kubernetes.io/control-plane
       effect: NoSchedule
-{% if kube_install_gateway_api %}
 config:
   enableGatewayAPI: true
-{% endif %}
