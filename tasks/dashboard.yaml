@@ -13,11 +13,6 @@
       command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
-    - name: Remove temporary certificate
-      command: kubectl delete cert -n kubernetes-dashboard kubernetes-dashboard
-      environment:
-        KUBECONFIG: "{{KUBECONFIG}}"
-      when: kube_cert_manager and kube_public_dns_name != ''
   when: kube_install_ingress | bool
 
 - block:
