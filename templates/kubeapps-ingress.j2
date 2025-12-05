@@ -17,7 +17,7 @@ metadata:
   name: kubeapps
   annotations:
       {% if kube_ingress_type == "traefik" %}
-      traefik.ingress.kubernetes.io/router.middlewares: default-my-timeout@kubernetescrd
+      traefik.ingress.kubernetes.io/router.middlewares: kubeapps-read-timeout@kubernetescrd
       {% endif %}
       {% if kube_ingress_type == "nginx" %}
       nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
