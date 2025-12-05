@@ -8,8 +8,7 @@
   vars:
     helm_chart_name: ingress-nginx
     helm_chart_namespace: ingress-nginx
-    helm_repo_name: ingress-nginx
-    helm_repo_url: https://kubernetes.github.io/ingress-nginx
+    helm_oci_registry: oci://ghcr.io/nginx/charts/nginx-ingress
     helm_chart_version: "{{ kube_ingress_chart_version }}"
     helm_wait: true
     helm_timeout: 300s
