@@ -50,15 +50,27 @@ spec:
             name: kubernetes-dashboard
             port:
               number: 8443
+{% if kube_ingress_type == "nginx" %}
+        path: /dashboard/?(.*)
+        pathType: ImplementationSpecific
+{% endif %}
+{% if kube_ingress_type == "traefik" %}
         path: /dashboard/
         pathType: Prefix
+{% endif %}
   - host: {{ kube_public_dns_name }}
     http:
       paths:
-      - path: /dashboard/
-        backend:
+      - backend:
           service:
             name: kubernetes-dashboard
             port:
               number: 8443
+{% if kube_ingress_type == "nginx" %}
+        path: /dashboard/?(.*)
+        pathType: ImplementationSpecific
+{% endif %}
+{% if kube_ingress_type == "traefik" %}
+        path: /dashboard/
         pathType: Prefix
+{% endif %}
