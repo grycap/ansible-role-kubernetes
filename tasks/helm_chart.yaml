@@ -2,6 +2,9 @@
     command: helm repo add {{ helm_repo_name }} {{ helm_repo_url }}
     environment:
       KUBECONFIG: "{{KUBECONFIG}}"
+    when:
+    - helm_repo_name is defined
+    - helm_repo_url is defined
 
   - name: Set empty extra args
     set_fact:
@@ -37,8 +40,18 @@
 
   - block:
 
+    - name: Use Helm Repo
+      set_fact:
+        helm_ref: "{{ helm_repo_name }}/{{ helm_chart_name }}"
+      when: helm_repo_name is defined and helm_repo_url is defined
+
+    - name: Use OCI Registry
+      set_fact:
+        helm_ref: "{{ helm_oci_registry }}"
+      when: helm_oci_registry is defined
+
     - name: Install {{ helm_chart_name }} {{ helm_chart_version }}
-      command: helm upgrade {{ helm_chart_name }} --install --namespace {{ helm_chart_namespace }} --create-namespace {{ helm_repo_name }}/{{ helm_chart_name }} {{ extra_args }}
+      command: helm upgrade {{ helm_chart_name }} --install --namespace {{ helm_chart_namespace }} --create-namespace {{ helm_ref }} {{ extra_args }}
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
       async: 900
