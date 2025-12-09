@@ -43,12 +43,17 @@ spec:
 {% endif %}
 {% endif %}
   rules:
-{% if kube_cert_manager %}
+  - http:
+      paths:
+      - backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 8443
+        path: /dashboard/
+        pathType: Prefix
   - host: {{ kube_public_dns_name }}
     http:
-{% else %}
-  - http:
-{% endif %}
       paths:
       - path: /dashboard/
         backend:

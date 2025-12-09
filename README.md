@@ -49,7 +49,8 @@ The variables that can be passed to this role and a brief description about them
 	# Type of ingress to install
 	kube_ingress_type: nginx # or traefik
 	# Ingress controller Helm chart version to install
-	kube_ingress_chart_version: "4.12.1"
+	kube_traefix_ingress_chart_version: "37.3.0"
+	kube_nginx_ingress_chart_version: "4.12.1"
 	# Flag to deploy the ingress controller in the master node
 	kube_ingress_in_master: false
 	# Flag to set the kubeapps UI to be installed
