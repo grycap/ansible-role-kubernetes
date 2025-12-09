@@ -53,15 +53,15 @@ metadata:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 {% endif %}
 spec:
-{% if kube_cert_manager and public_hostname is defined %}
+{% if kube_cert_manager %}
   tls:
   - hosts:
-    - {{ public_hostname }}
-    secretName: {{ public_hostname }}
+    - {{ kube_public_dns_name }}
+    secretName: {{ kube_public_dns_name }}
 {% endif %}
   rules:
-{% if kube_cert_manager and public_hostname is defined %}
-  - host: {{ public_hostname }}
+{% if kube_cert_manager %}
+  - host: {{ kube_public_dns_name }}
     http:
 {% else %}
   - http:

@@ -2,6 +2,11 @@
 - name: Copy 'is_cluster_ready' file
   copy: dest=/bin/is_cluster_ready src=is_cluster_ready mode=0755
 
+- name: Set default nip.io DNS name
+  set_fact:
+    kube_public_dns_name: "{{ kube_cert_public_ip }}.nip.io"
+  when: kube_public_dns_name == ""
+
 - block:
 
   - name: Create kubeadm-config file
@@ -118,6 +123,7 @@
     KUBECONFIG: "{{KUBECONFIG}}"
 
 - include_tasks: cert-manager.yaml
+  when: kube_cert_manager | bool
 
 - block:
     - name: Create kubernetes-dashboard.yaml
