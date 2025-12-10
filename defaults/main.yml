@@ -47,10 +47,13 @@ kube_apply_repos: []
 kube_install_metrics: false
 # Metrics-Server Helm chart version to install
 kube_metrics_chart_version: "3.12.2"
-# Flag to set the nginx ingress controller to be installed
+# Flag to set the ingress controller to be installed
 kube_install_ingress: false
-# Nginx ingress controller Helm chart version to install
-kube_ingress_chart_version: "4.12.1"
+# Type of ingress to install
+kube_ingress_type: nginx # or traefik
+# Ingress controller Helm chart version to install
+kube_traefix_ingress_chart_version: "37.3.0"
+kube_nginx_ingress_chart_version: "4.12.1"
 # Flag to deploy the ingress controller in the master node
 kube_ingress_in_master: false
 # Flag to set add the nvidia support to the cluster

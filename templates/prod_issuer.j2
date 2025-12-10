@@ -43,6 +43,6 @@ spec:
             namespace: nginx-gateway
 {% else %}
         ingress:
-          class: nginx
+          class: {{ kube_ingress_type }}
 {% endif %}
 {% endif %}
