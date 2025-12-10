@@ -16,7 +16,7 @@ tolerations:
 nodeSelector:
   kubernetes.io/os: linux
 {% if kube_ingress_in_master %}
-    node-role.kubernetes.io/control-plane: ""
+  node-role.kubernetes.io/control-plane: ""
 {% endif %}
 ingressClass:
   enabled: true
