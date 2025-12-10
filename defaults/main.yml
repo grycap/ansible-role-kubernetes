@@ -61,7 +61,7 @@ kube_nvidia_support: false
 # Driver version to install: specific version or "latest"
 kube_nvidia_driver_version: "515"
 # Tag of the nvidia device plugin docker container
-kube_nvidia_device_plugin_version: "v0.17.1"
+kube_nvidia_device_plugin_version: "v0.17.4"
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
