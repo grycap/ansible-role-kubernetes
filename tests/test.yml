@@ -10,7 +10,6 @@
       kube_deploy_dashboard: false
       kube_install_ingress: true
       kube_ingress_type: traefik
-      kube_ingress_in_master: true
       kube_public_dns_name: test.domain.com
       kube_version: 1.31.1
       kube_cri_runtime: containerd
