@@ -26,7 +26,7 @@
         helm_repo_url: https://kubernetes.github.io/ingress-nginx
         helm_chart_version: "{{ kube_nginx_ingress_chart_version }}"
         helm_wait: true
-        helm_timeout: 900s
+        helm_timeout: 300s
         helm_values_file: /var/tmp/ingress-values.yaml
 
 - when:
@@ -48,5 +48,5 @@
         helm_repo_url: https://helm.traefik.io/traefik
         helm_chart_version: "{{ kube_traefix_ingress_chart_version }}"
         helm_wait: true
-        helm_timeout: 900s
+        helm_timeout: 300s
         helm_values_file: /var/tmp/ingress-values.yaml
