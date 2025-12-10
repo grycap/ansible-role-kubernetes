@@ -1,4 +1,15 @@
-- when: kube_ingress_type == "nginx"
+- name: Check if ingress-nginx is already installed
+  command: kubectl get deployment -n ingress-nginx ingress-nginx-controller
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
+  register: ingress_nginx_deployment
+  failed_when: false
+  changed_when: false
+
+
+- when:
+  - kube_ingress_type == "nginx"
+  - ingress_nginx_deployment.rc != 0
   block:
 
     - name: Create ingress-values.yaml
@@ -18,7 +29,9 @@
         helm_timeout: 300s
         helm_values_file: /var/tmp/ingress-values.yaml
 
-- when: kube_ingress_type == "traefik"
+- when:
+  - kube_ingress_type == "traefik"
+  - ingress_nginx_deployment.rc != 0
   block:
 
     - name: Create ingress-values.yaml
