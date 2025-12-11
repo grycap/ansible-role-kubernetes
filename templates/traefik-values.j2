@@ -18,10 +18,12 @@ nodeSelector:
 {% if kube_ingress_in_master %}
   node-role.kubernetes.io/control-plane: ""
 {% endif %}
+{% if kube_install_ingress %}
 ingressClass:
   enabled: true
   isDefaultClass: true
   name: traefik
+{% endif %}
 additionalArguments:
   - "--serversTransport.insecureSkipVerify=true"
 
@@ -34,12 +36,16 @@ providers:
 gateway:
   enabled: true
   name: "traefik-gateway"
+{% if kube_cert_manager %}
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+{% endif %}
   gatewayClass:
     enabled: true
     name: "traefik"
   listeners:
     web:
-      port: 8080
+      port: 8000
       protocol: HTTP
       namespacePolicy:
         from: All
