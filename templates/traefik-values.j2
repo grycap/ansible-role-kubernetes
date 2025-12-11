@@ -24,3 +24,32 @@ ingressClass:
   name: traefik
 additionalArguments:
   - "--serversTransport.insecureSkipVerify=true"
+
+{% if kube_install_gateway_api %}
+providers:
+  kubernetesIngress:
+    enabled: false
+  kubernetesGateway:
+    enabled: true
+gateway:
+  enabled: true
+  name: "traefik-gateway"
+  gatewayClass:
+    enabled: true
+    name: "traefik"
+  listeners:
+    web:
+      port: 8080
+      protocol: HTTP
+      namespacePolicy:
+        from: All
+    websecure:
+      port: 8443
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      mode: Terminate
+      certificateRefs:
+        - name: {{ kube_public_dns_name }}-tls
+          kind: Secret
+{% endif %}
