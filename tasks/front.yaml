@@ -130,9 +130,6 @@
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
 
-- include_tasks: cert-manager.yaml
-  when: kube_cert_manager | bool
-
 - block:
     - name: Create kubernetes-dashboard.yaml
       copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
@@ -186,6 +183,9 @@
 
 - import_tasks: gateway-api.yaml
   when: kube_install_gateway_api | bool
+
+- include_tasks: cert-manager.yaml
+  when: kube_cert_manager | bool
 
 - block:
     - name: Create nvidia-device-plugin.yaml

@@ -17,8 +17,14 @@ metadata:
   namespace: kubeapps
 spec:
   parentRefs:
+{% if kube_ingress_type == "nginx" %}
   - name: nginx-gateway
     namespace: nginx-gateway
+{% endif %}
+{% if kube_ingress_type == "traefik" %}
+  - name: traefik-gateway
+    namespace: traefik
+{% endif %}
   rules:
   - matches:
     - path:
