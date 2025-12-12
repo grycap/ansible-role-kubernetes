@@ -52,10 +52,23 @@ gateway:
     websecure:
       port: 8443
       protocol: HTTPS
+      hostname: {{ kube_public_dns_name }}
       namespacePolicy:
         from: All
       mode: Terminate
       certificateRefs:
         - name: {{ kube_public_dns_name }}-tls
           kind: Secret
+{% for dns_name in kube_public_additional_dns_names %}
+    websecure-{{ dns_name }}:
+      port: 8443
+      protocol: HTTPS
+      hostname: {{ dns_name }}
+      namespacePolicy:
+        from: All
+      mode: Terminate
+      certificateRefs:
+        - name: {{ dns_name }}-tls
+          kind: Secret
+{% endfor %}
 {% endif %}

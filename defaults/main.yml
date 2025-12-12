@@ -92,8 +92,9 @@ kube_cert_manager: false
 kube_cert_manager_chart_version: "1.19.1"
 # Public IP to use by the cert-manager (not needed if kube_public_dns_name is set)
 kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
-# Public DNS name to use in the dashboard tls certificate
+# Public DNS names to use in the tls certificate
 kube_public_dns_name: ""
+kube_public_additional_dns_names: []
 # Email to be used in the Let's Encrypt issuer
 kube_cert_user_email: jhondoe@server.com
 # Cert Manager type of challenge provider: http01 or dns01

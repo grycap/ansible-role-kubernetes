@@ -73,8 +73,9 @@ The variables that can be passed to this role and a brief description about them
 	kube_cert_manager: false
 	# Public IP to use by the cert-manager (not needed if kube_public_dns_name is set)
 	kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
-	# Public DNS name to use in the dashboard tls certificate
+	# Public DNS names to use in the tls certificate
 	kube_public_dns_name: ""
+	kube_public_additional_dns_names: []
 	# Email to be used in the Let's Encrypt issuer
 	kube_cert_user_email: jhondoe@server.com
 	# Override default docker version
