@@ -14,32 +14,35 @@ spec:
   commonName: default
 {% endif %}
 {% if kube_ingress_type == "nginx" %}
+{% set all_dns = kube_public_additional_dns_names + [kube_public_dns_name] %}
+{% for dns_name in all_dns %}
 # First generate a selfsigned certificate to assure that the secret is created
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   namespace: nginx-gateway
-  name: {{ kube_public_dns_name }}-tls
+  name: {{ dns_name }}-tls
 spec:
-  secretName: {{ kube_public_dns_name }}-tls
+  secretName: {{ dns_name }}-tls
   issuerRef:
     kind: ClusterIssuer
     name: selfsigned
   dnsNames:
-    - "{{ kube_public_dns_name }}"
+    - "{{ dns_name }}"
 # Then rewrite it with the prod issuer
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   namespace: nginx-gateway
-  name: {{ kube_public_dns_name }}-tls
+  name: {{ dns_name }}-tls
 spec:
-  secretName: {{ kube_public_dns_name }}-tls
-  issuerRef: 
+  secretName: {{ dns_name }}-tls
+  issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-prod
   dnsNames:
-    - "{{ kube_public_dns_name }}"
+    - "{{ dns_name }}"
+{% endfor %}
 {% endif %}
