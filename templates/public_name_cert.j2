@@ -1,3 +1,21 @@
+# First generate a generic certificate to assure that the secret is created
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+{% if kube_ingress_type == "nginx" %}
+  namespace: nginx-gateway
+{% endif %}
+{% if kube_ingress_type == "traefik" %}
+  namespace: traefik
+{% endif %}
+  name: default-tls
+spec:
+  secretName: default-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: selfsigned
+  commonName: default
 # First generate a selfsigned certificate to assure that the secret is created
 ---
 apiVersion: cert-manager.io/v1

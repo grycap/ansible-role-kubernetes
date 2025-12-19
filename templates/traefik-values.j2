@@ -48,6 +48,15 @@ gateway:
     websecure:
       port: 8443
       protocol: HTTPS
+      namespacePolicy:
+        from: All
+      mode: Terminate
+      certificateRefs:
+        - name: default-tls
+          kind: Secret
+    websecure-{{ kube_public_dns_name }}:
+      port: 8443
+      protocol: HTTPS
       hostname: {{ kube_public_dns_name }}
       namespacePolicy:
         from: All

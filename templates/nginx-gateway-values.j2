@@ -39,7 +39,6 @@ gateways:
             certificateRefs:
               - name: server-tls
                 kind: Secret
-{% if kube_public_dns_name != '' %}
         - name: https-host
           port: 443
           hostname: {{ kube_public_dns_name }}
@@ -52,4 +51,17 @@ gateways:
             certificateRefs:
               - name: {{ kube_public_dns_name }}-tls
                 kind: Secret
-{% endif %}
+{% for dns_name in kube_public_additional_dns_names %}
+        - name: https-{{ dns_name }}
+          port: 443
+          hostname: {{ dns_name }}
+          protocol: HTTPS
+          allowedRoutes:
+            namespaces:
+              from: All
+          tls:
+            mode: Terminate
+            certificateRefs:
+              - name: {{ dns_name }}-tls
+                kind: Secret
+{% endfor %}
