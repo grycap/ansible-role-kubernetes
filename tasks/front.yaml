@@ -2,6 +2,10 @@
 - name: Copy 'is_cluster_ready' file
   copy: dest=/bin/is_cluster_ready src=is_cluster_ready mode=0755
 
+- set_fact:
+    kube_public_dns_name: "{{ kube_public_dns_name | regex_replace('^\\*\\.', 'k8s.') }}"
+  when: kube_public_dns_name.startswith('*.')
+
 - block:
 
   - name: Create kubeadm-config file
