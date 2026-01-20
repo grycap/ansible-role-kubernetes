@@ -78,6 +78,12 @@ The variables that can be passed to this role and a brief description about them
 	kube_docker_options: {}
 	# Install docker with pip
 	kube_install_docker_pip
+	# Endpoint for the control plane in case of HA mode with multiple master
+	kube_control_plane_ip: ""
+	kube_control_plane_port: 8443
+	kube_control_plane_peer_ip: "{{ ansible_default_ipv4.address }}"
+	kube_control_plane_peer_iface: "{{ ansible_default_ipv4.interface }}"
+	kube_control_plane_remote_peer_list: ["{{ ansible_default_ipv4.address }}"]
 	# Command flags to use for launching k3s in the systemd service
 	kube_k3_exec: ""
 	# How to install K8s: kubeadm or k3s

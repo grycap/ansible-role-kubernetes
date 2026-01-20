@@ -23,6 +23,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required '
     # custom max body size for file uploading like backing image uploading
     nginx.ingress.kubernetes.io/proxy-body-size: 10000m
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 {% if kube_cert_manager %}
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 {% endif %}
@@ -43,7 +44,7 @@ spec:
 {% endif %}
       paths:
       - pathType: ImplementationSpecific
-        path: "/"
+        path: /longhorn(/|$)(.*)
         backend:
           service:
             name: longhorn-frontend

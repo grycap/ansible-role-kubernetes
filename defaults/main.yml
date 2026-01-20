@@ -1,6 +1,6 @@
 # Version to install or latest
 kube_version: 1.24.17
-# Type of node front or wn
+# Type of node front, control_plane or wn
 kube_type_of_node: front
 # How to install K8s: kubeadm or k3s
 kube_install_method: kubeadm
@@ -109,6 +109,15 @@ kube_install_docker_pip: false
 # Command flags to use for launching k3s in the systemd service
 kube_k3_exec: ""
 
+
+# Endpoint for the control plane in case of HA mode with multiple master
+kube_control_plane_ip: ""
+kube_control_plane_port: 8443
+kube_control_plane_peer_ip: "{{ ansible_default_ipv4.address }}"
+kube_control_plane_peer_iface: "{{ ansible_default_ipv4.interface }}"
+kube_control_plane_remote_peer_list: ["{{ ansible_default_ipv4.address }}"]
+
+# Kyverno options
 kube_install_kyverno: false
 kyverno_crds_helm_chart_version: "2.0.3"
 kyverno_helm_chart_version: "2.0.3"
@@ -162,5 +171,7 @@ kube_longhorn_ingress_auth: "longhorn:$apr1$e6BbrO3Q$llbCJ6cWJS/RWnLGYQhxX."
 longhorn_num_replicas: 3
 # Set reclaimPolicy of Longhorn StorageClass Delete or Retain
 longhorn_reclaim_policy: Delete
+# Default path for storing data on a host.
+longhorn_default_data_path: '/var/lib/longhorn/'
 # Longhorn Helm chart version to install
 kube_longhorn_chart_version: 1.9.1

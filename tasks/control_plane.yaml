@@ -1,0 +1,32 @@
+---
+- name: Configure VIP LB
+  import_tasks: lb.yaml
+
+- name: Wait for Kube master
+  wait_for:
+    path: /etc/environment
+    search_regex: "KUBECONFIG=/etc/kubernetes/admin.conf"
+  delegate_to: "{{kube_server}}"
+
+- set_fact:
+    certificate_key: "{{ lookup('file', '/var/tmp/kubeadm-certificate-key') }}"
+
+- name: Create kubeadm-config file
+  template: src=kubeadm-config-cp.j2 dest=/tmp/kubeadm-config-cp.yml
+
+- name: Add node to kube cluster
+  command: kubeadm join --config /tmp/kubeadm-config-cp.yml creates=/etc/kubernetes/kubelet.conf
+
+- name: Add Kube API server options
+  lineinfile:
+    dest: /etc/kubernetes/manifests/kube-apiserver.yaml
+    line: '    - {{item.option}}={{item.value}}'
+    regexp: '^    - {{item.option}}='
+    insertafter: '    - kube-apiserver'
+  notify: restart kubeapi
+  with_items: "{{ kube_apiserver_options }}"
+
+- name: Set KUBECONFIG environment variable
+  lineinfile:
+    dest: /etc/environment
+    line: "KUBECONFIG=/etc/kubernetes/admin.conf"

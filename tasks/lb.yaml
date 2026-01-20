@@ -1,0 +1,10 @@
+- name: Create /etc/kube-vip file dir
+  file: path=/etc/kube-vip state=directory mode=755
+  
+- name: Create kube-vip config file
+  template: src=kube-vip-config.j2 dest=/etc/kube-vip/config.yaml
+
+- name: Create /etc/kubernetes/manifests file dir
+  file: path=/etc/kubernetes/manifests state=directory mode=755 recurse=yes
+
+- copy: src=kube-vip.yaml dest=/etc/kubernetes/manifests/kube-vip.yaml

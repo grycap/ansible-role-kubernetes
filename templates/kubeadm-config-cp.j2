@@ -29,9 +29,8 @@ nodeRegistration:
 discovery:
   bootstrapToken:
     token: "{{kube_token}}"
-{% if kube_control_plane_ip != "" %}
     apiServerEndpoint: {{kube_control_plane_ip}}:{{kube_control_plane_port}}
-{% else %}
-    apiServerEndpoint: {{kube_server}}:6443
-{% endif %}
     unsafeSkipCAVerification: true
+controlPlane:
+  localAPIEndpoint: {}
+  certificateKey: {{ certificate_key }}

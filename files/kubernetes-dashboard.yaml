@@ -319,10 +319,9 @@ metadata:
   labels:
     k8s-app: kubernetes-dashboard
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
   - name: https
     port: 8443
-    nodePort: 30443
   selector:
     k8s-app: kubernetes-dashboard
