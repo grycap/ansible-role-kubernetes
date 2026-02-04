@@ -7,11 +7,15 @@
     kube_public_dns_name: "{{ kube_cert_public_ip }}.nip.io"
   when: kube_public_dns_name == ""
 
-
 - name: Set default Ingress type
   set_fact:
     kube_ingress_type: "nginx"
   when: kube_ingress_type == ""
+
+- set_fact:
+    kube_public_dns_name: "{{ kube_public_dns_name | regex_replace('^\\*\\.', 'k8s.') }}"
+  when: kube_public_dns_name.startswith('*.')
+
 
 - block:
 
