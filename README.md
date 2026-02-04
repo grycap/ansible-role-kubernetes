@@ -43,13 +43,13 @@ The variables that can be passed to this role and a brief description about them
 	# Flag to set Metrics-Server to be installed
 	kube_install_metrics: false
 	# Metrics-Server Helm chart version to install
-	kube_metrics_chart_version: "3.12.2"
+	kube_metrics_chart_version: "3.13.0"
 	# Flag to set the ingress controller to be installed
 	kube_install_ingress: false
 	# Type of ingress to install
 	kube_ingress_type: nginx # or traefik
 	# Ingress controller Helm chart version to install
-	kube_traefix_chart_version: "37.3.0"
+	kube_traefik_chart_version: "37.3.0"
 	kube_nginx_ingress_chart_version: "4.12.1"
 	# Flag to deploy the ingress controller in the master node
 	kube_ingress_in_master: false
@@ -94,7 +94,7 @@ The variables that can be passed to this role and a brief description about them
 	kube_install_gateway_api: false
 	# Gateway API CRDs Version
 	kube_gateway_api_version: 1.4.0
-	# Nginx Gateway Gabric_version
+	# Nginx Gateway Fabric_version
 	kube_nginx_gateway_fabric_version: 2.2.1
 
 

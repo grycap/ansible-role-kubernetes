@@ -41,7 +41,7 @@
 
   - block:
     - template: src=public_name_cert.j2 dest=/tmp/public_name_cert.yaml
-    - name: Create Let's encrypt Certificate for '{{ public_name_cert }}'
+    - name: Create Let's encrypt Certificates'
       command: kubectl apply -f /tmp/public_name_cert.yaml
       environment:
         KUBECONFIG: "{{KUBECONFIG}}"
