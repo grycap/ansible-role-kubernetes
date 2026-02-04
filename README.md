@@ -43,11 +43,16 @@ The variables that can be passed to this role and a brief description about them
 	# Flag to set Metrics-Server to be installed
 	kube_install_metrics: false
 	# Metrics-Server Helm chart version to install
-	kube_metrics_chart_version: "3.12.2"
-	# Flag to set the nginx ingress controller to be installed
+	kube_metrics_chart_version: "3.13.0"
+	# Flag to set the ingress controller to be installed
 	kube_install_ingress: false
-	# Nginx ingress controller Helm chart version to install
-	kube_ingress_chart_version: "4.12.1"
+	# Type of ingress to install
+	kube_ingress_type: nginx # or traefik
+	# Ingress controller Helm chart version to install
+	kube_traefik_chart_version: "37.3.0"
+	kube_nginx_ingress_chart_version: "4.12.1"
+	# Flag to deploy the ingress controller in the master node
+	kube_ingress_in_master: false
 	# Flag to set the kubeapps UI to be installed
 	kube_install_kubeapps: false
 	# KubeApps chart version to install (or latest)
@@ -68,8 +73,9 @@ The variables that can be passed to this role and a brief description about them
 	kube_cert_manager: false
 	# Public IP to use by the cert-manager (not needed if kube_public_dns_name is set)
 	kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
-	# Public DNS name to use in the dashboard tls certificate
+	# Public DNS names to use in the tls certificate
 	kube_public_dns_name: ""
+	kube_public_additional_dns_names: []
 	# Email to be used in the Let's Encrypt issuer
 	kube_cert_user_email: jhondoe@server.com
 	# Override default docker version
@@ -84,6 +90,13 @@ The variables that can be passed to this role and a brief description about them
 	kube_install_method: kubeadm
 	# Servers to install and configure ntp. If [] ntp will not be configured
 	kube_ntp_servers: [ntp.upv.es, ntp.uv.es]
+	# Instal Gateway API
+	kube_install_gateway_api: false
+	# Gateway API CRDs Version
+	kube_gateway_api_version: 1.4.0
+	# Nginx Gateway Fabric_version
+	kube_nginx_gateway_fabric_version: 2.2.1
+
 
 Example Playbook
 ----------------

@@ -1,30 +1,16 @@
-- block:
-  - pip:
-      name: dnspython
-    ignore_errors: yes
-  - name: Try to get the DNS name of the node
-    set_fact:
-      public_hostname: "{{ lookup('dig', kube_cert_public_ip + '/PTR', '@8.8.8.8')[:-1] }}"
-    ignore_errors: yes
-  when: kube_cert_manager | bool and kube_public_dns_name == ""
+- name: Check if cert-manager is already installed
+  command: kubectl get deployment -n cert-manager cert-manager
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
+  register: cert_manager_deployment
+  failed_when: false
+  changed_when: false
 
 - block:
-  - debug:
-      msg: "DNS name = {{ public_hostname }} - Disabling cert_manager."
-    ignore_errors: yes
-  - name: Disabling cert_manager
-    set_fact:
-      kube_cert_manager: false
-  when: kube_cert_manager | bool and kube_public_dns_name == "" and (public_hostname is undefined or public_hostname == "NXDOMAI" or public_hostname == "")
 
-- set_fact:
-    public_hostname: "{{ kube_public_dns_name }}"
-  when: kube_cert_manager | bool and kube_public_dns_name != ""
-
-- block:
-  - name: Create ingress-values.yaml
-    copy:
-      src: cert-manager-values.yaml
+  - name: Create cert-manager-value.yaml
+    template:
+      src: cert-manager-values.j2
       dest: /var/tmp/cert-manager-values.yaml
 
   - name: Install cert-manager helm chart
@@ -37,7 +23,7 @@
       helm_chart_version: "{{ kube_cert_manager_chart_version }}"
       helm_values_file: /var/tmp/cert-manager-values.yaml
       helm_wait: true
-      helm_timeout: 600s
+      helm_timeout: 90s
 
   - block:
     - template: src=dns01_secret.j2 dest=/tmp/dns01_secret.yaml
@@ -54,6 +40,14 @@
       KUBECONFIG: "{{KUBECONFIG}}"
 
   - block:
+    - template: src=public_name_cert.j2 dest=/tmp/public_name_cert.yaml
+    - name: Create Let's encrypt Certificates'
+      command: kubectl apply -f /tmp/public_name_cert.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+    when: kube_install_gateway_api | bool
+
+  - block:
     - template: src=wildcard_cert.j2 dest=/tmp/wildcard_cert.yaml
     - name: Create Let's encrypt Wildcard Certificate for '{{ kube_cert_manager_wildcard_cert_dns_name }}'
       command: kubectl apply -f /tmp/wildcard_cert.yaml
@@ -61,4 +55,4 @@
         KUBECONFIG: "{{KUBECONFIG}}"
     when: kube_cert_manager_wildcard_cert_dns_name != '' and kube_cert_manager_challenge == 'dns01'
 
-  when: kube_cert_manager | bool
+  when: cert_manager_deployment.rc != 0

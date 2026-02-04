@@ -1,0 +1,70 @@
+service:
+  enabled: true
+  type: NodePort
+ports:
+  web:
+    nodePort: 80
+  websecure:
+    nodePort: 443
+tolerations:
+  - key: "node-role.kubernetes.io/master"
+    operator: "Exists"
+    effect: "NoSchedule"
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
+nodeSelector:
+  kubernetes.io/os: linux
+{% if kube_ingress_in_master %}
+  node-role.kubernetes.io/control-plane: ""
+{% endif %}
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+  name: traefik
+additionalArguments:
+  - "--serversTransport.insecureSkipVerify=true"
+
+{% if kube_install_gateway_api %}
+providers:
+  kubernetesGateway:
+    enabled: true
+gateway:
+  enabled: true
+  name: "traefik-gateway"
+{% if kube_cert_manager %}
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+{% endif %}
+  gatewayClass:
+    enabled: true
+    name: "traefik"
+  listeners:
+    web:
+      port: 8000
+      protocol: HTTP
+      namespacePolicy:
+        from: All
+    websecure:
+      port: 8443
+      protocol: HTTPS
+      namespacePolicy:
+        from: All
+      mode: Terminate
+      certificateRefs:
+        - name: default-tls
+          kind: Secret
+{% set all_dns = kube_public_additional_dns_names + [kube_public_dns_name] %}
+{% for dns_name in all_dns %}
+    websecure-{{ dns_name }}:
+      port: 8443
+      protocol: HTTPS
+      hostname: {{ dns_name }}
+      namespacePolicy:
+        from: All
+      mode: Terminate
+      certificateRefs:
+        - name: {{ dns_name }}-tls
+          kind: Secret
+{% endfor %}
+{% endif %}

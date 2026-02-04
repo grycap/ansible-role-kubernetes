@@ -2,9 +2,20 @@
 - name: Copy 'is_cluster_ready' file
   copy: dest=/bin/is_cluster_ready src=is_cluster_ready mode=0755
 
+- name: Set default nip.io DNS name
+  set_fact:
+    kube_public_dns_name: "{{ kube_cert_public_ip }}.nip.io"
+  when: kube_public_dns_name == ""
+
+- name: Set default Ingress type
+  set_fact:
+    kube_ingress_type: "nginx"
+  when: kube_ingress_type == ""
+
 - set_fact:
     kube_public_dns_name: "{{ kube_public_dns_name | regex_replace('^\\*\\.', 'k8s.') }}"
   when: kube_public_dns_name.startswith('*.')
+
 
 - block:
 
@@ -30,7 +41,9 @@
   - name: Add Kube API server --service-node-port-range option
     set_fact:
       kube_apiserver_options: "{{ [{'option': '--service-node-port-range', 'value': '80-35000'}] + kube_apiserver_options }}"
-    when: kube_install_ingress | bool and not node_port_exists | bool
+    when:
+      - kube_install_ingress | bool or kube_install_gateway_api | bool
+      - not node_port_exists | bool
 
   - name: Add Kube API server options
     lineinfile:
@@ -91,7 +104,7 @@
 
   - set_fact:
       k3s_args: "{{k3s_args}} --service-node-port-range=80-32000"
-    when: kube_install_ingress | bool
+    when: kube_install_ingress | bool or kube_install_gateway_api | bool
 
   - name: Install k3s server
     command: sh /tmp/k3s.sh {{k3s_args}} creates=/etc/rancher/k3s/k3s.yaml
@@ -120,8 +133,6 @@
 - import_tasks: helm.yaml
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
-
-- include_tasks: cert-manager.yaml
 
 - block:
     - name: Create kubernetes-dashboard.yaml
@@ -166,8 +177,19 @@
 - import_tasks: longhorn-csi.yaml
   when: kube_install_longhorn | bool
 
+- name: Disable Ingress if Gateway API is enabled
+  set_fact:
+    kube_install_ingress: false
+  when: kube_install_gateway_api | bool
+
 - import_tasks: ingress.yaml
   when: kube_install_ingress | bool
+
+- import_tasks: gateway-api.yaml
+  when: kube_install_gateway_api | bool
+
+- include_tasks: cert-manager.yaml
+  when: kube_cert_manager | bool
 
 - block:
     - name: Create nvidia-device-plugin.yaml
@@ -178,14 +200,8 @@
         KUBECONFIG: "{{KUBECONFIG}}"
   when: kube_nvidia_support | bool
 
-- block:
-    - name: Create kubernetes-dashboard-ingress.yaml
-      template: src=kubernetes-dashboard-ingress.j2 dest=/tmp/kubernetes-dashboard-ingress.yaml
-    - name: Apply kubernetes-dashboard-ingress.yaml
-      command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
-      environment:
-        KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_install_ingress | bool and kube_deploy_dashboard | bool
+- import_tasks: dashboard.yaml
+  when: kube_deploy_dashboard | bool
 
 - import_tasks: kubeapps.yaml
   when: kube_install_kubeapps | bool

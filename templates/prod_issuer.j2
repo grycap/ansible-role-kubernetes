@@ -1,3 +1,11 @@
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned
+spec:
+  selfSigned: {}
+---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -28,6 +36,19 @@ spec:
 {% else %}
     # Enable the HTTP-01 challenge provider
     - http01:
+{% if kube_install_gateway_api %}
+        gatewayHTTPRoute:
+          parentRefs:
+{% if kube_ingress_type == "nginx" %}
+          - name: nginx-gateway
+            namespace: nginx-gateway
+{% endif %}
+{% if kube_ingress_type == "traefik" %}
+          - name: traefik-gateway
+            namespace: traefik
+{% endif %}
+{% else %}
         ingress:
-          class: nginx
+          class: {{ kube_ingress_type }}
+{% endif %}
 {% endif %}

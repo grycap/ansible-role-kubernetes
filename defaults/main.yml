@@ -30,7 +30,7 @@ kube_cri_runtime_install: true
 # CRI dockerd version
 kube_cri_dockerd_version: "0.3.21"
 # Helm version
-kube_install_helm_version: "v3.17.2"
+kube_install_helm_version: "v3.19.4"
 # Deploy the Dashboard
 kube_deploy_dashboard: false
 # Value to pass to the kubeadm init --apiserver-advertise-address option
@@ -46,19 +46,30 @@ kube_apply_repos: []
 # Flag to set Metrics-Server to be installed
 kube_install_metrics: false
 # Metrics-Server Helm chart version to install
-kube_metrics_chart_version: "3.12.2"
-# Flag to set the nginx ingress controller to be installed
+kube_metrics_chart_version: "3.13.0"
+
+# Flag to set the ingress controller to be installed
 kube_install_ingress: false
-# Nginx ingress controller Helm chart version to install
-kube_ingress_chart_version: "4.14.3"
+# Install Gateway API (will disable kube_install_ingress)
+kube_install_gateway_api: false
+# Type of ingress to install
+kube_ingress_type: nginx # or traefik
+# Ingress controller Helm chart version to install
+kube_traefik_chart_version: "37.3.0"
+kube_nginx_ingress_chart_version: "4.14.3"
 # Flag to deploy the ingress controller in the master node
 kube_ingress_in_master: false
+# Gateway API CRDs Version in case of NGF
+kube_gateway_api_version: 1.4.0
+# Nginx Gateway Fabric version
+kube_nginx_gateway_fabric_version: 2.2.1
+
 # Flag to set add the nvidia support to the cluster
 kube_nvidia_support: false
 # Driver version to install: specific version or "latest"
 kube_nvidia_driver_version: "515"
 # Tag of the nvidia device plugin docker container
-kube_nvidia_device_plugin_version: "v0.17.1"
+kube_nvidia_device_plugin_version: "v0.18.0"
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
@@ -81,8 +92,9 @@ kube_cert_manager: false
 kube_cert_manager_chart_version: "1.19.3"
 # Public IP to use by the cert-manager (not needed if kube_public_dns_name is set)
 kube_cert_public_ip: "{{ ansible_default_ipv4.address }}"
-# Public DNS name to use in the dashboard tls certificate
+# Public DNS names to use in the tls certificate
 kube_public_dns_name: ""
+kube_public_additional_dns_names: []
 # Email to be used in the Let's Encrypt issuer
 kube_cert_user_email: jhondoe@server.com
 # Cert Manager type of challenge provider: http01 or dns01

@@ -1,0 +1,25 @@
+---
+- name: Create kubernetes-dashboard.yaml
+  copy: src=kubernetes-dashboard.yaml dest=/tmp/kubernetes-dashboard.yaml
+- name: Apply kubernetes-dashboard.yaml
+  command: kubectl apply -f /tmp/kubernetes-dashboard.yaml
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
+
+- block:
+    - name: Create kubernetes-dashboard-ingress.yaml
+      template: src=kubernetes-dashboard-ingress.j2 dest=/tmp/kubernetes-dashboard-ingress.yaml
+    - name: Apply kubernetes-dashboard-ingress.yaml
+      command: kubectl apply -f /tmp/kubernetes-dashboard-ingress.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+  when: kube_install_ingress | bool
+
+- block:
+    - name: Create kubernetes-dashboard-httproute.yaml
+      template: src=kubernetes-dashboard-httproute.j2 dest=/tmp/kubernetes-dashboard-httproute.yaml
+    - name: Apply kubernetes-dashboard-httproute.yaml
+      command: kubectl apply -f /tmp/kubernetes-dashboard-httproute.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+  when: kube_install_gateway_api | bool

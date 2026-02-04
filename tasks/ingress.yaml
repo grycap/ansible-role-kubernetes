@@ -1,16 +1,52 @@
-- name: Create ingress-values.yaml
-  template:
-    src: ingress-values.j2
-    dest: /var/tmp/ingress-values.yaml
+- name: Check if ingress-nginx is already installed
+  command: kubectl get deployment -n ingress-nginx ingress-nginx-controller
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
+  register: ingress_nginx_deployment
+  failed_when: false
+  changed_when: false
 
-- name: Install ingress-nginx helm chart
-  import_tasks: helm_chart.yaml
-  vars:
-    helm_chart_name: ingress-nginx
-    helm_chart_namespace: ingress-nginx
-    helm_repo_name: ingress-nginx
-    helm_repo_url: https://kubernetes.github.io/ingress-nginx
-    helm_chart_version: "{{ kube_ingress_chart_version }}"
-    helm_wait: true
-    helm_timeout: 300s
-    helm_values_file: /var/tmp/ingress-values.yaml
+
+- when:
+  - kube_ingress_type == "nginx"
+  - ingress_nginx_deployment.rc != 0
+  block:
+
+    - name: Create ingress-values.yaml
+      template:
+        src: ingress-nginx-values.j2
+        dest: /var/tmp/ingress-values.yaml
+
+    - name: Install ingress-nginx helm chart
+      import_tasks: helm_chart.yaml
+      vars:
+        helm_chart_name: ingress-nginx
+        helm_chart_namespace: ingress-nginx
+        helm_repo_name: ingress-nginx
+        helm_repo_url: https://kubernetes.github.io/ingress-nginx
+        helm_chart_version: "{{ kube_nginx_ingress_chart_version }}"
+        helm_wait: true
+        helm_timeout: 300s
+        helm_values_file: /var/tmp/ingress-values.yaml
+
+- when:
+  - kube_ingress_type == "traefik"
+  - ingress_nginx_deployment.rc != 0
+  block:
+
+    - name: Create ingress-values.yaml
+      template:
+        src: traefik-values.j2
+        dest: /var/tmp/traefik-values.yaml
+
+    - name: Install ingress-traefik helm chart
+      import_tasks: helm_chart.yaml
+      vars:
+        helm_chart_name: traefik
+        helm_chart_namespace: traefik
+        helm_repo_name: traefik
+        helm_repo_url: https://helm.traefik.io/traefik
+        helm_chart_version: "{{ kube_traefik_chart_version }}"
+        helm_wait: true
+        helm_timeout: 300s
+        helm_values_file: /var/tmp/traefik-values.yaml

@@ -1,0 +1,43 @@
+- when: kube_ingress_type == "nginx"
+  block:
+
+    - name: Install Gateway API CRDs
+      command: kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{ kube_gateway_api_version }}/standard-install.yaml
+      environment:
+        KUBECONFIG: "{{KUBECONFIG}}"
+
+    - name: Create nginx-gateway-values.yaml
+      template:
+        src: nginx-gateway-values.j2
+        dest: /var/tmp/nginx-gateway-values.yaml
+
+    - name: Install nginx-gateway helm chart
+      import_tasks: helm_chart.yaml
+      vars:
+        helm_chart_name: ngf
+        helm_chart_namespace: nginx-gateway
+        helm_oci_registry: oci://ghcr.io/nginx/charts/nginx-gateway-fabric
+        helm_chart_version: "{{ kube_nginx_gateway_fabric_version }}"
+        helm_wait: false
+        helm_values_file: /var/tmp/nginx-gateway-values.yaml
+
+
+- when: kube_ingress_type == "traefik"
+  block:
+
+    - name: Create traefik-values.yaml
+      template:
+        src: traefik-values.j2
+        dest: /var/tmp/traefik-values.yaml
+
+    - name: Install traefik helm chart
+      import_tasks: helm_chart.yaml
+      vars:
+        helm_chart_name: traefik
+        helm_chart_namespace: traefik
+        helm_repo_name: traefik
+        helm_repo_url: https://helm.traefik.io/traefik
+        helm_chart_version: "{{ kube_traefik_chart_version }}"
+        helm_wait: true
+        helm_timeout: 300s
+        helm_values_file: /var/tmp/traefik-values.yaml

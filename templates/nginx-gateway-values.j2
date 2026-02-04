@@ -1,0 +1,56 @@
+nginx:
+  service:
+    type:  NodePort
+    externalTrafficPolicy: Cluster
+    nodePorts:
+     - port: 80
+       listenerPort: 80
+     - port: 443
+       listenerPort: 443
+
+nginxGateway:
+  snippetsFilters:
+    enable: true
+
+certGenerator:
+  enable: true
+  serverTLSSecretName: server-tls
+
+gateways:
+  - name: nginx-gateway
+    namespace: nginx-gateway
+    spec:
+      gatewayClassName: nginx
+      listeners:
+        - name: http
+          port: 80
+          protocol: HTTP
+          allowedRoutes:
+            namespaces:
+              from: All
+        - name: https
+          port: 443
+          protocol: HTTPS
+          allowedRoutes:
+            namespaces:
+              from: All
+          tls:
+            mode: Terminate
+            certificateRefs:
+              - name: server-tls
+                kind: Secret
+{% set all_dns = kube_public_additional_dns_names + [kube_public_dns_name] %}
+{% for dns_name in all_dns %}
+        - name: https-{{ dns_name }}
+          port: 443
+          hostname: {{ dns_name }}
+          protocol: HTTPS
+          allowedRoutes:
+            namespaces:
+              from: All
+          tls:
+            mode: Terminate
+            certificateRefs:
+              - name: {{ dns_name }}-tls
+                kind: Secret
+{% endfor %}

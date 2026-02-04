@@ -19,9 +19,13 @@
     helm_wait: false
     helm_values_file: /var/tmp/longhorn-csi-values.yaml
 
-- name: Create longhorn-ingress.yaml
-  template: src=longhorn-ingress.j2 dest=/tmp/longhorn-ingress.yaml
-- name: Apply longhorn-ingress.yaml
-  command: kubectl apply -f /tmp/longhorn-ingress.yaml
-  environment:
-    KUBECONFIG: "{{KUBECONFIG}}"
+- block:
+
+  - name: Create longhorn-ingress.yaml
+    template: src=longhorn-ingress.j2 dest=/tmp/longhorn-ingress.yaml
+  - name: Apply longhorn-ingress.yaml
+    command: kubectl apply -f /tmp/longhorn-ingress.yaml
+    environment:
+      KUBECONFIG: "{{KUBECONFIG}}"
+
+  when: kube_install_ingress | bool
