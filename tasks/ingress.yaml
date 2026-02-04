@@ -46,7 +46,7 @@
         helm_chart_namespace: traefik
         helm_repo_name: traefik
         helm_repo_url: https://helm.traefik.io/traefik
-        helm_chart_version: "{{ kube_traefix_chart_version }}"
+        helm_chart_version: "{{ kube_traefik_chart_version }}"
         helm_wait: true
         helm_timeout: 300s
         helm_values_file: /var/tmp/traefik-values.yaml
