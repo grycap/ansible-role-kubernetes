@@ -1,6 +1,10 @@
 service:
   enabled: true
   type: NodePort
+{% if kube_ingress_in_master %}
+  spec:
+    externalTrafficPolicy: Local
+{% endif %}
 ports:
   web:
     nodePort: 80
