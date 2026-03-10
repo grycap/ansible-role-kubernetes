@@ -6,6 +6,12 @@ ports:
     nodePort: 80
   websecure:
     nodePort: 443
+logs:
+  general:
+    level: INFO
+  access:
+    enabled: true
+    format: json            # o "common"/"combined"
 tolerations:
   - key: "node-role.kubernetes.io/master"
     operator: "Exists"
