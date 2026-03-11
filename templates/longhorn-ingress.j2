@@ -8,6 +8,27 @@ metadata:
   name: basic-auth
   namespace: longhorn-system
 type: Opaque
+{% if kube_ingress_type == "traefik" %}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: basic-auth
+  namespace: longhorn-system
+spec:
+  basicAuth:
+    secret: basic-auth
+    realm: "Authentication Required"
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: large-body
+  namespace: longhorn-system
+spec:
+  buffering:
+    maxRequestBodyBytes: 10485760000   # 10000m in bytes    
+{% endif %}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -15,6 +36,10 @@ metadata:
   name: longhorn-ingress
   namespace: longhorn-system
   annotations:
+{% if kube_ingress_type == "traefik" %}
+    traefik.ingress.kubernetes.io/router.middlewares: longhorn-system-basic-auth@kubernetescrd, longhorn-system-large-body@kubernetescrd
+{% endif %}
+{% if kube_ingress_type == "nginx" %}
     # type of authentication
     nginx.ingress.kubernetes.io/auth-type: basic
     # name of the secret that contains the user/password definitions
@@ -23,20 +48,20 @@ metadata:
     nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required '
     # custom max body size for file uploading like backing image uploading
     nginx.ingress.kubernetes.io/proxy-body-size: 10000m
+{% endif %}
 {% if kube_cert_manager %}
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 {% endif %}
 spec:
-  ingressClassName: nginx
-{% if kube_cert_manager and public_hostname is defined %}
+{% if kube_cert_manager %}
   tls:
   - hosts:
-    - {{ public_hostname }}
-    secretName: {{ public_hostname }}
+    - {{ kube_public_dns_name }}
+    secretName: {{ kube_public_dns_name }}
 {% endif %}
   rules:
-{% if kube_cert_manager and public_hostname is defined %}
-  - host: {{ public_hostname }}
+{% if kube_cert_manager %}
+  - host: {{ kube_public_dns_name }}
     http:
 {% else %}
   - http:

@@ -29,22 +29,6 @@ metadata:
 
 ---
 
-kind: Service
-apiVersion: v1
-metadata:
-  labels:
-    k8s-app: kubernetes-dashboard
-  name: kubernetes-dashboard
-  namespace: kubernetes-dashboard
-spec:
-  ports:
-    - port: 443
-      targetPort: 8443
-  selector:
-    k8s-app: kubernetes-dashboard
-
----
-
 apiVersion: v1
 kind: Secret
 metadata:
@@ -193,10 +177,12 @@ spec:
           image: kubernetesui/dashboard:v2.7.0
           imagePullPolicy: Always
           ports:
-            - containerPort: 8443
+            - containerPort: 9090
               protocol: TCP
           args:
-            - --auto-generate-certificates
+            - --enable-insecure-login
+            - --insecure-bind-address=0.0.0.0
+            - --insecure-port=9090
             - --namespace=kubernetes-dashboard
             # Uncomment the following line to manually specify Kubernetes API server Host
             # If not specified, Dashboard will attempt to auto discover the API server and connect
@@ -210,9 +196,8 @@ spec:
               name: tmp-volume
           livenessProbe:
             httpGet:
-              scheme: HTTPS
               path: /
-              port: 8443
+              port: 9090
             initialDelaySeconds: 30
             timeoutSeconds: 30
           securityContext:
@@ -319,10 +304,9 @@ metadata:
   labels:
     k8s-app: kubernetes-dashboard
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
-  - name: https
-    port: 8443
-    nodePort: 30443
+  - name: http
+    port: 9090
   selector:
     k8s-app: kubernetes-dashboard
