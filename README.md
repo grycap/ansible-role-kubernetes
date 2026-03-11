@@ -94,7 +94,7 @@ The variables that can be passed to this role and a brief description about them
 	kube_install_gateway_api: false
 	# Gateway API CRDs Version
 	kube_gateway_api_version: 1.4.0
-	# Nginx Gateway Fabric_version
+	# Nginx Gateway Fabric version
 	kube_nginx_gateway_fabric_version: 2.2.1
 
 

@@ -35,9 +35,11 @@ spec:
     backendRefs:
     - name: kubeapps
       port: 80
+{% if kube_ingress_type == "nginx" %}
     filters:
       - type: ExtensionRef
         extensionRef:
           group: gateway.nginx.org
           kind: SnippetsFilter
           name: proxy-timeouts
+{% endif %}
