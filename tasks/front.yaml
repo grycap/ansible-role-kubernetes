@@ -2,6 +2,11 @@
 - name: Copy 'is_cluster_ready' file
   copy: dest=/bin/is_cluster_ready src=is_cluster_ready mode=0755
 
+- name: Set default public DNS name from additional DNS names
+  set_fact:
+    kube_public_dns_name: "{{ kube_public_additional_dns_names[0] }}"
+  when: kube_public_dns_name == "" and kube_public_additional_dns_names != []
+
 - name: Set default nip.io DNS name
   set_fact:
     kube_public_dns_name: "{{ kube_cert_public_ip }}.nip.io"
