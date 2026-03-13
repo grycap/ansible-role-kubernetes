@@ -1,0 +1,27 @@
+localPeer:
+  id: 0
+  address: {{kube_control_plane_peer_ip}}
+  port: 10000
+remotePeers:
+{% for peer_ip in kube_control_plane_remote_peer_list %}
+- id: {{loop.index + 1}}
+  address: {{peer_ip}}
+  port: 10000
+{% endfor %}
+vip: {{kube_control_plane_ip}}
+gratuitousARP: true
+singleNode: false
+startAsLeader: true
+interface: {{kube_control_plane_peer_iface}}
+loadBalancers:
+- name: API Server Load Balancer
+  type: tcp
+  port: {{kube_control_plane_port}}
+  bindToVip: false
+  backends:
+  - port: 6443
+    address: {{kube_control_plane_peer_ip}}
+{% for peer_ip in kube_control_plane_remote_peer_list %}
+  - port: 6443
+    address: {{peer_ip}}
+{% endfor %}
