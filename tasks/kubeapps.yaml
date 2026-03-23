@@ -8,7 +8,23 @@
     helm_repo_url: https://charts.bitnami.com/bitnami
     helm_chart_version: "{{ kube_kubeapps_chart_version }}"
 
-- template: src=kubeapps-ingress.j2 dest=/tmp/kubeapps-ingress.yaml
-- command: kubectl apply -f /tmp/kubeapps-ingress.yaml
-  environment:
-    KUBECONFIG: "{{KUBECONFIG}}"
+- block:
+
+  - template: src=kubeapps-ingress.j2 dest=/tmp/kubeapps-ingress.yaml
+  - name: Create KubeApps Ingress
+    command: kubectl apply -f /tmp/kubeapps-ingress.yaml
+    environment:
+      KUBECONFIG: "{{KUBECONFIG}}"
+
+  when: kube_install_ingress | bool
+
+
+- block:
+
+  - template: src=kubeapps-httproute.j2 dest=/tmp/kubeapps-httproute.yaml
+  - name: Create KubeApps HTTPRoute
+    command: kubectl apply -f /tmp/kubeapps-httproute.yaml
+    environment:
+      KUBECONFIG: "{{KUBECONFIG}}"
+
+  when: kube_install_gateway_api | bool
