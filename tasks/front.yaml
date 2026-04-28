@@ -182,6 +182,9 @@
 - import_tasks: longhorn-csi.yaml
   when: kube_install_longhorn | bool
 
+- import_tasks: local-path-provisioner.yaml
+  when: kube_install_local_path | bool
+
 - name: Disable Ingress if Gateway API is enabled
   set_fact:
     kube_install_ingress: false
