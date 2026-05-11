@@ -194,7 +194,7 @@
   when: kube_install_gateway_api | bool
 
 - include_tasks: cert-manager.yaml
-  when: kube_cert_manager | bool
+  when: kube_cert_manager | bool or kube_install_gateway_api | bool
 
 - block:
     - name: Create nvidia-device-plugin.yaml
