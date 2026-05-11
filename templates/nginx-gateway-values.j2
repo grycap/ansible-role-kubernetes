@@ -41,6 +41,7 @@ gateways:
                 kind: Secret
 {% set all_dns = kube_public_additional_dns_names + [kube_public_dns_name] %}
 {% for dns_name in all_dns %}
+{% if dns_name != "" %}
         - name: https-{{ dns_name }}
           port: 443
           hostname: {{ dns_name }}
@@ -53,4 +54,5 @@ gateways:
             certificateRefs:
               - name: {{ dns_name }}-tls
                 kind: Secret
+{% endif %}
 {% endfor %}
