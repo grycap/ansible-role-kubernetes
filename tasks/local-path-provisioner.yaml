@@ -1,0 +1,20 @@
+- name: Git Clone
+  git:
+    repo: https://github.com/rancher/local-path-provisioner
+    dest: /opt/local-path-provisioner
+
+- name: Create local-path-values.yaml
+  copy:
+    content: |
+      storageClass
+        name: local-path
+    dest: /var/tmp/local-path-values.yaml
+
+- name: Install longhorn helm chart
+  import_tasks: helm_chart.yaml
+  vars:
+    helm_chart_name: local-path-storage
+    helm_chart_namespace: local-path-storage
+    helm_oci_registry: /opt/local-path-provisioner/deploy/chart/local-path-provisioner/
+    helm_wait: false
+    helm_values_file: /var/tmp/local-path-values.yaml

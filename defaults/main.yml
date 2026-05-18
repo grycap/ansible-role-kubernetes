@@ -176,3 +176,6 @@ longhorn_num_replicas: 3
 longhorn_reclaim_policy: Delete
 # Longhorn Helm chart version to install
 kube_longhorn_chart_version: 1.9.1
+
+# Local Path provisioner support
+kube_install_local_path: false
