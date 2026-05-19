@@ -7,6 +7,7 @@
   copy:
     content: |
       storageClass:
+        defaultClass: true
         name: local-path
     dest: /var/tmp/local-path-values.yaml
 
