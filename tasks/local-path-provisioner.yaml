@@ -6,7 +6,7 @@
 - name: Create local-path-values.yaml
   copy:
     content: |
-      storageClass
+      storageClass:
         name: local-path
     dest: /var/tmp/local-path-values.yaml
 
