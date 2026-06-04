@@ -30,7 +30,7 @@ metadata:
 {% endif %}
 {% endif %}
 spec:
-{% if kube_cert_manager and kube_public_dns_name != "" %}
+{% if kube_tls_enabled and kube_public_dns_name != "" %}
   tls:
   - hosts:
     - {{ kube_public_dns_name }}
@@ -39,7 +39,7 @@ spec:
 {% endif %}
 {% endif %}
   rules:
-{% if kube_cert_manager %}
+{% if kube_tls_enabled %}
   - host: {{ kube_public_dns_name }}
     http:
 {% else %}

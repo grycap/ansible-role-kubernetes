@@ -32,7 +32,7 @@ metadata:
 {% endif %}
 {% endif %}
 spec:
-{% if kube_cert_manager %}
+{% if kube_tls_enabled %}
   tls:
   - hosts:
     - {{ kube_public_dns_name }}

@@ -21,6 +21,11 @@
     kube_public_dns_name: "{{ kube_public_dns_name | regex_replace('^\\*\\.', 'k8s.') }}"
   when: kube_public_dns_name.startswith('*.')
 
+- name: Set TLS management flags
+  set_fact:
+    kube_tls_generated_enabled: "{{ (kube_tls_certificates | default({})) | length > 0 }}"
+    kube_tls_enabled: "{{ kube_cert_manager | bool or ((kube_tls_certificates | default({})) | length > 0) }}"
+
 
 - block:
 
@@ -197,7 +202,10 @@
   when: kube_install_gateway_api | bool
 
 - include_tasks: cert-manager.yaml
-  when: kube_cert_manager | bool or kube_install_gateway_api | bool
+  when: kube_cert_manager | bool or (kube_install_gateway_api | bool and not kube_tls_generated_enabled | bool)
+
+- import_tasks: external-tls.yaml
+  when: kube_tls_generated_enabled | bool
 
 - block:
     - name: Create nvidia-device-plugin.yaml
