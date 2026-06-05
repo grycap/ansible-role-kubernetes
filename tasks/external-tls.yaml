@@ -67,16 +67,11 @@
   template:
     src: generated-tls-secrets.j2
     dest: /var/tmp/generated-tls-secrets.yaml
+    mode: '0640'
   when: kube_generated_tls_secrets | length > 0
 
 - name: Apply IM-generated TLS secrets
   command: kubectl apply -f /var/tmp/generated-tls-secrets.yaml
   environment:
     KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_generated_tls_secrets | length > 0
-
-- name: Remove temporary IM-generated TLS secret manifest
-  file:
-    path: /var/tmp/generated-tls-secrets.yaml
-    state: absent
   when: kube_generated_tls_secrets | length > 0
