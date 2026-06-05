@@ -30,6 +30,7 @@ spec:
     name: selfsigned
   dnsNames:
     - "{{ dns_name }}"
+{% if not (kube_tls_generated_enabled | default(false) | bool) %}
 # Then rewrite it with the prod issuer
 ---
 apiVersion: cert-manager.io/v1
@@ -44,5 +45,6 @@ spec:
     name: letsencrypt-prod
   dnsNames:
     - "{{ dns_name }}"
+{% endif %}
 {% endfor %}
 {% endif %}

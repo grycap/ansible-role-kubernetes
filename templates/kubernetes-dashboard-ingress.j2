@@ -24,7 +24,7 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
 {% endif %}
-{% if kube_cert_manager %}
+{% if kube_cert_manager and not (kube_tls_generated_enabled | default(false) | bool) %}
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 {% if kube_cert_manager_challenge == 'dns01' %}
     certmanager.k8s.io/acme-challenge-type: dns01
