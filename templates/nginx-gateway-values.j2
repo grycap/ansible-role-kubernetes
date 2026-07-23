@@ -42,9 +42,10 @@ gateways:
 {% set all_dns = kube_public_additional_dns_names + [kube_public_dns_name] %}
 {% for dns_name in all_dns %}
 {% if dns_name != "" %}
-        - name: https-{{ dns_name }}
+{% set dns_resource_name = dns_name | regex_replace('^\\*\\.', 'wildcard-') %}
+        - name: https-{{ dns_resource_name }}
           port: 443
-          hostname: {{ dns_name }}
+          hostname: "{{ dns_name }}"
           protocol: HTTPS
           allowedRoutes:
             namespaces:
@@ -52,7 +53,7 @@ gateways:
           tls:
             mode: Terminate
             certificateRefs:
-              - name: {{ dns_name }}-tls
+              - name: {{ dns_resource_name }}-tls
                 kind: Secret
 {% endif %}
 {% endfor %}

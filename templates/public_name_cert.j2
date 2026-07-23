@@ -16,15 +16,16 @@ spec:
 {% if kube_ingress_type == "nginx" %}
 {% set all_dns = kube_public_additional_dns_names + [kube_public_dns_name] %}
 {% for dns_name in all_dns %}
+{% set dns_resource_name = dns_name | regex_replace('^\\*\\.', 'wildcard-') %}
 # First generate a selfsigned certificate to assure that the secret is created
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   namespace: nginx-gateway
-  name: {{ dns_name }}-tls
+  name: {{ dns_resource_name }}-tls
 spec:
-  secretName: {{ dns_name }}-tls
+  secretName: {{ dns_resource_name }}-tls
   issuerRef:
     kind: ClusterIssuer
     name: selfsigned
@@ -36,9 +37,9 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   namespace: nginx-gateway
-  name: {{ dns_name }}-tls
+  name: {{ dns_resource_name }}-tls
 spec:
-  secretName: {{ dns_name }}-tls
+  secretName: {{ dns_resource_name }}-tls
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-prod
