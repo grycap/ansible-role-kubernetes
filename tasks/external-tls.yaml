@@ -1,0 +1,117 @@
+---
+- name: Collect DNS names with IM-generated TLS certificates
+  set_fact:
+    kube_generated_tls_dns_names: "{{ kube_tls_certificates.keys() | list | reject('equalto', '') | list | unique }}"
+
+- name: Compute wildcard DNS candidate for public DNS name
+  set_fact:
+    kube_public_dns_wildcard_candidate: "{{ kube_public_dns_name | regex_replace('^[^.]+\\.', '*.') }}"
+  when: kube_public_dns_name != ''
+
+- name: Select IM-generated TLS certificate name for public DNS
+  set_fact:
+    kube_public_dns_certificate_name: "{{ kube_public_dns_name if kube_public_dns_name in kube_generated_tls_dns_names else (kube_public_dns_wildcard_candidate if kube_public_dns_wildcard_candidate in kube_generated_tls_dns_names else '') }}"
+  when:
+    - kube_generated_tls_dns_names | length > 0
+    - kube_public_dns_name != ''
+
+- name: Select default IM-generated TLS certificate
+  set_fact:
+    kube_default_tls_certificate: "{{ kube_tls_certificates.get(kube_public_dns_certificate_name | default(''), kube_tls_certificates[kube_generated_tls_dns_names[0]]) }}"
+  when: kube_generated_tls_dns_names | length > 0
+
+- name: Ensure public DNS name has an IM-generated TLS certificate
+  assert:
+    that:
+      - kube_public_dns_name == '' or (kube_public_dns_certificate_name | default('')) != ''
+    fail_msg: kube_public_dns_name must have an IM-generated TLS certificate, either exact or wildcard (*.domain).
+
+- name: Initialize IM-generated TLS secret target list
+  set_fact:
+    kube_generated_tls_secrets: []
+
+- name: Collect Gateway API DNS names
+  set_fact:
+    kube_gateway_dns_names: "{{ (kube_public_additional_dns_names + [kube_public_dns_name]) | reject('equalto', '') | list | unique }}"
+
+- name: Initialize Gateway API DNS to certificate mappings
+  set_fact:
+    kube_gateway_dns_certificate_mappings: []
+
+- name: Resolve IM-generated TLS certificate for each Gateway API DNS name
+  set_fact:
+    kube_gateway_dns_certificate_mappings: "{{ kube_gateway_dns_certificate_mappings + [{'dns_name': item, 'cert_name': (item if item in kube_generated_tls_dns_names else (item | regex_replace('^[^.]+\\.', '*.') if (item | regex_replace('^[^.]+\\.', '*.')) in kube_generated_tls_dns_names else ''))}] }}"
+  loop: "{{ kube_gateway_dns_names }}"
+  when:
+    - kube_install_gateway_api | bool
+    - kube_gateway_dns_names | length > 0
+
+- name: Ensure all Gateway API DNS names have an IM-generated TLS certificate
+  assert:
+    that:
+      - item.cert_name != ''
+    fail_msg: "No IM-generated TLS certificate found for {{ item.dns_name }} (exact or wildcard)."
+  loop: "{{ kube_gateway_dns_certificate_mappings }}"
+  when:
+    - kube_install_gateway_api | bool
+    - kube_gateway_dns_certificate_mappings | length > 0
+
+- name: Add Traefik gateway default TLS secret target
+  set_fact:
+    kube_generated_tls_secrets: "{{ kube_generated_tls_secrets + [{'namespace': 'traefik', 'name': 'default-tls', 'cert': kube_default_tls_certificate.cert, 'key': kube_default_tls_certificate.key}] }}"
+  when:
+    - kube_install_gateway_api | bool
+    - kube_ingress_type == 'traefik'
+    - kube_generated_tls_dns_names | length > 0
+
+- name: Add Gateway API TLS secret targets
+  set_fact:
+    kube_generated_tls_secrets: "{{ kube_generated_tls_secrets + [{'namespace': (kube_ingress_type == 'traefik') | ternary('traefik', 'nginx-gateway'), 'name': item.dns_name ~ '-tls', 'cert': kube_tls_certificates[item.cert_name].cert, 'key': kube_tls_certificates[item.cert_name].key}] }}"
+  loop: "{{ kube_gateway_dns_certificate_mappings }}"
+  when:
+    - kube_install_gateway_api | bool
+    - item.cert_name != ''
+
+- name: Add dashboard TLS secret target
+  set_fact:
+    kube_generated_tls_secrets: "{{ kube_generated_tls_secrets + [{'namespace': 'kubernetes-dashboard', 'name': kube_public_dns_name, 'cert': kube_tls_certificates[kube_public_dns_certificate_name].cert, 'key': kube_tls_certificates[kube_public_dns_certificate_name].key}] }}"
+  when:
+    - kube_deploy_dashboard | bool
+    - kube_public_dns_name != ''
+    - (kube_public_dns_certificate_name | default('')) != ''
+
+- name: Add Kubeapps TLS secret target
+  set_fact:
+    kube_generated_tls_secrets: "{{ kube_generated_tls_secrets + [{'namespace': 'kubeapps', 'name': kube_public_dns_name, 'cert': kube_tls_certificates[kube_public_dns_certificate_name].cert, 'key': kube_tls_certificates[kube_public_dns_certificate_name].key}] }}"
+  when:
+    - kube_install_kubeapps | bool
+    - kube_public_dns_name != ''
+    - (kube_public_dns_certificate_name | default('')) != ''
+
+- name: Add Longhorn TLS secret target
+  set_fact:
+    kube_generated_tls_secrets: "{{ kube_generated_tls_secrets + [{'namespace': 'longhorn-system', 'name': kube_public_dns_name, 'cert': kube_tls_certificates[kube_public_dns_certificate_name].cert, 'key': kube_tls_certificates[kube_public_dns_certificate_name].key}] }}"
+  when:
+    - kube_install_longhorn_ingress | bool
+    - kube_public_dns_name != ''
+    - (kube_public_dns_certificate_name | default('')) != ''
+
+- name: Ensure namespaces for IM-generated TLS secrets exist
+  shell: kubectl create namespace {{ item }} --dry-run=client -o yaml | kubectl apply -f -
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
+  loop: "{{ kube_generated_tls_secrets | map(attribute='namespace') | list | unique }}"
+  when: kube_generated_tls_secrets | length > 0
+
+- name: Render IM-generated TLS secrets manifest
+  template:
+    src: generated-tls-secrets.j2
+    dest: /var/tmp/generated-tls-secrets.yaml
+    mode: '0640'
+  when: kube_generated_tls_secrets | length > 0
+
+- name: Apply IM-generated TLS secrets
+  command: kubectl apply -f /var/tmp/generated-tls-secrets.yaml
+  environment:
+    KUBECONFIG: "{{KUBECONFIG}}"
+  when: kube_generated_tls_secrets | length > 0
