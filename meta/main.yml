@@ -1,5 +1,6 @@
 galaxy_info:
   role_name: kubernetes
+  namespace: grycap
   author: micafer1@upv.es
   description: Install Kubernetes cluster
   company: GRyCAP
