@@ -32,12 +32,6 @@
       K3S_URL: https://{{ kube_server }}:6443
       K3S_TOKEN: "{{ node_token }}"
 
-  - name: Copy config.toml.tmpl for NVidia support
-    copy:
-      src: config.toml.tmpl
-      dest: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
-    when: kube_nvidia_support | bool
-
   when: kube_install_method == "k3s"
 
 - block:
@@ -64,5 +58,4 @@
     command: kubeadm join --config /tmp/kubeadm-config.yml creates=/etc/kubernetes/kubelet.conf
 
   when: kube_install_method == "kubeadm"
-
 
