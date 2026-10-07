@@ -10,3 +10,7 @@ toolkit:
 {% else %}
 {}
 {% endif %}
+driver:
+  enabled: true
+  kernelModuleType: "{{ gpu_operator_driver_kernel_module_type }}"
+  version: "{{ gpu_operator_effective_driver_version }}"
