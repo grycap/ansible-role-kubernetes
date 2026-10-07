@@ -69,7 +69,7 @@ kube_install_gpu_operator: false
 kube_gpu_operator_chart_version: "v26.7.1"
 # NVIDIA GPU Operator configuration values
 gpu_operator_driver_kernel_module_type: "auto" # or propietary
-gpu_operator_effective_driver_version: "595.91.07" # or 580.173.02
+gpu_operator_effective_driver_version: "580.173.02" # or 595.91.07, 610.57.04, 615.71.09
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
