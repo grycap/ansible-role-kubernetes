@@ -66,8 +66,8 @@ kube_nginx_gateway_fabric_version: 2.4.2
 
 # Install the NVIDIA GPU Operator (requires containerd or CRI-O with kubeadm; K3s uses its bundled containerd)
 kube_install_gpu_operator: false
-# NVIDIA GPU Operator Helm chart version. 24.9.2 supports Kubernetes 1.24+
-kube_gpu_operator_chart_version: "24.9.2"
+# NVIDIA GPU Operator Helm chart version. 26.7.1 supports Kubernetes 1.24+
+kube_gpu_operator_chart_version: "v26.7.1"
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
