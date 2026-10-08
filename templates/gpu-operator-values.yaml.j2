@@ -1,0 +1,16 @@
+{% if kube_install_method == "k3s" %}
+toolkit:
+  env:
+    - name: CONTAINERD_CONFIG
+      value: /var/lib/rancher/k3s/agent/etc/containerd/config.toml
+    - name: CONTAINERD_SOCKET
+      value: /run/k3s/containerd/containerd.sock
+    - name: RUNTIME_CONFIG_SOURCE
+      value: "command,file"
+{% else %}
+{}
+{% endif %}
+driver:
+  enabled: true
+  kernelModuleType: "{{ gpu_operator_driver_kernel_module_type }}"
+  version: "{{ gpu_operator_effective_driver_version }}"

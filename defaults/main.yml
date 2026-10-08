@@ -63,13 +63,13 @@ kube_ingress_in_master: false
 kube_gateway_api_version: 1.4.0
 # Nginx Gateway Fabric version
 kube_nginx_gateway_fabric_version: 2.4.2
-
-# Flag to set add the nvidia support to the cluster
-kube_nvidia_support: false
-# Driver version to install: specific version or "latest"
-kube_nvidia_driver_version: "515"
-# Tag of the nvidia device plugin docker container
-kube_nvidia_device_plugin_version: "v0.18.0"
+# Install the NVIDIA GPU Operator (requires containerd or CRI-O with kubeadm; K3s uses its bundled containerd)
+kube_install_gpu_operator: false
+# NVIDIA GPU Operator Helm chart version. 26.7.1 supports Kubernetes 1.24+
+kube_gpu_operator_chart_version: "v26.7.1"
+# NVIDIA GPU Operator configuration values
+gpu_operator_driver_kernel_module_type: "auto" # or propietary
+gpu_operator_effective_driver_version: "580.173.02" # or 595.91.07, 610.57.04, 615.71.09
 # Flag to set the kubeapps UI to be installed
 kube_install_kubeapps: false
 # KubeApps chart version to install (or latest)
@@ -109,13 +109,6 @@ kube_cert_manager_wildcard_cert_dns_name: ''
 kube_docker_version: ""
 # Options to add in the docker.json file
 kube_docker_options: {}
-# Nvidia docker options to add in the docker.json file
-docker_nvidia_options:
-  default-runtime: nvidia
-  runtimes:
-    nvidia:
-      path: /usr/bin/nvidia-container-runtime
-      runtimeArgs: []
 # Install docker with pip
 kube_install_docker_pip: false
 # Command flags to use for launching k3s in the systemd service
