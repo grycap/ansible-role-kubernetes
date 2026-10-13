@@ -199,14 +199,34 @@
 - include_tasks: cert-manager.yaml
   when: kube_cert_manager | bool or kube_install_gateway_api | bool
 
-- block:
-    - name: Create nvidia-device-plugin.yaml
-      template: src=nvidia-device-plugin.j2 dest=/tmp/nvidia-device-plugin.yml
-    - name: Apply nvidia-device-plugin.yaml
-      command: kubectl apply -f /tmp/nvidia-device-plugin.yml
-      environment:
-        KUBECONFIG: "{{KUBECONFIG}}"
-  when: kube_nvidia_support | bool
+- name: Validate GPU Operator container runtime
+  fail:
+    msg: >-
+      The NVIDIA GPU Operator does not support Docker as the Kubernetes runtime.
+      Set kube_cri_runtime to containerd or crio, or disable kube_install_gpu_operator.
+  when:
+    - kube_install_gpu_operator | bool
+    - kube_install_method == "kubeadm"
+    - kube_cri_runtime == "docker"
+
+- name: Install NVIDIA GPU Operator
+  block:
+    - name: Create GPU Operator Helm values
+      template:
+        src: gpu-operator-values.yaml.j2
+        dest: /tmp/gpu-operator-values.yaml
+
+    - name: Install NVIDIA GPU Operator Helm chart
+      import_tasks: helm_chart.yaml
+      vars:
+        helm_chart_name: gpu-operator
+        helm_chart_namespace: gpu-operator
+        helm_repo_name: nvidia
+        helm_repo_url: https://helm.ngc.nvidia.com/nvidia
+        helm_chart_version: "{{ kube_gpu_operator_chart_version }}"
+        helm_wait: false
+        helm_values_file: /tmp/gpu-operator-values.yaml
+  when: kube_install_gpu_operator | bool
 
 - import_tasks: dashboard.yaml
   when: kube_deploy_dashboard | bool

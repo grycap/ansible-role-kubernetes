@@ -82,6 +82,10 @@ The variables that can be passed to this role and a brief description about them
 	kube_docker_version: ""
 	# Options to add in the docker.json file
 	kube_docker_options: {}
+	# Install NVIDIA GPU Operator (kubeadm: containerd/CRI-O; K3s: bundled containerd)
+	kube_install_gpu_operator: false
+	# NVIDIA GPU Operator Helm chart version (24.9.2 supports Kubernetes 1.24+)
+	kube_gpu_operator_chart_version: "24.9.2"
 	# Install docker with pip
 	kube_install_docker_pip
 	# Command flags to use for launching k3s in the systemd service
