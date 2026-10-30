@@ -16,4 +16,4 @@ galaxy_info:
     - kubernetes
 
 dependencies:
-  - grycap.ntp
+  - { role: 'geerlingguy.ntp', ntp_servers: [ntp.upv.es, ntp.uv.es] }
