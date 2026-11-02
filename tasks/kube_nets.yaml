@@ -19,7 +19,7 @@
 
 - block:
     - name: Create calico-net.yaml
-      copy: src=calico-net.yaml dest=/tmp/calico-net.yaml
+      template: src=calico-net.j2 dest=/tmp/calico-net.yaml
     - name: Apply calico-net.yaml
       command: kubectl apply -f /tmp/calico-net.yaml creates=/var/etcd/calico-data
       environment:
